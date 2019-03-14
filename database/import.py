@@ -119,11 +119,11 @@ def main():
 
     x = DatabaseImporter(args.filename, args.username, args.delete ,args.logfile)
     x.parse()
-    # try:
-    #     x.parse()
-    # except:
-    #     quit(1)
-    #     # Check the return status using PHP and output accordingly #TODO
+    try:
+        x.parse()
+    except:
+        quit(1)
+        # Check the return status using PHP and output accordingly #TODO
     x.clean()
 
 if __name__ == "__main__":

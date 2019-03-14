@@ -1,0 +1,4 @@
+index.php shows the dashbaoard, but if not logged in, send to login.PHP
+there is a register.php that is only accessible with password?
+account creation should use sha512
+logout.php
