@@ -48,8 +48,18 @@ class DatabaseImporter:
         self.table = self.getTableName()
 
     def getTableName(self):
-        _results = self.database.query("SELECT `tableName` FROM `users` WHERE (`user` = '{}')".format(self.username), True)
+        _results = self.database.query("SELECT `tableName` FROM `users` WHERE (`user` = %s);", (self.database.escape(self.username)), True)
         return _results[0][0]
+
+    def changeBool(self, ele):
+        # Changes all FALSE and TRUE values to 0 and 1
+        _ele = ele.upper()
+        if _ele == "FALSE":
+            return 0
+        elif _ele == "TRUE":
+            return 1
+        else:
+            return ele
 
     def parse(self):
         # parse the uploaded csv file and insert into mysql database
@@ -61,26 +71,29 @@ class DatabaseImporter:
 
         for row in  _reader:
             row = row[1:]           # we ignore the serial number
+            row = [self.changeBool(self.database.escape(x.strip())) for x in row]
             if _rowcount == 0:      # Headers
                 _map = [self.sqlMapping[x.strip()] for x in row]
                 _colCount = len(_map)
-                print(_map)
             else:
                 # Check if exists
-                _r = self.database.query("SELECT * FROM `{}` WHERE (`coyRegNo` = '{}')".format(self.table, row[_map.index("coyRegNo")]), True)
+                # Prepared SQL Statements will force quotes, table name is assumed to be clean and inserted directly into the query.
+                _r = self.database.query("SELECT * FROM `{}` WHERE (`coyRegNo` = %s);".format(self.table), (row[_map.index("coyRegNo")]), True)
+
                 if len(_r) == 1:
-                    # Update Instead
-                    #TODO
-                    for i in range(_colCount):
-                        pass
+                    # UPDATE table1 SET field1=new_value1 WHERE condition
+                    _q = ["UPDATE `{}` SET".format(self.table)] + ["{} = %s,".format(x) for x in _map[:-1]] + ["{} = %s".format(_map[-1])] + ["WHERE (`sn` = %s)"]
+                    _q = " ".join(_q)
+                    row.append(_r[0][0])
                 elif len(_r) == 0:
-                    # Insert
-                    _q = "INSERT INTO `{}` ({}) VALUES ({})".format(self.table, ", ".join(self._map), ", ".join(row))
+                    # INSERT INTO table1 (field1, field2, ...) VALUES (value1, value2, ...)
+                    _q = "INSERT INTO `{}` ({}) VALUES ({})".format(self.table, ", ".join(_map), ", ".join(["%s"] * _colCount))
                 else:
                     self.logfile.write("Non-unique Identifier!")
                     quit(1)
 
-                self.database.query()
+                _q += ";"
+                self.database.query(_q, tuple(row))
 
             _rowcount += 1
 
@@ -106,6 +119,11 @@ def main():
 
     x = DatabaseImporter(args.filename, args.username, args.delete ,args.logfile)
     x.parse()
+    # try:
+    #     x.parse()
+    # except:
+    #     quit(1)
+    #     # Check the return status using PHP and output accordingly #TODO
     x.clean()
 
 if __name__ == "__main__":
