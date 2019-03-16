@@ -18,7 +18,7 @@ class Database:
         # Source for the configuration file
         _confLoc = "../config.location"
         with open(_confLoc, 'r') as f:
-            _confFile = os.path.dirname(os.path.abspath(_confLoc)) + "/" + f.readlines()[0].strip()
+            _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), f.readlines()[0].strip())
 
         with open(_confFile, 'r') as f:
             _conf = json.load(f)
