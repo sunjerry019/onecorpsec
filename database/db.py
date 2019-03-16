@@ -8,17 +8,25 @@ Update credentials here
 
 # https://pypi.org/project/mysql-connector-python/
 
+import os
+import json
 import mysql.connector
 from mysql.connector import Error
 
 class Database:
     def __init__(self):
-        with open("credentials",'r') as f:
+        # Source for the configuration file
+        _confLoc = "../config.location"
+        with open(_confLoc, 'r') as f:
+            _confFile = os.path.dirname(os.path.abspath(_confLoc)) + "/" + f.readlines()[0].strip()
+
+        with open(_confFile, 'r') as f:
+            _conf = json.load(f)
             self.credentials = {
-                "host"       : "localhost",
-                "user"       : "root",
-                "password"   : f.readlines()[0].strip(),
-                "database"   : "tssglobal"
+                "host"       : _conf["host"],
+                "user"       : _conf["user"],
+                "password"   : _conf["password"],
+                "database"   : _conf["database"]
             }
 
     def escape(self, _str):
