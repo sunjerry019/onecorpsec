@@ -1,0 +1,7 @@
+Use Django to serve the dashboard
+Upload csv file, import database/import.py, run DatabaseImporter with its associated arguments
+
+
+https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
+
+sign up can only be done if you are logged in as admin hmm

@@ -55,7 +55,7 @@ ROOT_URLCONF = 'dashboard.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,9 +82,9 @@ WSGI_APPLICATION = 'dashboard.wsgi.application'
 # }
 
 # Source for the configuration file
-_confLoc = "../../config.location"
+_confLoc = os.path.join(BASE_DIR, "../config.location")
 with open(_confLoc, 'r') as f:
-    _confFile = os.path.dirname(os.path.abspath(_confLoc)) + "/" + f.readlines()[0].strip()
+    _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), f.readlines()[0].strip())
 
 # Obtain the database configuration details
 with open(_confFile,'r') as f:
@@ -125,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-gb'
 
-TIME_ZONE = 'UTC+8'
+TIME_ZONE = 'Asia/Singapore'
 
 USE_I18N = True
 
@@ -138,3 +138,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
