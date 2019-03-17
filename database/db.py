@@ -21,12 +21,12 @@ class Database:
             _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), f.readlines()[0].strip())
 
         with open(_confFile, 'r') as f:
-            _conf = json.load(f)
+            self.configurations = json.load(f)
             self.credentials = {
-                "host"       : _conf["host"],
-                "user"       : _conf["user"],
-                "password"   : _conf["password"],
-                "database"   : _conf["database"]
+                "host"       : self.configurations["host"],
+                "user"       : self.configurations["user"],
+                "password"   : self.configurations["password"],
+                "database"   : self.configurations["database"]
             }
 
     def escape(self, _str):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-File for importing CSV into the MySQL Database
+Script for importing CSV into the MySQL Database
 """
 
 import csv
@@ -94,7 +94,7 @@ class DatabaseImporter:
     def parse(self):
         # Prepare the database
         self.createTableIfDoesntExist()
-        
+
         # parse the uploaded csv file and insert into mysql database
         # TODO Sanistize the input
         _reader = csv.reader(self.csvfile, delimiter=',', quotechar='"')
