@@ -140,6 +140,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Accounts and Auth
+AUTH_USER_MODEL = 'accounts.DatabaseUser'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
