@@ -10,7 +10,7 @@ CREATE TABLE `users` (
 CREATE TABLE `main` (
     sn SERIAL,
     coyName VARCHAR(250) CHARACTER SET utf8,        -- Company Name
-    coyRegNo VARCHAR(10) CHARACTER SET utf8,        -- Register No = Unique Identifier
+    coyRegNo VARCHAR(10) UNIQUE CHARACTER SET utf8,        -- Register No = Unique Identifier
     toEmail VARCHAR(250) CHARACTER SET utf8,        -- To Emails (can have multiple, comma separated)
     ccEmail VARCHAR(250) CHARACTER SET utf8,        -- CC Emails (can have multiple, comma separated)
     bccEmail VARCHAR(250) CHARACTER SET utf8,       -- BCC Emails (can have multiple, comma separated)

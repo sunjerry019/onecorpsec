@@ -14,6 +14,7 @@ from db import Database
 class DatabaseImporter:
     def __init__(self, filename, username, delete = False, logfile = None):
         # Initialize all variables and parameters
+        # Must ensure username parameter is safe
 
         self.delete = delete
         self.csvname = filename
@@ -52,6 +53,34 @@ class DatabaseImporter:
         # return _results[0][0]
         return "table_{}".format(self.username)
 
+    def createTableIfDoesntExist(self):
+        # Check if the table already exists
+        _r = self.database.query("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'{}'".format(self.table), None, True)
+
+        if len(_r) == 0:
+            # Create the table
+            _q = ("CREATE TABLE `{}` ("
+                "sn SERIAL, "
+                "coyName VARCHAR(250) CHARACTER SET utf8, "               # Company Name
+                "coyRegNo VARCHAR(10) UNIQUE CHARACTER SET utf8, "        # Register No = Unique Identifier
+                "toEmail VARCHAR(250) CHARACTER SET utf8, "               # To Emails (can have multiple, comma separated)
+                "ccEmail VARCHAR(250) CHARACTER SET utf8, "               # CC Emails (can have multiple, comma separated)
+                "bccEmail VARCHAR(250) CHARACTER SET utf8, "              # BCC Emails (can have multiple, comma separated)
+                "addresseeName VARCHAR(250) CHARACTER SET utf8, "         # who the emails should be addressed to
+                "yearEndMonth TINYINT(2) UNSIGNED, "                      # The month in an tiny int format
+                "yearEndYear YEAR(4) UNSIGNED, "                          # The year in which the next ACRA is due
+                "agmDone BOOLEAN, "                 # Flag for whether need to continue sending AGM email
+                "GSTReq BOOLEAN, "                  # Flag for whether company needs to submit GST
+                "GSTDone BOOLEAN, "                 # Flag for whether need to continue sending GST Reminder Email
+                "auditReq BOOLEAN, "                # Flag for whether company needs to submit GST
+                "auditDone BOOLEAN, "               # Flag for whether need to continue sending Audit Email
+                "incomeTaxDone BOOLEAN, "           # Flag for whether need to continue sending Income Tax Email
+                "PRIMARY KEY (sn) "
+                ");"
+            ).format(self.tablename)
+
+            self.database.query(_q)
+
     def changeBool(self, ele):
         # Changes all FALSE and TRUE values to 0 and 1
         _ele = ele.upper()
@@ -63,6 +92,9 @@ class DatabaseImporter:
             return ele
 
     def parse(self):
+        # Prepare the database
+        self.createTableIfDoesntExist()
+        
         # parse the uploaded csv file and insert into mysql database
         # TODO Sanistize the input
         _reader = csv.reader(self.csvfile, delimiter=',', quotechar='"')

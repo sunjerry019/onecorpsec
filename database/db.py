@@ -41,7 +41,7 @@ class Database:
             print("Error while connecting to MySQL: \n{}".format(e))
 
     def query(self, _query, data = None, result = False):
-        if type(data) is not tuple:
+        if data and type(data) is not tuple:
             data = (data,)
 
         self.dbCursor.execute(_query, data) if data else self.dbCursor.execute(_query)

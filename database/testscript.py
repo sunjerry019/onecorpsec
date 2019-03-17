@@ -3,4 +3,6 @@
 from db import Database
 
 x = Database()
-print(x.credentials)
+x.connect()
+print(x.query("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'{}'".format("table_admin"), None, True))
+x.exitDB()
