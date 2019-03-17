@@ -9,5 +9,6 @@
 {% else %}
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a>
+   <p><a href="{% url 'password_reset' %}">Forgot yor password?</a></p>
 {% endif %}
 {% endblock %}
