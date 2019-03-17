@@ -14,7 +14,7 @@ from db import Database
 class DatabaseImporter:
     def __init__(self, filename, username, delete = False, logfile = None):
         # Initialize all variables and parameters
-        # table name to be imported from the mysql db
+
         self.delete = delete
         self.csvname = filename
         self.csvfile = open(self.csvname, 'r')
@@ -48,8 +48,9 @@ class DatabaseImporter:
         self.table = self.getTableName()
 
     def getTableName(self):
-        _results = self.database.query("SELECT `tableName` FROM `users` WHERE (`user` = %s);", (self.database.escape(self.username)), True)
-        return _results[0][0]
+        # _results = self.database.query("SELECT `tableName` FROM `users` WHERE (`user` = %s);", (self.database.escape(self.username)), True)
+        # return _results[0][0]
+        return "table_{}".format(self.username)
 
     def changeBool(self, ele):
         # Changes all FALSE and TRUE values to 0 and 1
@@ -109,7 +110,7 @@ class DatabaseImporter:
             except OSError:
                 self.logfile.write("Unable to delete csv file\n")
 
-def main():
+def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', type = str, help = "csv file to parse")
     parser.add_argument('username', type = str, help = "username of the importer")
@@ -118,7 +119,7 @@ def main():
     args = parser.parse_args()
 
     x = DatabaseImporter(args.filename, args.username, args.delete ,args.logfile)
-    x.parse()
+    # x.parse()
     try:
         x.parse()
     except:
@@ -127,4 +128,4 @@ def main():
     x.clean()
 
 if __name__ == "__main__":
-    main()
+    _main()
