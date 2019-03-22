@@ -10,6 +10,7 @@ import argparse
 import mysql.connector
 from mysql.connector import Error
 from db import Database
+from mapping import Mapping
 
 class DatabaseImporter:
     def __init__(self, filename, username, delete = False, logfile = None):
@@ -22,22 +23,7 @@ class DatabaseImporter:
         self.database = Database()
         self.username = username
 
-        self.sqlMapping = {
-            "Company Name"     : "coyName",
-            "Company Reg. No." : "coyRegNo",
-            "To Emails"        : "toEmail",
-            "CC Emails"        : "ccEmail",
-            "BCC Emails"       : "bccEmail",
-            "Addressee"        : "addresseeName",
-            "Year End"         : "yearEndMonth",
-            "Year"             : "yearEndYear",
-            "AGM Done"         : "agmDone",
-            "GST Required"     : "GSTReq",
-            "GST Done"         : "GSTDone",
-            "Audit Required"   : "auditReq",
-            "Audit Done"       : "auditDone",
-            "Income Tax Done"  : "incomeTaxDone",
-        }
+        self.sqlMapping = Mapping().getMap()
 
         if logfile is not None:
             self.logfile = open(logfile, 'a')
@@ -62,38 +48,50 @@ class DatabaseImporter:
             _q = ("CREATE TABLE `{}` ("
                 "sn SERIAL, "
                 "coyName VARCHAR(250) CHARACTER SET utf8, "               # Company Name
-                "coyRegNo VARCHAR(10) UNIQUE CHARACTER SET utf8, "        # Register No = Unique Identifier
+                "coyRegNo VARCHAR(10) CHARACTER SET utf8 UNIQUE , "       # Register No = Unique Identifier
                 "toEmail VARCHAR(250) CHARACTER SET utf8, "               # To Emails (can have multiple, comma separated)
                 "ccEmail VARCHAR(250) CHARACTER SET utf8, "               # CC Emails (can have multiple, comma separated)
                 "bccEmail VARCHAR(250) CHARACTER SET utf8, "              # BCC Emails (can have multiple, comma separated)
                 "addresseeName VARCHAR(250) CHARACTER SET utf8, "         # who the emails should be addressed to
                 "fin_endMonth TINYINT(2) UNSIGNED, "                      # The month in an tiny int format
                 "fin_endYear YEAR(4) UNSIGNED, "                          # The year in which the next ACRA is due
-                "agm_next TINYINT(2) UNSIGNED, "                          # The next month that the AGM email is to be sent.
+                "agm_next TINYINT(2), "                                   # The next month that the AGM email is to be sent.
                 "agm_done BOOLEAN, "                                      # Flag for whether need to continue sending AGM email
                 "GST_req BOOLEAN, "                                       # Flag for whether company needs to submit GST
                 "GST_done BOOLEAN, "                                      # Flag for whether need to continue sending GST Reminder Email
-                "GST_type TINYINT(2) UNSIGNED, "                          # Type of GST (0 = Monthly, 1 = Quarterly, 2 = Semi-Annually)
-                "GST_next TINYINT(2) UNSIGNED, "                          # The next month that the AGM email is to be sent.
+                "GST_type TINYINT(2), "                                   # Type of GST (0 = Monthly, 1 = Quarterly, 2 = Semi-Annually)
+                "GST_next TINYINT(2), "                                   # The next month that the AGM email is to be sent.
                 "audit_req BOOLEAN, "                                     # Flag for whether company needs to submit GST
                 "audit_done BOOLEAN, "                                    # Flag for whether need to continue sending Audit Email
-                "audit_next TINYINT(2) UNSIGNED, "                        # The next month that the audit email is to be sent.
+                "audit_next TINYINT(2), "                                 # The next month that the audit email is to be sent.
                 "incomeTaxDone BOOLEAN, "                                 # Flag for whether need to continue sending Income Tax Email
                 "PRIMARY KEY (sn) "
                 ");"
-            ).format(self.tablename)
+            ).format(self.table)
 
             self.database.query(_q)
 
-    def changeBool(self, ele):
-        # Changes all FALSE and TRUE values to 0 and 1
+    def mapValues(self, ele):
         _ele = ele.upper()
+        # Change Booleans
+        # Changes all FALSE and TRUE values to 0 and 1
         if _ele == "FALSE":
             return 0
         elif _ele == "TRUE":
             return 1
-        else:
-            return ele
+
+        # Change Months
+        monthMap = { "JAN" : 1, "FEB" : 2, "MAR" : 3, "APR" : 4, "MAY" : 5, "JUN" : 6, "JUL" : 7, "AUG" : 8, "SEP" : 9, "OCT" : 10, "NOV" : 11, "DEC" : 12 }
+        if _ele in monthMap:
+            return(monthMap[ele])
+
+        # Change GST Type
+        GSTTypeMap = {"1/12": 0, "3/12": 1, "6/12" : 2}
+        if _ele in GSTTypeMap:
+            return(GSTTypeMap[_ele])
+
+        return ele
+
 
     def parse(self):
         # Prepare the database
@@ -108,7 +106,7 @@ class DatabaseImporter:
 
         for row in  _reader:
             row = row[1:]           # we ignore the serial number
-            row = [self.changeBool(self.database.escape(x.strip())) for x in row]
+            row = [self.mapValues(self.database.escape(x.strip())) for x in row]
             if _rowcount == 0:      # Headers
                 _map = [self.sqlMapping[x.strip()] for x in row]
                 _colCount = len(_map)
@@ -155,12 +153,10 @@ def _main():
     args = parser.parse_args()
 
     x = DatabaseImporter(args.filename, args.username, args.delete ,args.logfile)
-    # x.parse()
-    try:
-        x.parse()
-    except:
-        quit(1)
-        # Check the return status using PHP and output accordingly #TODO
+    x.parse()
+    # try: x.parse()
+    # except: quit(1)
+    # Check the return status using PHP and output accordingly #TODO
     x.clean()
 
 if __name__ == "__main__":

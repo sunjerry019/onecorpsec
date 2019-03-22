@@ -1,0 +1,3 @@
+S/N,Company Name,Company Registration Number,To Emails,CC Emails,BCC Emails,Address To,FY End Month,FY End Year,Next AGM Reminder,Current AGM Done?,GST Required?,Current GST Done?,GST Type,Next GST Reminder,Audit Required?,Current Audit Done?,Next Audit Reminder,Current Income Tax Done?
+1,Company A,201814836R,sunjerry019+coyA@gmail.com,,,Tom,MAR,2019,MAR,TRUE,FALSE,TRUE,3/12,MAR,FALSE,TRUE,MAR,TRUE
+2,Company B,201511574C,sunjerry019+coyB@gmail.com,,,Harry,FEB,2019,MAR,FALSE,FALSE,FALSE,6/12,MAR,FALSE,TRUE,MAR,FALSE

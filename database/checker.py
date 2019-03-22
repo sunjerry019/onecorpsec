@@ -10,13 +10,20 @@ from db import Database
 import datetime
 
 class Checker():
-    def __init__(self):
+    def __init__(self, user = False):
         self.database = Database()
         self.database.connect()
         self.users = self.getUsers()
+
+        if user:
+            if user not in users:
+                raise NXError("User does not have a valid table")
+            else:
+                self.user = user
+
         self.today = datetime.datetime.now()
 
-    def runCheck(self):
+    def runCheckAll(self):
         if self.users:
             # Run the checks here
             # columns should be the same for every one
@@ -51,7 +58,7 @@ class Checker():
 
 def _main():
     x = Checker()
-    x.runCheck()
+    x.runCheckAll()
     x.clean()
 
 if __name__ == "__main__":

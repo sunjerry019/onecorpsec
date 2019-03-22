@@ -25,3 +25,11 @@ CREATE TABLE `main` (
     incomeTaxDone BOOLEAN,  -- Flag for whether need to continue sending Income Tax Email
     PRIMARY KEY (sn)
 );
+
+
+CREATE TABLE `csv_mapping` (
+    sn SERIAL,
+    tabletext VARCHAR (250) UNIQUE,
+    plaintext VARCHAR (250),
+    PRIMARY KEY (sn)
+)
