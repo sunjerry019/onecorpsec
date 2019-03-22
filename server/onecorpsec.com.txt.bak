@@ -1,0 +1,45 @@
+;;
+;; Domain:     onecorpsec.com.
+;; Exported:   2019-03-20 01:09:50
+;;
+;; This file is intended for use for informational and archival
+;; purposes ONLY and MUST be edited before use on a production
+;; DNS server.  In particular, you must:
+;;   -- update the SOA record with the correct authoritative name server
+;;   -- update the SOA record with the contact e-mail address information
+;;   -- update the NS record(s) with the authoritative name servers for this domain.
+;;
+;; For further information, please consult the BIND documentation
+;; located on the following website:
+;;
+;; http://www.isc.org/
+;;
+;; And RFC 1035:
+;;
+;; http://www.ietf.org/rfc/rfc1035.txt
+;;
+;; Please note that we do NOT offer technical support for any use
+;; of this zone data, the BIND name server, or any other third-party
+;; DNS software.
+;;
+;; Use at your own risk.
+
+;; SOA Record
+onecorpsec.com.	3600	IN	SOA	onecorpsec.com. root.onecorpsec.com. 2030471079 7200 3600 86400 3600
+
+;; A Records
+onecorpsec.com.	1	IN	A	128.199.174.238
+
+;; CNAME Records
+a.onecorpsec.com.	1	IN	CNAME	onecorpsec.com.
+www.onecorpsec.com.	1	IN	CNAME	onecorpsec.com.
+
+;; MX Records
+onecorpsec.com.	1	IN	MX	20 eforward5.registrar-servers.com.
+onecorpsec.com.	1	IN	MX	10 eforward1.registrar-servers.com.
+onecorpsec.com.	1	IN	MX	10 eforward3.registrar-servers.com.
+onecorpsec.com.	1	IN	MX	15 eforward4.registrar-servers.com.
+onecorpsec.com.	1	IN	MX	10 eforward2.registrar-servers.com.
+
+;; TXT Records
+onecorpsec.com.	1	IN	TXT	"v=spf1 include:spf.efwd.registrar-servers.com ~all"
