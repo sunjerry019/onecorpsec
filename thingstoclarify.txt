@@ -1,5 +1,5 @@
 Things to Clarify
-1. Is Company Registration Number unique?
+1. Is Company Registration Number unique? Yes
 2. What exactly are the conditions for email to be sent?
 
 Email needs to customizable (Enter own email)
@@ -20,8 +20,7 @@ Different Condition 1st day of the month
 
 Corporate Secretary Software
 
-TODO: Make mail forward to the registered email address
-TODO: Change password changes email password as well
-TODO: When setting password, email password changes as well
-TODO: We are going to create a folder for each domain that we register in the MySQL table:
-mkdir -p /var/mail/vhosts/example.com
+Email account management:
+// TODO: Make mail forward to the registered email address
+// TODO: Change password changes email password as well
+// TODO: When setting password, email password changes as well

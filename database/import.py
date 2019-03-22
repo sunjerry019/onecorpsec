@@ -67,14 +67,18 @@ class DatabaseImporter:
                 "ccEmail VARCHAR(250) CHARACTER SET utf8, "               # CC Emails (can have multiple, comma separated)
                 "bccEmail VARCHAR(250) CHARACTER SET utf8, "              # BCC Emails (can have multiple, comma separated)
                 "addresseeName VARCHAR(250) CHARACTER SET utf8, "         # who the emails should be addressed to
-                "yearEndMonth TINYINT(2) UNSIGNED, "                      # The month in an tiny int format
-                "yearEndYear YEAR(4) UNSIGNED, "                          # The year in which the next ACRA is due
-                "agmDone BOOLEAN, "                 # Flag for whether need to continue sending AGM email
-                "GSTReq BOOLEAN, "                  # Flag for whether company needs to submit GST
-                "GSTDone BOOLEAN, "                 # Flag for whether need to continue sending GST Reminder Email
-                "auditReq BOOLEAN, "                # Flag for whether company needs to submit GST
-                "auditDone BOOLEAN, "               # Flag for whether need to continue sending Audit Email
-                "incomeTaxDone BOOLEAN, "           # Flag for whether need to continue sending Income Tax Email
+                "fin_endMonth TINYINT(2) UNSIGNED, "                      # The month in an tiny int format
+                "fin_endYear YEAR(4) UNSIGNED, "                          # The year in which the next ACRA is due
+                "agm_next TINYINT(2) UNSIGNED, "                          # The next month that the AGM email is to be sent.
+                "agm_done BOOLEAN, "                                      # Flag for whether need to continue sending AGM email
+                "GST_req BOOLEAN, "                                       # Flag for whether company needs to submit GST
+                "GST_done BOOLEAN, "                                      # Flag for whether need to continue sending GST Reminder Email
+                "GST_type TINYINT(2) UNSIGNED, "                          # Type of GST (0 = Monthly, 1 = Quarterly, 2 = Semi-Annually)
+                "GST_next TINYINT(2) UNSIGNED, "                          # The next month that the AGM email is to be sent.
+                "audit_req BOOLEAN, "                                     # Flag for whether company needs to submit GST
+                "audit_done BOOLEAN, "                                    # Flag for whether need to continue sending Audit Email
+                "audit_next TINYINT(2) UNSIGNED, "                        # The next month that the audit email is to be sent.
+                "incomeTaxDone BOOLEAN, "                                 # Flag for whether need to continue sending Income Tax Email
                 "PRIMARY KEY (sn) "
                 ");"
             ).format(self.tablename)
