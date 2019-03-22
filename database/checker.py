@@ -7,16 +7,28 @@ If so, emails are sent using sendEmailWithTemplate.py
 
 import mysql.connector
 from db import Database
+import datetime
 
 class Checker():
     def __init__(self):
         self.database = Database()
         self.database.connect()
         self.users = self.getUsers()
+        self.today = datetime.datetime.now()
 
+    def runCheck(self):
         if self.users:
             # Run the checks here
-            
+            # columns should be the same for every one
+            self.columnMap = self.database.query("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=N'table_{}';".format(self.users[0]), None, True)
+            self.columnMap = [x[0] for x in self.columnMap]
+
+            for user in self.users:
+                _companies = self.database.query("SELECT * FROM `table_{}`".format(user), None, True)
+                for company in _companies:
+                    _a = dict(zip(self.columnMap, company))
+                    _emailDue = datetime.datetime(_a["yearEndYear"], _a["yearEndMonth"], 1)
+
         else:
             print("No users with appropriate data")
 
@@ -39,6 +51,7 @@ class Checker():
 
 def _main():
     x = Checker()
+    x.runCheck()
     x.clean()
 
 if __name__ == "__main__":
