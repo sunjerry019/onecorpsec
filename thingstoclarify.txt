@@ -1,0 +1,27 @@
+Things to Clarify
+1. Is Company Registration Number unique?
+2. What exactly are the conditions for email to be sent?
+
+Email needs to customizable (Enter own email)
+Automate the process of routing email
+otherwise info@onecorpsec.com (Do Not Reply)
+CC ownCustomEmail (reply-to)
+Custom Email and Custom Email Address
+
+Different Condition 1st day of the month
+    1. AGM, Annual Return based on yearend date send every month
+    2. GST based on GST Date (End Date) after date (Monthly, Quarterly + 3 Mo, Semi-annually) -> Send the next day (Once)
+    3. IRAS After Year end to 30 Nov (every 2 months)
+
+
+3. Is it one month one email, and therefore I need a flag to check whether email for the month has been sent? (lastEmailReminderSent)
+
+(Add a From email to the user database)
+
+Corporate Secretary Software
+
+TODO: Make mail forward to the registered email address
+TODO: Change password changes email password as well
+TODO: When setting password, email password changes as well
+TODO: We are going to create a folder for each domain that we register in the MySQL table:
+mkdir -p /var/mail/vhosts/example.com
