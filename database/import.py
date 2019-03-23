@@ -60,7 +60,7 @@ class DatabaseImporter:
                 "GST_req BOOLEAN, "                                       # Flag for whether company needs to submit GST
                 "GST_endMonth TINYINT(2), "                               # End Month for GST
                 "GST_done BOOLEAN, "                                      # Flag for whether need to continue sending GST Reminder Email
-                "GST_type TINYINT(2), "                                   # Type of GST (0 = Monthly, 1 = Quarterly, 2 = Semi-Annually)
+                "GST_type TINYINT(2), "                                   # Type of GST (1/12 = Monthly, 3/12 = Quarterly, 6/12 = Semi-Annually)
                 "GST_next TINYINT(2), "                                   # The next month that the AGM email is to be sent.
                 "audit_req BOOLEAN, "                                     # Flag for whether company needs to submit GST
                 "audit_done BOOLEAN, "                                    # Flag for whether need to continue sending Audit Email
@@ -87,7 +87,7 @@ class DatabaseImporter:
             return(monthMap[ele])
 
         # Change GST Type
-        GSTTypeMap = {"1/12": 0, "3/12": 1, "6/12" : 2}
+        GSTTypeMap = {"1/12": 1, "3/12": 3, "6/12" : 6}
         if _ele in GSTTypeMap:
             return(GSTTypeMap[_ele])
 
