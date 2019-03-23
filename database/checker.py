@@ -5,6 +5,9 @@ This script is meant to check against the database for all the tables to see whe
 If so, emails are sent using sendEmailWithTemplate.py
 """
 
+# NOTE: No input sanitization is done here as input are supposed to be safe
+# REVIEW: Email sending conditions, stop conditions not tested
+
 import mysql.connector
 from db import Database
 import datetime
@@ -25,22 +28,39 @@ class Checker():
             if user not in self.users:
                 raise NXError("User does not have a valid table")
             else:
-                self.user = user
+                self.users = [user]
 
         self.today = dt.now()
 
-    def stopEmail(self, type, CRN):
-        # Update the flag and check if all 3 type are GST_done
+        # columns should be the same for every one
+        self.columnMap = self.database.query("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=N'table_{}';".format(self.users[0]), None, True)
+        self.columnMap = [x[0] for x in self.columnMap]
+
+        # Audit                             => QUESTION: Unconfirmed whether we need this
+        self.types = ["AGM", "GST", "IRAS"]
+
+    def stopEmail(self, _usr, _CRN, _typ):
+        # REVIEW: Test this part
+
+        # First update the database flag
+        self.updateDatabase(_usr, _typ + "_done", _CRN, 1)
+
+        # Check if all 3 type are done
         # If all 3 types are done, update the financial year and reset all the flags
-        pass
+        # x = sum([self.getField(_usr, _CRN, t + "_done") for t in self.types])
+        _x = 0
+        for _t in self.types:
+            _x += self.getField(_usr, _CRN, _t + "_done")
+
+        if _x == 3:
+            # Increase financial year by 1
+            self.updateDatabaseDelta(_usr, _CRN, "fin_endYear", 1)
+            for _t in self.types:
+                self.updateDatabase(_usr, _CRN, _t + "_done", 0)
 
     def runCheckAll(self):
         if self.users:
             # Run the checks here
-            # columns should be the same for every one
-            self.columnMap = self.database.query("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=N'table_{}';".format(self.users[0]), None, True)
-            self.columnMap = [x[0] for x in self.columnMap]
-
             for user in self.users:
                 self.runCheck(user)
         else:
@@ -55,16 +75,13 @@ class Checker():
             # No error correction/catching is done here
 
             # AGM/ACRA, GST, Income Tax (IRAS)  => Only check until Nov 20
-            # Audit                             => QUESTION: Unconfirmed whether we need this
-
-            _types = ["agm", "GST", "IRAS"]
             _intervals = {
-                "agm"  : 1,
+                "AGM"  : 1,
                 "GST"  : _a["GST_type"],
                 "IRAS" : 2
             }
 
-            for _typ in _types:
+            for _typ in self.types:
                 _done       = _a["{}_done".format(_typ)]
                 _req        = _a["GST_req"] if _typ is "GST" else True
 
@@ -78,19 +95,29 @@ class Checker():
                     if _yearEnd <= self.today <= _finalEmail and self.today >= _nextEmail and self.sendEmail(user, _a["coyRegNo"] , _typ):
                         # If any of the previous conditions don't match, the conditional will shortcircuit and not send the email
                         # Only update the database if the email sending is sucessful
-                        # self.updateDatabaseDelta(user, _a["coyRegNo"], "{}_next".format(_typ), _interval[_typ])
-                        pass
+                        self.updateDatabaseDelta(user, _a["coyRegNo"], "{}_next".format(_typ), _interval[_typ])
+
+                    if self.today >= _finalEmail:
+                        # we mark the item as if its done since its the final email we are going send anyway
+                        self.stopEmail(user, _a["coyRegNo"], _typ)
+
+    def getField(self, _usr, _CRN, _field):
+        # returns the first result for the user, CRN and field
+        # usually no more than 1 result will be returned
+        return self.database.query("SELECT `{}` FROM `table_{}` WHERE `coyRegNo`='{}';".format(_field, _usr, _CRN), None, True)[0][0]
 
     def updateDatabase(self, _usr, _CRN, _field, _val):
-        self.database.query("UPDATE `table_{}`SET `{}`='{}' WHERE `coyRegNo`='{}'".format(_usr, _field, _val, _CRN))
+        return self.database.query("UPDATE `table_{}`SET `{}`='{}' WHERE `coyRegNo`='{}';".format(_usr, _field, _val, _CRN))
 
-    def updateDatabaseDelta(self, _usr, _CRN, _field, _incrementMonth):
-        _prevVal = self.database.query("SELECT `{}` FROM `table_{}` WHERE `coyRegNo`='{}'".format(_field, _usr, _CRN), None, True)[0][0]
-        _newVal = _prevVal + _incrementMonth
-        self.database.query("UPDATE `table_{}`SET `{}`='{}' WHERE `coyRegNo`='{}'".format(_usr, _field, _newVal, _CRN))
+    def updateDatabaseDelta(self, _usr, _CRN, _field, _increment):
+        _prevVal = self.database.query("SELECT `{}` FROM `table_{}` WHERE `coyRegNo`='{}';".format(_field, _usr, _CRN), None, True)[0][0]
+        _newVal = _prevVal + _increment
+        return self.database.query("UPDATE `table_{}`SET `{}`='{}' WHERE `coyRegNo`='{}';".format(_usr, _field, _newVal, _CRN))
 
     def sendEmail(self, _usr, _coy, _typ):
         print("{} - {}: Sending Email for {}".format(_usr, _coy, _typ))
+
+        # TODO: actually send the email
         return True
 
     def getUsers(self):
