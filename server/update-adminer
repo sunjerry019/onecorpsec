@@ -2,5 +2,5 @@
 
 # Updates adminer with wget
 cd "/usr/local/nginx/adminer/"
-wget -N "http://www.adminer.org/latest.php"
+wget -N "http://www.adminer.org/latest.php" &> /dev/null
 chown -R www-data:www-data "/usr/local/nginx/adminer"
