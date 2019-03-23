@@ -55,8 +55,8 @@ class DatabaseImporter:
                 "addresseeName VARCHAR(250) CHARACTER SET utf8, "    # who the emails should be addressed to
                 "fin_endMonth TINYINT(2) UNSIGNED, "                 # The month in an tiny int format
                 "fin_endYear YEAR(4) UNSIGNED, "                     # The year in which the next ACRA is due
-                "agm_next TINYINT(2), "                              # The next month that the AGM email is to be sent.
-                "agm_done BOOLEAN, "                                 # Flag for whether need to continue sending AGM email
+                "AGM_next TINYINT(2), "                              # The next month that the AGM email is to be sent.
+                "AGM_done BOOLEAN, "                                 # Flag for whether need to continue sending AGM email
                 "GST_req BOOLEAN, "                                  # Flag for whether company needs to submit GST
                 "GST_endMonth TINYINT(2), "                          # End Month for GST
                 "GST_done BOOLEAN, "                                 # Flag for whether need to continue sending GST Reminder Email
