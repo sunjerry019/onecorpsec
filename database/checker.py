@@ -29,15 +29,10 @@ class Checker():
 
         self.today = dt.now()
 
-        self.intervals = {
-            "AGM": 1,
-            "GST": 1,
-            ""
-        }
-
     def stopEmail(self, type, CRN):
         # Update the flag and check if all 3 type are GST_done
         # If all 3 types are done, update the financial year and reset all the flags
+        pass
 
     def runCheckAll(self):
         if self.users:
@@ -47,39 +42,44 @@ class Checker():
             self.columnMap = [x[0] for x in self.columnMap]
 
             for user in self.users:
-                _companies = self.database.query("SELECT * FROM `table_{}`".format(user), None, True)
-                for company in _companies:
-                    _a = dict(zip(self.columnMap, company))
-
-                    # Here we assume all values held in the table are valid and accurate
-                    # No error correction is done here
-
-                    # AGM/ACRA, GST, Income Tax (IRAS)  => Only check until Nov 20
-                    # Audit                             => QUESTION: Unconfirmed whether we need this
-
-                    _types = ["agm", "GST", "IRAS"]
-                    _intervals = {
-                        "agm"  : 1,
-                        "GST"  : _a["GST_type"],
-                        "IRAS" : 2
-                    }
-
-                    for _typ in _types:
-                        _done       = _a["{}_done".format(_typ)]
-                        _req        = _a["GST_req"] if _typ is "GST" else True
-
-                        if _req and not _done:
-                            _yearEnd  = dt(_a["fin_endYear"], _a["fin_endMonth"], 1)
-                            _nextEmail = dt(_a["fin_endYear"], _a["{}_next".format(_typ)], 1) if (_a["{}_next".format(_typ)] >= _a["fin_endMonth"]) else dt(_a["fin_endYear"] + 1, _a["{}_next".format(_typ)], 1)
-
-                            # IRAS only check until Nov 20; Set limit for checking (1 Year)
-                            _finalEmail = dt(_a["fin_endYear"], 11, 30) if _typ is "IRAS" else dt(_a["fin_endYear"] + 1, _a["fin_endMonth"], 1)
-
-                            if _yearEnd <= self.today <= _finalEmail and self.today >= _nextEmail and self.sendEmail(user, _typ):
-                                self.updateDatabaseDelta(user, _a["coyRegNo"], "{}_next".format(_typ), _interval[_typ])
-
+                self.runCheck(user)
         else:
             print("No users with appropriate data")
+
+    def runCheck(self, user):
+        _companies = self.database.query("SELECT * FROM `table_{}`".format(user), None, True)
+        for company in _companies:
+            _a = dict(zip(self.columnMap, company))
+
+            # Here we assume all values held in the table are valid and accurate
+            # No error correction/catching is done here
+
+            # AGM/ACRA, GST, Income Tax (IRAS)  => Only check until Nov 20
+            # Audit                             => QUESTION: Unconfirmed whether we need this
+
+            _types = ["agm", "GST", "IRAS"]
+            _intervals = {
+                "agm"  : 1,
+                "GST"  : _a["GST_type"],
+                "IRAS" : 2
+            }
+
+            for _typ in _types:
+                _done       = _a["{}_done".format(_typ)]
+                _req        = _a["GST_req"] if _typ is "GST" else True
+
+                if _req and not _done:
+                    _yearEnd  = dt(_a["fin_endYear"], _a["fin_endMonth"], 1)
+                    _nextEmail = dt(_a["fin_endYear"], _a[_typ + "_next"], 1) if (_a[_typ +"_next"] >= _a["fin_endMonth"]) else dt(_a["fin_endYear"] + 1, _a[_typ + "_next"], 1)
+
+                    # IRAS only check until Nov 20; Set limit for checking (1 Year)
+                    _finalEmail = dt(_a["fin_endYear"], 11, 30) if _typ is "IRAS" else dt(_a["fin_endYear"] + 1, _a["fin_endMonth"], 1)
+
+                    if _yearEnd <= self.today <= _finalEmail and self.today >= _nextEmail and self.sendEmail(user, _a["coyRegNo"] , _typ):
+                        # If any of the previous conditions don't match, the conditional will shortcircuit and not send the email
+                        # Only update the database if the email sending is sucessful
+                        # self.updateDatabaseDelta(user, _a["coyRegNo"], "{}_next".format(_typ), _interval[_typ])
+                        pass
 
     def updateDatabase(self, _usr, _CRN, _field, _val):
         self.database.query("UPDATE `table_{}`SET `{}`='{}' WHERE `coyRegNo`='{}'".format(_usr, _field, _val, _CRN))
@@ -89,8 +89,8 @@ class Checker():
         _newVal = _prevVal + _incrementMonth
         self.database.query("UPDATE `table_{}`SET `{}`='{}' WHERE `coyRegNo`='{}'".format(_usr, _field, _newVal, _CRN))
 
-    def sendEmail(self, _user, _typ):
-        print(typ)
+    def sendEmail(self, _usr, _coy, _typ):
+        print("{} - {}: Sending Email for {}".format(_usr, _coy, _typ))
         return True
 
     def getUsers(self):
