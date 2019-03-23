@@ -58,6 +58,7 @@ class DatabaseImporter:
                 "agm_next TINYINT(2), "                                   # The next month that the AGM email is to be sent.
                 "agm_done BOOLEAN, "                                      # Flag for whether need to continue sending AGM email
                 "GST_req BOOLEAN, "                                       # Flag for whether company needs to submit GST
+                "GST_endMonth TINYINT(2), "                               # End Month for GST
                 "GST_done BOOLEAN, "                                      # Flag for whether need to continue sending GST Reminder Email
                 "GST_type TINYINT(2), "                                   # Type of GST (0 = Monthly, 1 = Quarterly, 2 = Semi-Annually)
                 "GST_next TINYINT(2), "                                   # The next month that the AGM email is to be sent.

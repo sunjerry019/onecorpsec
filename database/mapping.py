@@ -4,6 +4,9 @@ import csv
 import argparse
 from db import Database
 
+class NXFileError(Exception):
+    pass
+
 class Mapping():
     def __init__(self, csv = None, delete = False):
         self.database = Database()
@@ -73,10 +76,15 @@ def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', type = str, help = "csv file to parse or output to")
     parser.add_argument('-d', '--delete', action='store_true', help = "add flag to delete csv file after script")
+    parser.add_argument('-i', '--import', action='store_true', help = "Import the CSV Map")
+    parser.add_argument('-e', '--export', action='store_true', help = "Export the CSV Map into a template")
     args = parser.parse_args()
 
     x = Mapping(args.filename, args.delete)
-    x.generateTemplate()
+    if args.import:
+        x.importMap()
+    if args.export:
+        x.generateTemplate()
     x.clean()
 
 if __name__ == '__main__':
