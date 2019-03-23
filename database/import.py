@@ -66,6 +66,7 @@ class DatabaseImporter:
                 "audit_done BOOLEAN, "                                    # Flag for whether need to continue sending Audit Email
                 "audit_next TINYINT(2), "                                 # The next month that the audit email is to be sent.
                 "incomeTaxDone BOOLEAN, "                                 # Flag for whether need to continue sending Income Tax Email
+                "incomeTaxNext TINYINT(2), "                              # The next month that the IRAS email is to be sent
                 "PRIMARY KEY (sn) "
                 ");"
             ).format(self.table)
@@ -108,6 +109,9 @@ class DatabaseImporter:
         for row in  _reader:
             row = row[1:]           # we ignore the serial number
             row = [self.mapValues(self.database.escape(x.strip())) for x in row]
+
+            #TODO Do some error handling here to check for illegal values
+
             if _rowcount == 0:      # Headers
                 _map = [self.sqlMapping[x.strip()] for x in row]
                 _colCount = len(_map)
