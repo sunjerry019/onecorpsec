@@ -54,52 +54,29 @@ class Checker():
                     # Here we assume all values held in the table are valid and accurate
                     # No error correction is done here
 
-                    # AGM/ACRA
-                    _agmDone = _a["agm_done"]
-                    if not _agmDone:
-                        _yearEnd  = dt(_a["fin_endYear"], _a["fin_endMonth"], 1)
-                        _nextEmail = dt(_a["fin_endYear"], _a["agm_next"], 1) if _a["agm_next"] >= _a["fin_endMonth"] else dt(_a["fin_endYear"] + 1, _a["agm_next"], 1)
+                    # AGM/ACRA, GST, Income Tax (IRAS)  => Only check until Nov 20
+                    # Audit                             => QUESTION: Unconfirmed whether we need this
 
-                        if self.today >= _yearEnd and self.today >= _nextEmail and self.sendEmail(user, "AGM"):
-                            self.updateDatabaseDelta(user, _a["coyRegNo"], "agm_next", 1)
-                    # GST
-                    _GSTReq = _a["GST_req"]
-                    _GSTDone = _a["GST_done"]
-                    if not _GSTDone and _GSTReq:
-                        _yearEnd = dt(_a["fin_endYear"], _a["GST_endMonth"], 1)
-                        _nextEmail = dt(_a["fin_endYear"], _a["GST_next"], 1) if _a["agm_next"] >= _a["fin_endMonth"] else dt(_a["fin_endYear"] + 1, _a["GST_next"], 1)
-                        _interval = _a["GST_type"]
+                    _types = ["agm", "GST", "IRAS"]
+                    _intervals = {
+                        "agm"  : 1,
+                        "GST"  : _a["GST_type"],
+                        "IRAS" : 2
+                    }
 
-                        if self.today >= _yearEnd and self.today >= _nextEmail and self.sendEmail(user, "GST"):
-                            self.updateDatabaseDelta(user, _a["coyRegNo"], "GST_next", _interval)
+                    for _typ in _types:
+                        _done       = _a["{}_done".format(_typ)]
+                        _req        = _a["GST_req"] if _typ is "GST" else True
 
-                    # Audit
-                    # QUESTION: Unconfirmed whether we need this
-                    # _AuditReq = _a["audit_req"]
-                    # _AuditDone = _a["audit_done"]
-                    # if not _AuditDone and _AuditReq:
-                    #     _emailDue = dt(_a["fin_endYear"], _a["GST_endMonth"], 1)
-                    #     _nextEmail = dt(_a["fin_endYear"], _a["GST_next"], 1)
-                    #     _interval = _a["GST_type"]
-                    #
-                    #     if self.today >= _emailDue and self.today >= _nextEmail and self.sendEmail("GST"):
-                    #         self.updateDatabase(user, _a["coyRegNo"], "GST_next", _interval)
+                        if _req and not _done:
+                            _yearEnd  = dt(_a["fin_endYear"], _a["fin_endMonth"], 1)
+                            _nextEmail = dt(_a["fin_endYear"], _a["{}_next".format(_typ)], 1) if (_a["{}_next".format(_typ)] >= _a["fin_endMonth"]) else dt(_a["fin_endYear"] + 1, _a["{}_next".format(_typ)], 1)
 
-                    # Income Tax (IRAS)
-                    # Only check until Nov 20
-                    _IRASDone = _a["incomeTaxDone"]
-                    if not _IRASDone:
-                        _yearEnd = dt(_a["fin_endYear"], _a["fin_endMonth"], 1)
-                        _IRASNext = dt(_a["fin_endYear"], _a["incomeTaxNext"], 1)
-                        # if self.today >= _yearEnd:
-                        #     _nextEmail = _yearEnd
-                        #     while _nextEmail <= self.today:
-                        #         _nextEmail += relativedelta(months=2)
+                            # IRAS only check until Nov 20; Set limit for checking (1 Year)
+                            _finalEmail = dt(_a["fin_endYear"], 11, 30) if _typ is "IRAS" else dt(_a["fin_endYear"] + 1, _a["fin_endMonth"], 1)
 
-
-                        if self.today >= _yearEnd and self.today >= _IRASNext and self.sendEmail(user, "IRAS"):
-                            self.updateDatabaseDelta(user, _a["coyRegNo"], "incomeTaxNext", 2)
-
+                            if _yearEnd <= self.today <= _finalEmail and self.today >= _nextEmail and self.sendEmail(user, _typ):
+                                self.updateDatabaseDelta(user, _a["coyRegNo"], "{}_next".format(_typ), _interval[_typ])
 
         else:
             print("No users with appropriate data")
