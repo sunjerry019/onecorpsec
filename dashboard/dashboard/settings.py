@@ -90,8 +90,8 @@ with open(_confLoc, 'r') as f:
     if _x[0] == '.':
         _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), x)
     else:
-        # This ia an absolute path
-        _confFile = x
+        # This is an absolute path
+        _confFile = _x
 
 # Obtain the database configuration details
 with open(_confFile,'r') as f:
