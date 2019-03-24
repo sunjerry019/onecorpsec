@@ -27,5 +27,4 @@ send_mail(
     "yudong@onecorpsec.com",
     ['sunjerry019@gmail.com'],
     fail_silently=False,
-	connection='django.core.mail.backends.console.EmailBackend'
 )
