@@ -25,6 +25,7 @@ else
 fi
 
 cd "$WORKON_HOME/$1"
-./bin/pip install mysql-connector-python django django-html-emailer
+./bin/pip install mysql-connector-python django django-html-emailer mysqlclient
+eche "export DJANGO_SETTINGS_MODULE=dashboard.settings" >> ./bin/activate.fish
 echo ""
 echo "Please cd into $WORKON_HOME/$1 and run . bin/activate.fish"

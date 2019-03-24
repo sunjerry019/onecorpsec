@@ -36,3 +36,7 @@ Updated /etc/crontab to run cron.monthly on 3rd day of month at 0334
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
 # https://unix.stackexchange.com/a/410851
+
+sudo apt-get install libmysqlclient-dev
+
+https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
