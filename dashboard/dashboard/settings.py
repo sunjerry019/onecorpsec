@@ -114,11 +114,13 @@ _send_mail_with_name = _conf["DOserver"]["emailUsers"]["default"]["name"]
 # https://stackoverflow.com/a/28143166
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 143
+EMAIL_USE_TLS = False
+EMAIL_PORT = 25
 EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = _send_mail_with + '@onecorpsec.com'
-EMAIL_HOST_PASSWORD = _conf["DOserver"]["emailUsers"][_send_mail_with]
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+# EMAIL_HOST_USER = _send_mail_with + '@onecorpsec.com'
+# EMAIL_HOST_PASSWORD = _conf["DOserver"]["emailUsers"][_send_mail_with]
 DEFAULT_FROM_EMAIL = "{} <{}@onecorpsec.com>".format(_send_mail_with_name, _send_mail_with)
 
 # Password validation
