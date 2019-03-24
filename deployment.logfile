@@ -1,0 +1,38 @@
+https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-ubuntu-18-04
+Installed adminer with https://extremeshok.com/5385/ubuntu-debian-redhat-centos-nginx-adminer-lite-phpmyadmin-alternative/
+
+chown -R www-data:adm /usr/local/nginx/adminer
+
+TODO ----> remember to set up a crontab to update adminer
+
+https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04
+sudo certbot --nginx -d onecorpsec.com -d www.onecorpsec.com -d a.onecorpsec.com
+
+exposing adminer on the internet????
+https://www.digitalocean.com/community/tutorials/how-to-set-up-password-authentication-with-nginx-on-ubuntu-14-04
+
+/usr/local/nginx/adminer.htpasswd
+
+
+https://www.digitalocean.com/community/tutorials/how-to-configure-a-mail-server-using-postfix-dovecot-mysql-and-spamassassin
+sudo certbot certonly --nginx -d onecorpsec.com -d www.onecorpsec.com -d a.onecorpsec.com -d mail.onecorpsec.com --dry-run
+
+https://linode.com/docs/email/postfix/configure-spf-and-dkim-in-postfix-on-debian-8/#configure-opendkim
+
+added some extra parameters to use tls:
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_security_level = may
+smtp_tls_security_level = may
+smtp_tls_note_starttls_offer = yes
+# smtpd_tls_CAfile = /etc/postfix/ssl/cacert.pem
+smtpd_tls_loglevel = 1
+smtpd_tls_received_header = yes
+smtpd_tls_session_cache_timeout = 3600s
+tls_random_source = dev:/dev/urandom
+
+DKIM and SPF rotation complete
+Updated /etc/crontab to run cron.monthly on 3rd day of month at 0334
+
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+# https://unix.stackexchange.com/a/410851
