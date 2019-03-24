@@ -107,6 +107,15 @@ DATABASES = {
     }
 }
 
+# HTML Mailer
+_send_mail_with = _conf["DOserver"]["emailUsers"]["default"]
+
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST = 'localhost'
+EMAIL_HOST_USER = _send_mail_with + '@onecorpsec.com'
+EMAIL_HOST_PASSWORD = _conf["DOserver"]["emailUsers"][_send_mail_with]
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
