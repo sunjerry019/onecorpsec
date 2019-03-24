@@ -21,6 +21,8 @@ import settings
 from django.core.mail import send_mail
 from django.core.mail import get_connection
 
+print(settings.EMAIL_BACKEND)
+
 # https://docs.djangoproject.com/en/dev/topics/email/#send-mail
 print(send_mail(
     'Subject here',
