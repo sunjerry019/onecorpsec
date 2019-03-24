@@ -1,0 +1,5 @@
+#!/bin/bash
+
+git checkout -- ../config.location
+git pull
+echo "~/config.json" > ../config.location
