@@ -83,7 +83,7 @@ class Checker():
 
             for _typ in self.types:
                 _done       = _a["{}_done".format(_typ)]
-                _req        = _a["GST_req"] if _typ is "GST" else True
+                _req        = _a["{}_req".format(_typ)] if _typ is "GST" else True
 
                 if _req and not _done:
                     _yearEnd  = dt(_a["fin_endYear"], _a["fin_endMonth"], 1)
