@@ -14,6 +14,9 @@ application = get_wsgi_application()
 # 		"my_message": "Hello & good day to you!"
 # 	})
 
+import sys
+sys.path.insert(0, 'dashboard')
+
 from django.core.mail import EmailMultiAlternatives
 import settings
 
