@@ -16,16 +16,14 @@ application = get_wsgi_application()
 
 import sys
 sys.path.insert(0, 'dashboard')
-
-from django.core.mail import EmailMultiAlternatives
 import settings
+from django.core.mail import send_mail
 
-def send_mail():
- from_email = settings.EMAIL_HOST_USER
- to_email = ['sunjerry019@gmail.com']
- subject = "Any text"
- body = "Hello world"
- msg = EmailMultiAlternatives(subject, body, from_email, to_email)
- msg.send()
-
-send_mail()
+# https://docs.djangoproject.com/en/dev/topics/email/#send-mail
+send_mail(
+    'Subject here',
+    'Here is the message.',
+    settings.EMAIL_HOST_USER,
+    ['sunjerry019@gmail.com'],
+    fail_silently=False
+)

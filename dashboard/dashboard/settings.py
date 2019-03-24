@@ -88,7 +88,7 @@ _confLoc = os.path.join(BASE_DIR, "../config.location")
 with open(_confLoc, 'r') as f:
     _x = f.readlines()[0].strip()
     if _x[0] == '.':
-        _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), x)
+        _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), _x)
     else:
         # This is an absolute path
         _confFile = _x
