@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# To update anywhere
+# cd ../server/; ./updateRepo; cd -
+
 git checkout -- ../config.location
 git pull
-echo "~/config.json" > ../config.location
+echo "/home/sunyudong/config.json" > ../config.location
