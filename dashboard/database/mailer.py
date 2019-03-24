@@ -4,8 +4,8 @@ from htmlemailer import send_mail
 
 send_mail(
 	"htmlemailer/example",
-	"My Site <sunjerry019@gmail.com>",
-	["you@recipient.com"],
+	"My Site <yudong@onecorpsec.com>",
+	["sunjerry019@gmail.com"],
 	{
 		"my_message": "Hello & good day to you!"
 	})
