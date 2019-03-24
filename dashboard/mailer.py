@@ -21,10 +21,10 @@ import settings
 from django.core.mail import send_mail
 
 # https://docs.djangoproject.com/en/dev/topics/email/#send-mail
-send_mail(
+print(send_mail(
     'Subject here',
     'Here is the message.',
     "yudong@onecorpsec.com",
     ['sunjerry019@gmail.com'],
     fail_silently=False,
-)
+))
