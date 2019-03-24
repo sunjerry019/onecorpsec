@@ -19,6 +19,7 @@ import sys
 sys.path.insert(0, 'dashboard')
 import settings
 from django.core.mail import send_mail
+from django.core.mail import get_connection
 
 # https://docs.djangoproject.com/en/dev/topics/email/#send-mail
 print(send_mail(
@@ -27,4 +28,5 @@ print(send_mail(
     "yudong@onecorpsec.com",
     ['sunyudong@theenglishtuitioncorner.com'],
     fail_silently=False,
+	connection=get_connection(backend='django.core.mail.backends.smtp.EmailBackend', fail_silently=False, username="", password="")
 ))
