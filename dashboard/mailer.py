@@ -25,6 +25,6 @@ print(send_mail(
     'Subject here',
     'Here is the message.',
     "yudong@onecorpsec.com",
-    ['sunjerry019@gmail.com'],
+    ['sunyudong@theenglishtuitioncorner.com'],
     fail_silently=False,
 ))
