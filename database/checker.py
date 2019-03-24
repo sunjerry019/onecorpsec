@@ -37,7 +37,7 @@ class Checker():
         self.columnMap = [x[0] for x in self.columnMap]
 
         # Audit                             => QUESTION: Unconfirmed whether we need this
-        self.types = ["AGM", "GST", "IRAS"]
+        self.types = ["AGM", "GST", "IRAS", "audit"]
 
     def stopEmail(self, _usr, _CRN, _typ):
         # REVIEW: Test this part
@@ -57,6 +57,7 @@ class Checker():
             self.updateDatabaseDelta(_usr, _CRN, "fin_endYear", 1)
             for _t in self.types:
                 self.updateDatabase(_usr, _CRN, _t + "_done", 0)
+                # TODO: Reset email_next
 
     def runCheckAll(self):
         if self.users:
@@ -76,14 +77,15 @@ class Checker():
 
             # AGM/ACRA, GST, Income Tax (IRAS)  => Only check until Nov 20
             _intervals = {
-                "AGM"  : 1,
-                "GST"  : _a["GST_type"],
-                "IRAS" : 2
+                "AGM"   : 1,
+                "GST"   : _a["GST_type"],
+                "IRAS"  : 2,
+                "audit" : 1
             }
 
             for _typ in self.types:
                 _done       = _a["{}_done".format(_typ)]
-                _req        = _a["{}_req".format(_typ)] if _typ is "GST" else True
+                _req        = _a["{}_req".format(_typ)] if _typ in ["GST", "audit"] else True
 
                 if _req and not _done:
                     _yearEnd  = dt(_a["fin_endYear"], _a["fin_endMonth"], 1)
