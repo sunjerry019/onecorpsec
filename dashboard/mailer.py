@@ -21,8 +21,6 @@ import settings
 from django.core.mail import send_mail
 from django.core.mail import get_connection
 
-print(settings.EMAIL_BACKEND)
-
 # https://docs.djangoproject.com/en/dev/topics/email/#send-mail
 print(send_mail(
     'Subject here',
@@ -30,5 +28,4 @@ print(send_mail(
     "yudong@onecorpsec.com",
     ['sunyudong@theenglishtuitioncorner.com'],
     fail_silently=False,
-	connection=get_connection(backend='django.core.mail.backends.smtp.EmailBackend', fail_silently=False, username="", password="")
 ))
