@@ -5,27 +5,18 @@
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
-# from htmlemailer import send_mail
-#
-# send_mail(
-# 	"htmlemailer/example",
-# 	"My Site <yudong@onecorpsec.com>",
-# 	["sunjerry019@gmail.com"],
-# 	{
-# 		"my_message": "Hello & good day to you!"
-# 	})
-
 import sys
 sys.path.insert(0, 'dashboard')
 import settings
-from django.core.mail import send_mail
-from django.core.mail import get_connection
+from htmlemailer import send_mail
+
+send_mail(
+	"htmlemailer/example",
+	settings.DEFAULT_FROM_EMAIL,
+	['sunyudong@theenglishtuitioncorner.com'],
+	{
+		"my_message": "Hello & good day to you!"
+	}
+)
 
 # https://docs.djangoproject.com/en/dev/topics/email/#send-mail
-print(send_mail(
-    'Subject here',
-    'Here is the message.',
-    "yudong@onecorpsec.com",
-    ['sunyudong@theenglishtuitioncorner.com'],
-    fail_silently=False,
-))
