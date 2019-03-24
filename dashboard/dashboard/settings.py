@@ -112,8 +112,8 @@ _send_mail_with      = _conf["DOserver"]["emailUsers"]["default"]["user"]
 _send_mail_with_name = _conf["DOserver"]["emailUsers"]["default"]["name"]
 
 # https://stackoverflow.com/a/28143166
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_USE_TLS = False
 EMAIL_PORT = 25
 EMAIL_HOST = 'localhost'
