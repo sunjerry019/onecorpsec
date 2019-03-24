@@ -86,7 +86,12 @@ WSGI_APPLICATION = 'dashboard.wsgi.application'
 # Source for the configuration file
 _confLoc = os.path.join(BASE_DIR, "../config.location")
 with open(_confLoc, 'r') as f:
-    _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), f.readlines()[0].strip())
+    _x = f.readlines()[0].strip()
+    if _x[0] == '.':
+        _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), x)
+    else:
+        # This ia an absolute path
+        _confFile = x
 
 # Obtain the database configuration details
 with open(_confFile,'r') as f:
