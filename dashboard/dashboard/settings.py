@@ -88,7 +88,7 @@ _confLoc = os.path.join(BASE_DIR, "../config.location")
 with open(_confLoc, 'r') as f:
     _x = f.readlines()[0].strip()
     if _x[0] == '.':
-        _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), x)
+        _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), _x)
     else:
         # This is an absolute path
         _confFile = _x
@@ -108,14 +108,23 @@ DATABASES = {
 }
 
 # HTML Mailer
-_send_mail_with = _conf["DOserver"]["emailUsers"]["default"]
+_send_mail_with      = _conf["DOserver"]["emailUsers"]["default"]["user"]
+_send_mail_with_name = _conf["DOserver"]["emailUsers"]["default"]["name"]
 
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
+# https://stackoverflow.com/a/28143166
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_USE_TLS = False
+EMAIL_PORT = 25
 EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = _send_mail_with + '@onecorpsec.com'
-EMAIL_HOST_PASSWORD = _conf["DOserver"]["emailUsers"][_send_mail_with]
-
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 143
+# EMAIL_HOST = 'mail.onecorpsec.com'
+# EMAIL_HOST_USER = _send_mail_with + '@onecorpsec.com'
+# EMAIL_HOST_PASSWORD = _conf["DOserver"]["emailUsers"][_send_mail_with]
+DEFAULT_FROM_EMAIL = "{} <{}@onecorpsec.com>".format(_send_mail_with_name, _send_mail_with)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -161,5 +170,5 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 # For emails
-EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+# EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
