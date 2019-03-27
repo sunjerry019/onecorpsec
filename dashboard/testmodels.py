@@ -140,7 +140,7 @@ class TableAdmin(models.Model):
     bccemail = models.CharField(db_column='bccEmail', max_length=250, blank=True, null=True)  # Field name made lowercase.
     addresseename = models.CharField(db_column='addresseeName', max_length=250, blank=True, null=True)  # Field name made lowercase.
     fin_endmonth = models.PositiveIntegerField(db_column='fin_endMonth', blank=True, null=True)  # Field name made lowercase.
-    fin_endyear = models.TextField(db_column='fin_endYear', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    fin_endyear = models.IntegerField(db_column='fin_endYear', blank=True, null=True)  # Field name made lowercase.
     agm_next = models.IntegerField(db_column='AGM_next', blank=True, null=True)  # Field name made lowercase.
     agm_done = models.IntegerField(db_column='AGM_done', blank=True, null=True)  # Field name made lowercase.
     gst_req = models.IntegerField(db_column='GST_req', blank=True, null=True)  # Field name made lowercase.
