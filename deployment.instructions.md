@@ -6,3 +6,4 @@ install:
     dateutil
     https://pypi.org/project/mysql-connector-python/
     django-html-emailer
+    django-material
