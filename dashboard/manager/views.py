@@ -1,13 +1,14 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.views import generic
-from django.template import RequestContext
+from django.template.loader import get_template
+from django.http import HttpResponse
 from .models import getTable
 
 
-class Home(generic.CreateView):
-    if request.user.is_authenticated:
-        _user = request.user.username
-        data_base = getTable(_user)
-    template_name = 'home.html'
+def render_Home(request):
+    t = get_template('home.html')
+    _model = getTable(request.user.username)
+    rows = _model.objects.all()
+    html = t.render({ 'hostname': "OneCorpSec" , 'user': request.user, 'rows': rows })
+    return HttpResponse(html)

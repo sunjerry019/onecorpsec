@@ -1,19 +1,18 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Home - {{ hostname }}{% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-    Hi {{ user.username }}!
-    <p><a href="{% url 'logout' %}">logout</a></p>
-    {% for coy in data_base.objects.all() %}
-    Registration Number: {{coy.coyregno}}
-    Email: {{coy.toemail}}
-    {% endfor %}
-    <p></p>
-{% else %}
-    <p>You are not logged in</p>
-    <a href="{% url 'login' %}">Login</a>
-    <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
-{% endif %}
+    {% if user.is_authenticated %}
+        Hi {{ user.username }}!
+        <p><a href="{% url 'logout' %}">logout</a></p>
+        {% for coy in rows %}
+        Registration Number: {{coy.coyregno}}
+        Email: {{coy.toemail}}
+        {% endfor %}
+    {% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'login' %}">Login</a>
+        <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
+    {% endif %}
 {% endblock %}
