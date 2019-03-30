@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block end %}
+<script type="text/javascript">
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the sidenav
+        // Already include e.preventDefault()
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(elems, false);
+    });
+</script>
+{% endblock %}
+<!-- https://stackoverflow.com/questions/9899372/pure-javascript-equivalent-of-jquerys-ready-how-to-call-a-function-when-t -->
+
+{% block navbar %}
+<nav>
+    <div class="nav-wrapper">
+        <a href="/" class="brand-logo"><img src="{% static "logo.svg" %}"></a>
+        <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            {% if user.is_authenticated %}
+                <li class="nav-welcome"><span>Welcome, </span><span class="username">{{ user.username }}</span></li>
+                <li><a href="{% url 'admin:index' %}"><i class="material-icons">settings</i></a></li>
+                {# https://stackoverflow.com/questions/694477/getting-django-admin-url-for-an-object #}
+                <li><a href="{% url 'logout' %}"><i class="material-icons">exit_to_app</i></a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<ul class="sidenav" id="mobile-nav">
+    {% if user.is_authenticated %}
+        <li class="sidenav-title"><span>Welcome,</span><span class="username">{{ user.username }}</span></li>
+        <li><a href="{% url 'logout' %}"><i class="material-icons">exit_to_app</i> Logout</a></li>
+    {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+    {% endif %}
+</ul>
+{% endblock %}

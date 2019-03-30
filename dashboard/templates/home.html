@@ -1,14 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'navbar.html' %}
 
-{% block title %}Home - {{ hostname }}{% endblock %}
+{% block title %}{{ hostname }}{% endblock %}
 
 {% block content %}
     {% if user.is_authenticated %}
-        Hi {{ user.username }}!
-        <p><a href="{% url 'logout' %}">logout</a></p>
+        You have {{ rowCount }} companies under your charge.
         {% for coy in rows %}
-        Registration Number: {{coy.coyregno}}
-        Email: {{coy.toemail}}
+            Registration Number: {{coy.coyregno}}
+            Email: {{coy.toemail}}
         {% endfor %}
     {% else %}
         <p>You are not logged in</p>

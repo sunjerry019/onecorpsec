@@ -7,13 +7,20 @@
     {% include 'material/includes/material_css.html' %}
     {% include 'material/includes/material_js.html' %}
     {% include 'style.html' %}
+
+    {% block head %}
+    {% endblock %}
 </head>
 <body>
     {% block navbar %}
     {% endblock %}
+    
     <main>
         {% block content %}
         {% endblock %}
     </main>
+
+    {% block end %}
+    {% endblock %}
 </body>
 </html>
