@@ -1,3 +1,6 @@
 https://wsvincent.com/django-user-authentication-tutorial-login-and-logout/
 https://django-book.readthedocs.io/en/latest/chapter18.html
 https://groups.google.com/forum/#!topic/django-users/M7fgzeyfQlY
+
+FONT USAGE
+https://www.fontsquirrel.com/fonts/aleo
