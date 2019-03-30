@@ -1,1 +1,0 @@
-../../all_assets/favicon_package/README.md
