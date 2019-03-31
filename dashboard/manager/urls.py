@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import re_path, path, include
 from django.views.generic.base import TemplateView
 
 from . import views
@@ -6,5 +6,5 @@ from . import views
 urlpatterns = [
     # path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('', views.render_Home, name='home'),
-    path(r'(\d+)/', views.render_Home),
+    re_path(r'^(\d+)/', views.render_Home),
 ]
