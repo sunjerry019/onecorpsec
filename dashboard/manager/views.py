@@ -2,16 +2,31 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.template.loader import get_template
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from .models import getTable
 
 
-def render_Home(request):
+def render_Home(request, page = 1):
     t = get_template('home.html')
     if request.user.is_authenticated:
         _model = getTable(request.user.username)
-        rows = _model.objects.all()
+        all_rows = _model.objects.all()
+
+        numitems = request.GET.get('enum') or 25
+        _p = Paginator(all_rows, numitems)
+        rows = _p.get_page(page)
+        override_base = None
     else:
-        rows = []
-    html = t.render({ 'hostname': "OneCorpSec" , 'user': request.user, 'rows': rows, 'rowCount': len(rows) })
+        rows = None
+        all_rows = []
+        override_base = "base.html"
+
+    html = t.render({
+        'hostname'      : "OneCorpSec" ,
+        'user'          : request.user,
+        'rows'          : rows,
+        'rowCount'      : len(all_rows),
+        'override_base' : override_base
+    })
     return HttpResponse(html)

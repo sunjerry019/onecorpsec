@@ -1,6 +1,7 @@
-{% extends 'navbar.html' %}
-
+{% extends override_base|default:'navbar.html' %}
+{# https://stackoverflow.com/a/14115934 #}
 {% block title %}{{ hostname }}{% endblock %}
+
 
 {% block content %}
     {% if user.is_authenticated %}
