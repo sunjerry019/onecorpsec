@@ -4,14 +4,96 @@
 
 {% block title %}{{ hostname }}{% endblock %}
 
+{% block styles %}
+    {{ block.super }}
+    <style>
+        body { background-color: #eee; }
+    </style>
+{% endblock %}
+
 
 {% block content %}
     {% if user.is_authenticated %}
-        You have {{ rowCount }} companies under your charge.
-        {% for coy in rows %}
-            Registration Number: {{coy.coyregno}}
-            Email: {{coy.toemail}}
-        {% endfor %}
+        <div class="dashboard-wrapper">
+            <h3>Dashboard</h3>
+            <div class="row">
+                <div class="col l8 m12">
+                    <div class="main-monitor card">
+                        You have {{ rowCount }} companies under your charge.
+
+                        <ul class="pagination center">
+                            {% if rows.has_previous %}
+                                <li class="waves-effect"><a href="/"><i class="material-icons">first_page</i></a></li>
+                                <li class="waves-effect"><a href="/{{ rows.previous_page_number }}/"><i class="material-icons">chevron_left</i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="/"><i class="material-icons">first_page</i></a></li>
+                                <li class="disabled"><a href="/"><i class="material-icons">chevron_left</i></a></li>
+                            {% endif %}
+
+                            {# https://stackoverflow.com/a/14389078/3211506 #}
+                            {% with ''|center:rows.paginator.num_pages as range %}
+                                {% for _ in range %}
+                                    {% if forloop.counter == rows.number %}
+                                        <li class="active"><a href="/{{ forloop.counter }}/">{{ forloop.counter }}</a></li>
+                                    {% else %}
+                                        <li class="waves-effect"><a href="/{{ forloop.counter }}/">{{ forloop.counter }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
+
+                            {% if rows.has_next %}
+                                <li class="waves-effect"><a href="/{{ rows.next_page_number }}/"><i class="material-icons">chevron_right</i></a></li>
+                                <li class="waves-effect"><a href="/{{ rows.paginator.num_pages }}/"><i class="material-icons">last_page</i></a></li>
+                            {% else %}
+                                <li class="disabled"><a href="/{{ rows.paginator.num_pages }}/"><i class="material-icons">chevron_right</i></a></li>
+                                <li class="disabled"><a href="/{{ rows.paginator.num_pages }}/"><i class="material-icons">last_page</i></a></li>
+                            {% endif %}
+                        </ul>
+
+                        <ul class="collapsible">
+                            {% for coy in rows %}
+                                <li>
+                                    <div class="collapsible-header">
+                                        {# avatar here????  https://materializecss.com/collections.html #}
+                                        {{ coy.coyname }}
+                                        <span class="badge">{{ coy.coyregno }}</span>
+                                        <i class="material-icons expansion">expand_more</i>
+                                    </div>
+                                    <div class="collapsible-body">
+                                        <p>{{ coy.toemail }}</p>
+                                        <p>{{ coy.ccemail }}</p>
+                                        <p>{{ coy.bccemail }}</p>
+                                        <p>{{ coy.addressename }}</p>
+                                        <p>{{ coy.fin_endmonth }}</p>
+                                        <p>{{ coy.fin_endyear }}</p>
+                                        <p>{{ coy.agm_next }}</p>
+                                        <p>{{ coy.agm_done }}</p>
+                                        <p>{{ coy.gst_req }}</p>
+                                        <p>{{ coy.gst_endmonth }}</p>
+                                        <p>{{ coy.gst_done }}</p>
+                                        <p>{{ coy.gst_type }}</p>
+                                        <p>{{ coy.gst_next }}</p>
+                                        <p>{{ coy.fin_endyear }}</p>
+                                        <p>{{ coy.audit_req }}</p>
+                                        <p>{{ coy.audit_done }}</p>
+                                        <p>{{ coy.audit_next }}</p>
+                                        <p>{{ coy.iras_done }}</p>
+                                        <p>{{ coy.iras_next }}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    </div>
+                </div> <!-- /.col -->
+
+                <div class="col l4 m12">
+                    <div class="card">
+                        Upload module goes here
+                    </div>
+                </div> <!-- /.col -->
+            </div> <!-- /.row -->
+        </div>
     {% else %}
         <div class="splash">
             <div class="centre">
@@ -24,7 +106,37 @@
                 <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
             </div>
         </div>
+    {% endif %}
+{% endblock %}
+
+
+{% block end %}
+    {{ block.super }}
+    {% if user.is_authenticated %}
         <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function(e) {
+                // Disable all disabled buttons
+                d_btns = document.querySelectorAll(".disabled a")
+                d_btns.forEach(function(ele) {
+                    ele.addEventListener('click', function(e) {
+                        e.preventDefault()
+                    });
+                });
+
+                document.querySelectorAll(".collapsible-header").forEach(function(ele) {
+                    ele.addEventListener('click', function(e){
+                        _e = this.querySelectorAll(".expansion")[0];
+                        _e.innerHTML = (_e.innerHTML == "expand_more") ? "expand_less" : "expand_more";
+                    })
+                })
+
+                // Initialize collapsibles
+                var _collapsibles = document.querySelectorAll('.collapsible');
+                var instances = M.Collapsible.init(_collapsibles, false);
+            });
+        </script>
+    {% else %}
+    <script type="text/javascript">
         // For generation of random star positions
         for(i = 1; i <= 8; i ++)
         {
@@ -36,6 +148,6 @@
             x = Math.floor(Math.random()*Math.random() * 300);
             document.querySelector('.splash').style.setProperty('--rand_' + i, x + "px");
         }
-        </script>
+    </script>
     {% endif %}
 {% endblock %}
