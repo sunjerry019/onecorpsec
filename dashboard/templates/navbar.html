@@ -3,7 +3,6 @@
 
 {% block end %}
 <script type="text/javascript">
-
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize the sidenav
         // Already include e.preventDefault()
@@ -35,6 +34,7 @@
 <ul class="sidenav" id="mobile-nav">
     {% if user.is_authenticated %}
         <li class="sidenav-title"><span>Welcome,</span><span class="username">{{ user.username }}</span></li>
+        <li><a href="{% url 'admin:index' %}"><i class="material-icons">settings</i> Settings</a></li>
         <li><a href="{% url 'logout' %}"><i class="material-icons">exit_to_app</i> Logout</a></li>
     {% else %}
         <li><a href="{% url 'login' %}">Login</a></li>
