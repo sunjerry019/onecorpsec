@@ -1,0 +1,7 @@
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function(){
+        document.getElementById("tick-animation-marker").classList.add("tick-drawn");
+    }, 500)
+});
+</script>

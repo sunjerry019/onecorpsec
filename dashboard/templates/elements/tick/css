@@ -1,0 +1,44 @@
+<style>
+    :root {
+        --tick-animation: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    #tick-animation
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 24px;
+    }
+    #tick-animation svg
+    {
+        height: 50px;
+        display: inline-block;
+    }
+
+    #tick-animation .path {
+        stroke: #00853F;
+    }
+    .tick-circ {
+        opacity: 0;
+        stroke-dasharray: 130;
+        stroke-dashoffset: 130;
+        -webkit-transition: all var(--tick-animation);
+        -moz-transition: all var(--tick-animation);
+        -ms-transition: all var(--tick-animation);
+        -o-transition: all var(--tick-animation);
+        transition: all var(--tick-animation);
+    }
+    .tick-tick {
+        stroke-dasharray: 50;
+        stroke-dashoffset: 50;
+        -webkit-transition: var(--tick-animation);
+        -moz-transition: var(--tick-animation);
+        -ms-transition: var(--tick-animation);
+        -o-transition: var(--tick-animation);
+        transition: var(--tick-animation);
+    }
+    .tick-drawn + svg .path {
+        opacity: 1;
+        stroke-dashoffset: 0;
+    }
+</style>
