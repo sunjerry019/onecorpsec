@@ -13,7 +13,10 @@ def render_Home(request, page = 1):
         _model = getTable(request.user.username)
         all_rows = _model.objects.all()
 
-        numitems = request.GET.get('enum') or 25
+        numitems = request.session['enum'] if 'enum' in request.session else 25
+        numitems = request.GET.get('enum') or numitems
+        request.session['enum'] = numitems
+
         _p = Paginator(all_rows, numitems)
         rows = _p.get_page(page)
         override_base = None
