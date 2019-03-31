@@ -1,4 +1,42 @@
 <style>
+    /* Login */
+    .centre { display: flex; justify-content: center; align-items: center; }
+    .single-centre-form      { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
+    .single-centre-form .row { width: 100%; max-width: 500px; }
+
+    /* Homescreen Splash */
+    .splash {
+        --rand_dist_1: 550px;
+        --rand_dist_2: 350px;
+        --rand_dist_3: 250px;
+        --rand_dist_4: 150px;
+        --rand_1: 0px;
+        --rand_2: 0px;
+        --rand_3: 40px;
+        --rand_4: 60px;
+        --rand_5: 130px;
+        --rand_6: 270px;
+        --rand_7: 70px;
+        --rand_8: 100px;
+
+        position: fixed; top: 0; bottom: 0; right: 0; left: 0; height: 100%; width: 100%; color: white;
+        /* https://leaverou.github.io/css3patterns/#starry-night */
+        background-color: black;
+        background-image:
+            radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+            radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+            radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),
+            radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
+        background-size: var(--rand_dist_1) var(--rand_dist_1), var(--rand_dist_2) var(--rand_dist_2), var(--rand_dist_3) var(--rand_dist_3), var(--rand_dist_4) var(--rand_dist_4);
+        /* background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px; */
+        background-position: var(--rand_1) var(--rand_2), var(--rand_3) var(--rand_4), var(--rand_5) var(--rand_6), var(--rand_7) var(--rand_8);
+        /* background-position: 0 0, 40px 60px, 130px 270px, 70px 100px; */
+    }
+    .splash .centre {
+        flex-direction: column;
+        height: 100%;
+    }
+
     /* Navbar */
     .brand-logo     { height: 100%; }
     .brand-logo img { height: 100%; padding: 5px 10px; }
@@ -7,9 +45,4 @@
     .sidenav-title              { font-weight: 300; color: rgba(0, 0, 0, 0.87); display: block; padding: 0 32px; }
     .sidenav-title span         { display: block; font-size: 20px; text-align: right; }
     .sidenav-title .username    { font-size-adjust: 1; margin-top: -15px; margin-bottom: 5px;}
-
-    /* Login */
-    .centre { display: flex; justify-content: center; align-items: center; }
-    .single-centre-form      { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
-    .single-centre-form .row { width: 100%; max-width: 500px; }
 </style>

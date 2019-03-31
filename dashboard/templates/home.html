@@ -1,5 +1,7 @@
 {% extends override_base|default:'navbar.html' %}
 {# https://stackoverflow.com/a/14115934 #}
+{% load static %}
+
 {% block title %}{{ hostname }}{% endblock %}
 
 
@@ -11,8 +13,29 @@
             Email: {{coy.toemail}}
         {% endfor %}
     {% else %}
-        <p>You are not logged in</p>
-        <a href="{% url 'login' %}">Login</a>
-        <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
+        <div class="splash">
+            <div class="centre">
+                <a href="/" class="center"> <!-- Note this is different from the above class -->
+                    <img src="{% static "favicon_silhouette.svg" %}">
+                    <img src="{% static "logo.cut.svg" %}">
+                </a>
+                <p>You are not logged in</p>
+                <a class="waves-effect waves-light btn" href="{% url 'login' %}">Login</a>
+                <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
+            </div>
+        </div>
+        <script type="text/javascript">
+        // For generation of random star positions
+        for(i = 1; i <= 8; i ++)
+        {
+            if (i <= 4)
+            {
+                d = 300 + Math.floor(Math.random() * 300);
+                document.querySelector('.splash').style.setProperty('--rand_dist_' + i, d + "px");
+            }
+            x = Math.floor(Math.random()*Math.random() * 300);
+            document.querySelector('.splash').style.setProperty('--rand_' + i, x + "px");
+        }
+        </script>
     {% endif %}
 {% endblock %}
