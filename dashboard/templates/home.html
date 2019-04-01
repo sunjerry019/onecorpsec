@@ -17,9 +17,9 @@
         <div class="dashboard-wrapper">
             <h3>Dashboard</h3>
             <div class="row">
-                <div class="col l8 m12">
+                <div class="col l8 m12 s12">
                     <div class="main-monitor card">
-                        You have {{ rowCount }} companies under your charge.
+                        <p id="summary" class="grey darken-3">< You have {{ rowCount }} companies under your charge > </p>
 
                         <ul class="pagination center">
                             {% if rows.has_previous %}
@@ -50,46 +50,51 @@
                             {% endif %}
                         </ul>
 
-                        <ul class="collapsible">
+                        {# Add some enum editor here #}
+
+                        <ul class="collapsible company-list">
                             {% for coy in rows %}
                                 <li>
-                                    <div class="collapsible-header">
+                                    <div class="collapsible-header waves-effect">
                                         {# avatar here????  https://materializecss.com/collections.html #}
                                         {{ coy.coyname }}
                                         <span class="badge">{{ coy.coyregno }}</span>
                                         <i class="material-icons expansion">expand_more</i>
                                     </div>
                                     <div class="collapsible-body">
+                                        {# Emails #}
                                         <p>{{ coy.toemail }}</p>
                                         <p>{{ coy.ccemail }}</p>
                                         <p>{{ coy.bccemail }}</p>
                                         <p>{{ coy.addressename }}</p>
+                                        {# Financial Year #}
                                         <p>{{ coy.fin_endmonth }}</p>
                                         <p>{{ coy.fin_endyear }}</p>
                                         <p>{{ coy.agm_next }}</p>
                                         <p>{{ coy.agm_done }}</p>
+                                        {# GST #}
                                         <p>{{ coy.gst_req }}</p>
                                         <p>{{ coy.gst_endmonth }}</p>
                                         <p>{{ coy.gst_done }}</p>
                                         <p>{{ coy.gst_type }}</p>
                                         <p>{{ coy.gst_next }}</p>
-                                        <p>{{ coy.fin_endyear }}</p>
+                                        {# Audit #}
                                         <p>{{ coy.audit_req }}</p>
                                         <p>{{ coy.audit_done }}</p>
                                         <p>{{ coy.audit_next }}</p>
+                                        {# IRAS #}
                                         <p>{{ coy.iras_done }}</p>
                                         <p>{{ coy.iras_next }}</p>
                                     </div>
                                 </li>
                             {% endfor %}
-
                         </ul>
                     </div>
                 </div> <!-- /.col -->
 
-                <div class="col l4 m12">
+                <div class="col l4 m12 s12">
                     <div class="card">
-                        Upload module goes here
+                        CSV module goes here
                     </div>
                 </div> <!-- /.col -->
             </div> <!-- /.row -->
