@@ -34,13 +34,23 @@
     .sidenav-title .username    { font-size-adjust: 1; margin-top: -15px; margin-bottom: 5px;}
 
     /* Homepage Dashboard */
-    .dashboard-wrapper
+    .dashboard-wrapper          { padding: 10px; }
+    .dashboard-wrapper .card    { text-align: center; }
+    #summary                    { padding: 10px; color: white; margin-top: 0px; }
+
+
+    .company-list li .expansion::after          { content: "expand_more"; }
+    .company-list li.active .expansion::after   { content: "expand_less"; }
+    .company-list .collapsible-body
     {
-        padding: 10px;
+        padding: 15px 2.6rem 15px 15px;
     }
-    .dashboard-wrapper .card
-    {
-        text-align: center;
-    }
-    #summary { padding: 10px; color: white; margin-top: 0px; }
+    .status-header                  { text-align: left; position: relative; }
+    .status-header h6               { display: inline-block; margin: 0px 0px 5px 15px; }
+    .status-header .switch          { display: inline-block; margin-right: 0px; }
+    .status-header .switch .lever   { margin: 2.5px 0px 0px 0px; vertical-align: top; }
+    .status-header .status::after   { display: inline-block; text-align: right; position: absolute; right: 0px; }
+    .status-header input[type='checkbox']:not(:checked) ~ .status::after    { color: #777; content: "Completed"; }
+    .status-header input[type='checkbox']:checked ~ .status::after          { color: #006400; content: "Emails active"; }
+    .status-header input[type='checkbox'][disabled] ~ .status::after        { color: #777; content: "Not required"; }
 </style>
