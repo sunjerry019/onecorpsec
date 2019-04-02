@@ -41,10 +41,7 @@
 
     .company-list li .expansion::after          { content: "expand_more"; }
     .company-list li.active .expansion::after   { content: "expand_less"; }
-    .company-list .collapsible-body
-    {
-        padding: 15px 2.6rem 15px 15px;
-    }
+    .company-list .collapsible-body { padding: 15px 2.6rem 15px 15px; }
     .status-header                  { text-align: left; position: relative; }
     .status-header h6               { display: inline-block; margin: 0px 0px 5px 15px; }
     .status-header .switch          { display: inline-block; margin-right: 0px; }
@@ -53,4 +50,9 @@
     .status-header input[type='checkbox']:not(:checked) ~ .status::after    { color: #777; content: "Completed"; }
     .status-header input[type='checkbox']:checked ~ .status::after          { color: #006400; content: "Emails active"; }
     .status-header input[type='checkbox'][disabled] ~ .status::after        { color: #777; content: "Not required"; }
+    .coy-section
+    {
+        border-top: 1px dashed #777;
+        padding-top: 10px;
+    }
 </style>

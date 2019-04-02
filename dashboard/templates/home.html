@@ -69,13 +69,15 @@
                                             {# TODO: Onchange -> Send AJAX, update text #}
 
                                             {# Emails #}
-                                            <p>{{ coy.toemail }}</p>
-                                            <p>{{ coy.ccemail }}</p>
-                                            <p>{{ coy.bccemail }}</p>
-                                            <p>{{ coy.addressename }}</p>
+                                            <div class="coy_emails">
+                                                <p>{{ coy.toemail }}</p>
+                                                <p>{{ coy.ccemail }}</p>
+                                                <p>{{ coy.bccemail }}</p>
+                                                <p>{{ coy.addressename }}</p>
+                                            </div>
 
                                             {# Financial Year #}
-                                            <div class="agm_acra">
+                                            <div class="agm_acra coy-section">
                                                 <div class="status-header">
                                                     <div class="switch status">
                                                         <label>
@@ -90,10 +92,9 @@
                                             <p>{{ coy.fin_endmonth }}</p>
                                             <p>{{ coy.fin_endyear }}</p>
                                             <p>{{ coy.agm_next }}</p>
-                                            <p>{{ coy.agm_done }}</p>
 
                                             {# GST #}
-                                            <div class="gst">
+                                            <div class="gst coy-section">
                                                 <div class="status-header">
                                                     <div class="switch status">
                                                         <label>
@@ -107,12 +108,11 @@
                                             </div>
                                             <p>{{ coy.gst_req }}</p>
                                             <p>{{ coy.gst_endmonth }}</p>
-                                            <p>{{ coy.gst_done }}</p>
                                             <p>{{ coy.gst_type }}</p>
                                             <p>{{ coy.gst_next }}</p>
 
                                             {# Audit #}
-                                            <div class="audit">
+                                            <div class="audit coy-section">
                                                 <div class="status-header">
                                                     <div class="switch status">
                                                         <label>
@@ -125,11 +125,10 @@
                                                 </div>
                                             </div>
                                             <p>{{ coy.audit_req }}</p>
-                                            <p>{{ coy.audit_done }}</p>
                                             <p>{{ coy.audit_next }}</p>
-                                            
+
                                             {# IRAS #}
-                                            <div class="iras">
+                                            <div class="iras coy-section">
                                                 <div class="status-header">
                                                     <div class="switch status">
                                                         <label>
@@ -141,7 +140,6 @@
                                                     <h6>IRAS</h6>
                                                 </div>
                                             </div>
-                                            <p>{{ coy.iras_done }}</p>
                                             <p>{{ coy.iras_next }}</p>
                                     </div>
                                 </li>
