@@ -26,7 +26,9 @@ SECRET_KEY = '3yuyd@vfyu3i*m09(g)n%tpx(h0vep_4pf@f9l!rh!7xeptg_f'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# python manage.py runserver 0.0.0.0:8000
+# https://stackoverflow.com/a/6111790/3211506
+ALLOWED_HOSTS = [ "192.168.1.86", "localhost" ]
 
 
 # Application definition
