@@ -11,7 +11,7 @@ def render_Home(request, page = 1):
     t = get_template('home.html')
     if request.user.is_authenticated:
         _model = getTable(request.user.username)
-        all_rows = _model.objects.all()
+        all_rows = _model.objects.all().order_by('sn')
 
         numitems = request.session['enum'] if 'enum' in request.session else 25
         numitems = request.GET.get('enum') or numitems
