@@ -51,8 +51,9 @@
                             {% endif %}
                         </ul>
 
-                        {# Add some enum editor here #}
+                        {# TODO: Add some enum editor here #}
 
+                        {# Zero padding: https://djangosnippets.org/snippets/543/#c655 #}
                         <ul class="collapsible company-list">
                             {% for coy in rows %}
                                 <li>
@@ -63,11 +64,12 @@
                                         <i class="material-icons expansion"></i>
                                     </div>
                                     <div class="collapsible-body">
-                                        <form method="POST">
+                                        <form method="POST" data-crn="{{ coy.coyregno }}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="CRN" value="{{ coy.coyregno }}">
                                             {# AJAX will auto handle the URL #}
                                             {# We make our own forms because django doesnt support multiple forms on one page #}
                                             {# Empty fields are replaced with <none> using CSS #}
-                                            {# TODO: Onchange -> Send AJAX, update text #}
 
                                             {# Emails #}
                                             <div class="coy-emails">
@@ -161,6 +163,7 @@
                                                     <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.iras_next|stringformat:"02d" }}/{% if coy.iras_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
                                                 </div>
                                             </div>
+                                        </form>
                                     </div>
                                 </li>
                             {% endfor %}
@@ -194,28 +197,7 @@
 {% block end %}
     {{ block.super }}
     {% if user.is_authenticated %}
-        <script type="text/javascript">
-            document.addEventListener('DOMContentLoaded', function(e) {
-                // Disable all disabled buttons
-                d_btns = document.querySelectorAll(".disabled a")
-                d_btns.forEach(function(ele) {
-                    ele.addEventListener('click', function(e) {
-                        e.preventDefault()
-                    });
-                });
-
-                // document.querySelectorAll(".collapsible-header").forEach(function(ele) {
-                //     ele.addEventListener('click', function(e){
-                //         _e = this.querySelectorAll(".expansion")[0];
-                //         _e.innerHTML = (_e.innerHTML == "expand_more") ? "expand_less" : "expand_more";
-                //     })
-                // })
-
-                // Initialize collapsibles
-                var _collapsibles = document.querySelectorAll('.collapsible');
-                var instances = M.Collapsible.init(_collapsibles, false);
-            });
-        </script>
+        {% include 'home.script.html' %}
     {% else %}
     <script type="text/javascript">
         // For generation of random star positions

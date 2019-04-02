@@ -1,0 +1,81 @@
+{# {% load static %} #}
+
+{# <script type="text/javascript" src="{% static "serialize-0.2.min.js" %}"></script> #}
+<script type="text/javascript">
+    var djangoHelpers =
+    {
+        getCookie : function(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        },
+
+        ajaxUpdate : function(_type = "POST", _url, _datatype = 'application/json', _data, _success, _fail)
+        {
+            xhr = new XMLHttpRequest();
+            var csrftoken = djangoHelpers.getCookie('csrftoken');
+
+            xhr.open(_type, _url);
+            xhr.setRequestHeader('Content-Type', _datatype);
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            xhr.onload = function() {
+                if (xhr.status === 200)         _success(xhr.status, xhr.responseText);
+                else if (xhr.status !== 200)    _fail(xhr.status, xhr.responseText);
+            };
+            if (_datatype === 'application/json') _data = JSON.stringify(_data);
+            xhr.send(_data);
+
+            return xhr;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function(e) {
+        // Initialization
+        // Disable all disabled buttons
+        d_btns = document.querySelectorAll(".disabled a");
+        d_btns.forEach(function(ele) {
+            ele.addEventListener('click', function(e) {
+                e.preventDefault();
+            });
+        });
+        // Initialize collapsibles
+        var _collapsibles = document.querySelectorAll('.collapsible');
+        var instances = M.Collapsible.init(_collapsibles, false);
+
+        // AJAX for change in done-status
+        _checkboxes = document.querySelectorAll(".coy-section");
+        _checkboxes.forEach(function(ele) {
+            ele.addEventListener('change', function(e) {
+                _data = new FormData(e.target.form)
+
+                // https://stackoverflow.com/a/17067016/3211506
+                // for (var pair of _data.entries()) {
+                //     console.log(pair[0]+ ', ' + pair[1]);
+                // }
+                // https://code.google.com/archive/p/form-serialize/
+                // TODO: Handle the AJAX
+
+                djangoHelpers.ajaxUpdate( "POST", "/update", '', _data,
+                    function(status, response) {
+                        // Success
+                        console.log("AJAX update success");
+                    },
+                    function(status, response) {
+                        // Fail
+                        console.log("AJAX update failed");
+                    }
+                )
+            });
+        });
+    });
+</script>
