@@ -5,7 +5,6 @@ from django.template.loader import get_template
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from .models import getTable
-from .forms import companyEditForm
 
 
 def render_Home(request, page = 1):
@@ -21,21 +20,16 @@ def render_Home(request, page = 1):
         _p = Paginator(all_rows, numitems)
         rows = _p.get_page(page)
         override_base = None
-        _forms = []
-        for _ in range(len(rows)):
-            _forms.append(companyEditForm(_model))
     else:
         rows = None
         all_rows = []
         override_base = "base.html"
-        _forms = []
 
     html = t.render({
         'hostname'      : "OneCorpSec",
         'user'          : request.user,
         'rows'          : rows,
         'rowCount'      : len(all_rows),
-        'override_base' : override_base,
-        'forms'         : _forms
+        'override_base' : override_base
     })
     return HttpResponse(html)
