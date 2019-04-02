@@ -1,3 +1,5 @@
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
 <style>
     /* Login */
     .centre { display: flex; justify-content: center; align-items: center; }
@@ -38,7 +40,6 @@
     .dashboard-wrapper .card    { text-align: center; }
     #summary                    { padding: 10px; color: white; margin-top: 0px; }
 
-
     .company-list li .expansion::after          { content: "expand_more"; }
     .company-list li.active .expansion::after   { content: "expand_less"; }
     .company-list .collapsible-body { padding: 15px 2.6rem 15px 15px; }
@@ -50,9 +51,15 @@
     .status-header input[type='checkbox']:not(:checked) ~ .status::after    { color: #777; content: "Completed"; }
     .status-header input[type='checkbox']:checked ~ .status::after          { color: #006400; content: "Emails active"; }
     .status-header input[type='checkbox'][disabled] ~ .status::after        { color: #777; content: "Not required"; }
-    .coy-section
-    {
-        border-top: 1px dashed #777;
-        padding-top: 10px;
-    }
+
+    .fd-content:empty::after { content: "< none >"; font-style: oblique; color: #aaa; }
+    .coy-emails                     { font-family: "Roboto Mono", monospace; display: table; margin-bottom: 10px; table-layout: fixed; width: 100%; font-size-adjust: 0.46; }
+    .coy-emails p                   { margin: 0px; display: table-row; }
+    .coy-emails span                { display: table-cell; text-overflow: wrap; overflow-wrap: break-word; text-align: left; }
+    .coy-emails span:first-child    { text-align: right; padding-right: 10px; width: 25%; }
+    .coy-section            { border-top: 1px dashed #777; padding-top: 10px; }
+    .coy-section .fd-set    { display: flex; }
+    .coy-section .fd        { text-align: left; padding: 10px; }
+    .coy-section .fd-label  { font-size-adjust: 0.4; text-transform: uppercase; display: block; color: #777; }
+    .coy-section.not_required, .coy-section.not_required .fd-label { color: #ccc; }
 </style>

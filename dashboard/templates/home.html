@@ -55,7 +55,7 @@
 
                         <ul class="collapsible company-list">
                             {% for coy in rows %}
-                                <li class="active">
+                                <li>
                                     <div class="collapsible-header waves-effect">
                                         {# avatar here????  https://materializecss.com/collections.html #}
                                         {{ coy.coyname }}
@@ -66,14 +66,15 @@
                                         <form method="POST">
                                             {# AJAX will auto handle the URL #}
                                             {# We make our own forms because django doesnt support multiple forms on one page #}
+                                            {# Empty fields are replaced with <none> using CSS #}
                                             {# TODO: Onchange -> Send AJAX, update text #}
 
                                             {# Emails #}
-                                            <div class="coy_emails">
-                                                <p>{{ coy.toemail }}</p>
-                                                <p>{{ coy.ccemail }}</p>
-                                                <p>{{ coy.bccemail }}</p>
-                                                <p>{{ coy.addressename }}</p>
+                                            <div class="coy-emails">
+                                                <p><span class="fd-label">To: </span><span class="fd-content">{{ coy.toemail }}</span></p>
+                                                <p><span class="fd-label">CC: </span><span class="fd-content">{{ coy.ccemail }}</span></p>
+                                                <p><span class="fd-label">BCC: </span><span class="fd-content">{{ coy.bccemail }}</span></p>
+                                                <p><span class="fd-label">Attn: </span><span class="fd-content">{{ coy.addressename }}</span></p>
                                             </div>
 
                                             {# Financial Year #}
@@ -88,13 +89,14 @@
                                                     </div>
                                                     <h6>AGM/ACRA</h6>
                                                 </div>
+                                                <div class="fd-set">
+                                                    <div class="fd"><span class="fd-label">Financial Year Ends </span><span class="fd-content">{{ coy.fin_endmonth|stringformat:"02d" }}/{{ coy.fin_endyear }}</span></div>
+                                                    <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.agm_next|stringformat:"02d" }}/{% if coy.agm_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
+                                                </div>
                                             </div>
-                                            <p>{{ coy.fin_endmonth }}</p>
-                                            <p>{{ coy.fin_endyear }}</p>
-                                            <p>{{ coy.agm_next }}</p>
 
                                             {# GST #}
-                                            <div class="gst coy-section">
+                                            <div class="gst coy-section {% if coy.gst_req != 1 %}not_required{% endif %}">
                                                 <div class="status-header">
                                                     <div class="switch status">
                                                         <label>
@@ -105,14 +107,23 @@
                                                     </div>
                                                     <h6>GST</h6>
                                                 </div>
+                                                {% if coy.gst_req != 1 %}
+                                                    <div class="fd-set">
+                                                        <div class="fd"><span class="fd-label">GST Window Ends </span><span class="fd-content"> -- </span></div>
+                                                        <div class="fd"><span class="fd-label">GST Frequency </span><span class="fd-content"> -- </span></div>
+                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content"> -- </span></div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="fd-set">
+                                                        <div class="fd"><span class="fd-label">GST Window Ends </span><span class="fd-content">{{ coy.gst_endmonth|stringformat:"02d" }}/{{ coy.fin_endyear }}</span></div>
+                                                        <div class="fd"><span class="fd-label">GST Frequency </span><span class="fd-content">{{ coy.gst_type|stringformat:"02d" }} month(s)</span></div>
+                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.gst_next|stringformat:"02d" }}/{% if coy.gst_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
+                                                    </div>
+                                                {% endif %}
                                             </div>
-                                            <p>{{ coy.gst_req }}</p>
-                                            <p>{{ coy.gst_endmonth }}</p>
-                                            <p>{{ coy.gst_type }}</p>
-                                            <p>{{ coy.gst_next }}</p>
 
                                             {# Audit #}
-                                            <div class="audit coy-section">
+                                            <div class="audit coy-section {% if coy.audit_req != 1 %}not_required{% endif %}">
                                                 <div class="status-header">
                                                     <div class="switch status">
                                                         <label>
@@ -123,9 +134,16 @@
                                                     </div>
                                                     <h6>Audit</h6>
                                                 </div>
+                                                {% if coy.audit_req != 1 %}
+                                                    <div class="fd-set">
+                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content"> -- </span></div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="fd-set">
+                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.audit_next|stringformat:"02d" }}/{% if coy.audit_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
+                                                    </div>
+                                                {% endif %}
                                             </div>
-                                            <p>{{ coy.audit_req }}</p>
-                                            <p>{{ coy.audit_next }}</p>
 
                                             {# IRAS #}
                                             <div class="iras coy-section">
@@ -139,8 +157,10 @@
                                                     </div>
                                                     <h6>IRAS</h6>
                                                 </div>
+                                                <div class="fd-set">
+                                                    <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.iras_next|stringformat:"02d" }}/{% if coy.iras_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
+                                                </div>
                                             </div>
-                                            <p>{{ coy.iras_next }}</p>
                                     </div>
                                 </li>
                             {% endfor %}
