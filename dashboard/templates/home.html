@@ -1,6 +1,7 @@
 {% extends override_base|default:'navbar.html' %}
 {# https://stackoverflow.com/a/14115934 #}
 {% load static %}
+{% load material_form %}
 
 {% block title %}{{ hostname }}{% endblock %}
 
@@ -62,6 +63,10 @@
                                         <i class="material-icons expansion">expand_more</i>
                                     </div>
                                     <div class="collapsible-body">
+                                        {% with idx=forloop.counter %}
+                                            {% csrf_token %}
+                                            {% forms.idx %}{% endform %}
+                                        {% endwith %}
                                         {# Emails #}
                                         <p>{{ coy.toemail }}</p>
                                         <p>{{ coy.ccemail }}</p>
@@ -85,6 +90,7 @@
                                         {# IRAS #}
                                         <p>{{ coy.iras_done }}</p>
                                         <p>{{ coy.iras_next }}</p>
+                                        {{ forloop.counter }}
                                     </div>
                                 </li>
                             {% endfor %}
