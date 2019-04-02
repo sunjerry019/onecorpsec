@@ -1,4 +1,5 @@
 from django.db import models
+import time
 
 # Create your models here.
 
@@ -37,6 +38,6 @@ def getTable(_usrname):
     })
 
     # Create the class, which automatically triggers ModelBase processing
-    model = type('UserTable', (models.Model,), attrs)
+    model = type('UserTable_{}_{}'.format(_usrname, int(time.time())), (models.Model,), attrs)
 
     return model
