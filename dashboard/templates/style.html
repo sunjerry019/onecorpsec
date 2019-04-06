@@ -24,16 +24,17 @@
         background-position: var(--rand_1) var(--rand_2), var(--rand_3) var(--rand_4), var(--rand_5) var(--rand_6), var(--rand_7) var(--rand_8);
         /* background-position: 0 0, 40px 60px, 130px 270px, 70px 100px; */
     }
-    .splash .centre { flex-direction: column; height: 100%; }
+    .splash .centre     { flex-direction: column; height: 100%; }
+    .splash .centre a   { display: flex; flex-direction: column; }
 
     /* Navbar */
     .brand-logo     { height: 100%; }
     .brand-logo img { height: 100%; padding: 5px 10px; }
     .nav-welcome            { font-weight: 300; margin-right: 10px; }
-    .nav-welcome .username  { font-size-adjust: 1; padding-left: 3px; }
+    .nav-welcome .username  { font-size: 28px; /* font-size-adjust: 1; */ padding-left: 3px; }
     .sidenav-title              { font-weight: 300; color: rgba(0, 0, 0, 0.87); display: block; padding: 0 32px; }
     .sidenav-title span         { display: block; font-size: 20px; text-align: right; }
-    .sidenav-title .username    { font-size-adjust: 1; margin-top: -15px; margin-bottom: 5px;}
+    .sidenav-title .username    { font-size: 28px; /* font-size-adjust: 1; */ margin-top: -15px; margin-bottom: 5px;}
 
     /* Homepage Dashboard */
     .dashboard-wrapper          { padding: 10px; }
@@ -47,19 +48,21 @@
     .status-header h6               { display: inline-block; margin: 0px 0px 5px 15px; }
     .status-header .switch          { display: inline-block; margin-right: 0px; }
     .status-header .switch .lever   { margin: 2.5px 0px 0px 0px; vertical-align: top; }
-    .status-header .status::after   { display: inline-block; text-align: right; position: absolute; right: 0px; }
+    .status-header .status::after   { display: inline-block; text-align: right; position: absolute; right: 0px; top: 0px; }
     .status-header input[type='checkbox']:not(:checked) ~ .status::after    { color: #777; content: "Completed"; }
     .status-header input[type='checkbox']:checked ~ .status::after          { color: #006400; content: "Emails active"; }
     .status-header input[type='checkbox'][disabled] ~ .status::after        { color: #777; content: "Not required"; }
 
+
+
     .fd-content:empty::after { content: "< none >"; font-style: oblique; color: #aaa; }
-    .coy-emails                     { font-family: "Roboto Mono", monospace; display: table; margin-bottom: 10px; table-layout: fixed; width: 100%; font-size-adjust: 0.46; }
+    .coy-emails                     { font-family: "Roboto Mono", monospace; display: table; margin-bottom: 10px; table-layout: fixed; width: 100%; font-size: 12px; /* font-size-adjust: 0.46; */ }
     .coy-emails p                   { margin: 0px; display: table-row; }
     .coy-emails span                { display: table-cell; text-overflow: wrap; overflow-wrap: break-word; text-align: left; }
     .coy-emails span:first-child    { text-align: right; padding-right: 10px; width: 25%; }
     .coy-section            { border-top: 1px dashed #777; padding-top: 10px; }
     .coy-section .fd-set    { display: flex; }
     .coy-section .fd        { text-align: left; padding: 10px; }
-    .coy-section .fd-label  { font-size-adjust: 0.4; text-transform: uppercase; display: block; color: #777; }
+    .coy-section .fd-label  { font-size: 11px; /* font-size-adjust: 0.4; */ text-transform: uppercase; display: block; color: #777; }
     .coy-section.not_required, .coy-section.not_required .fd-label { color: #ccc; }
 </style>
