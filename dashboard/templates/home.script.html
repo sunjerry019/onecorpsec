@@ -22,20 +22,55 @@
 
         ajaxUpdate : function(_type = "POST", _url, _datatype = 'application/json', _data, _success, _fail)
         {
-            xhr = new XMLHttpRequest();
+            var xhr = new XMLHttpRequest();
             var csrftoken = djangoHelpers.getCookie('csrftoken');
 
             xhr.open(_type, _url);
             xhr.setRequestHeader('Content-Type', _datatype);
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
             xhr.onload = function() {
-                if (xhr.status === 200)         _success(xhr.status, xhr.responseText);
-                else if (xhr.status !== 200)    _fail(xhr.status, xhr.responseText);
+                xhr.status === 200 ? _success(xhr.status, xhr.responseText) : _fail(xhr.status, xhr.responseText);
             };
+
             if (_datatype === 'application/json') _data = JSON.stringify(_data);
             xhr.send(_data);
 
             return xhr;
+        },
+
+        serializeForm: function(_form)
+        {
+            // https://gomakethings.com/how-to-serialize-form-data-with-vanilla-js/
+            // https://github.com/jquery/jquery/blob/669f720edc4f557dfef986db747c09ebfaa16ef5/src/serialize.js
+            // Loop through form elements
+            var _data = {};
+            const rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i
+
+            for (let i = 0; i < _form.elements.length; i++) {
+                let field = _form.elements[i];
+
+                // We skip fields without a name, submits, buttons, file and reset inputs
+                if (!field.name || rsubmitterTypes.test(field.type)) continue;
+
+                // If a multi-select, get all selections
+                if (field.type === 'select-multiple') {
+                    _data[field.name] = []
+                    if (!field.disabled)
+                    {
+                        for (let n = 0; n < field.options.length; n++) {
+                            if (!field.options[n].selected) continue;
+                            _data[field.name].push(field.options[n].value);
+                        }
+                    }
+                }
+                // If checkbox, we convert to 1 and 0
+                // in ternary: _data[field.name] = (!field.disabled) ? field.checked & 1 : 0;
+                else if (field.type === 'checkbox') _data[field.name] = (field.checked ^ field.disabled) & !field.disabled
+                // Default
+                else _data[field.name] = (!field.disabled) ? field.value : 0;
+            }
+
+            return _data;
         }
     }
 
@@ -44,9 +79,7 @@
         // Disable all disabled buttons
         d_btns = document.querySelectorAll(".disabled a");
         d_btns.forEach(function(ele) {
-            ele.addEventListener('click', function(e) {
-                e.preventDefault();
-            });
+            ele.addEventListener('click', e => e.preventDefault() );
         });
         // Initialize collapsibles
         var _collapsibles = document.querySelectorAll('.collapsible');
@@ -56,25 +89,23 @@
         _checkboxes = document.querySelectorAll(".coy-section");
         _checkboxes.forEach(function(ele) {
             ele.addEventListener('change', function(e) {
-                _data = new FormData(e.target.form)
 
-                // https://stackoverflow.com/a/17067016/3211506
-                // for (var pair of _data.entries()) {
-                //     console.log(pair[0]+ ', ' + pair[1]);
-                // }
-                // https://code.google.com/archive/p/form-serialize/
+                _data = djangoHelpers.serializeForm(e.target.form);
+                console.log(_data);
+
                 // TODO: Handle the AJAX
-
-                djangoHelpers.ajaxUpdate( "POST", "/update", '', _data,
+                djangoHelpers.ajaxUpdate( "POST", "/update/", 'application/json', JSON.stringify(_data),
                     function(status, response) {
                         // Success
+                        console.log(response);
                         console.log("AJAX update success");
                     },
                     function(status, response) {
                         // Fail
                         console.log("AJAX update failed");
                     }
-                )
+                );
+
             });
         });
     });

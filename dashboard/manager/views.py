@@ -35,7 +35,7 @@ def render_Home(request, page = 1):
     })
     return HttpResponse(html)
 
-
 def updateDatabase(request):
-    # Trigger the checker here
-    pass
+    # Trigger the checker here after updating
+    print(request.POST)
+    return HttpResponse()

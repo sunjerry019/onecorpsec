@@ -1,0 +1,9 @@
+// JS
+
+// _data = new FormData(e.target.form)
+
+// https://stackoverflow.com/a/17067016/3211506
+// for (var pair of _data.entries()) {
+//     console.log(pair[0]+ ', ' + pair[1]);
+// }
+// https://code.google.com/archive/p/form-serialize/
