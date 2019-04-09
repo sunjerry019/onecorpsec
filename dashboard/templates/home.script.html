@@ -65,7 +65,8 @@
                 }
                 // If checkbox, we convert to 1 and 0
                 // in ternary: _data[field.name] = (!field.disabled) ? field.checked & 1 : 0;
-                else if (field.type === 'checkbox') _data[field.name] = (field.checked ^ field.disabled) & !field.disabled
+                // solution 1: (field.checked ^ field.disabled) & !field.disabled
+                else if (field.type === 'checkbox') _data[field.name] = field.checked & ~field.disabled;
                 // Default
                 else _data[field.name] = (!field.disabled) ? field.value : 0;
             }
@@ -93,16 +94,16 @@
                 _data = djangoHelpers.serializeForm(e.target.form);
                 console.log(_data);
 
-                // TODO: Handle the AJAX
                 djangoHelpers.ajaxUpdate( "POST", "/update/", 'application/json', JSON.stringify(_data),
                     function(status, response) {
                         // Success
-                        console.log(response);
-                        console.log("AJAX update success");
+                        M.toast({html: 'Update Successful!', displayLength: 1000});
                     },
                     function(status, response) {
                         // Fail
-                        console.log("AJAX update failed");
+                        M.toast({html: 'Update failed, please try again later.', displayLength: 1000})
+                        // Reset field that was changed
+                        e.target.checked ^= 1
                     }
                 );
 
