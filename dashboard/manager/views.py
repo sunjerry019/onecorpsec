@@ -40,7 +40,6 @@ def render_Home(request, page = 1):
 
 def updateDatabase(request):
     if request.user.is_authenticated:
-        # Trigger the checker here after updating
         _enc = request.encoding if request.encoding else settings.DEFAULT_CHARSET
         _form = json.loads(json.loads(request.body.decode(_enc)))
 
@@ -61,8 +60,12 @@ def updateDatabase(request):
                 setattr(_row, field, _form[field])
                 _updateFields.append(field)
 
+        # Update the Database
         try:
             _row.save(force_update=True, update_fields=_updateFields)
+
+            # TODO: If successful, trigger the checker here for that username for that company
+
             return http.HttpResponse(status=200)
         except:
             return http.HttpResponse(status=500)
