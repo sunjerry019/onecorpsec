@@ -171,9 +171,30 @@
                     </div>
                 </div> <!-- /.col -->
 
-                <div class="col l4 m12 s12">
-                    <div class="card">
-                        CSV module goes here
+                <div class="col l4 m12 s12 csv_module">
+                    <div class="card blue-grey darken-1">
+                        <div class="progress">
+                            <div class="indeterminate orange darken-2"></div>
+                        </div>
+                        <div class="card-content white-text left-align">
+                            <span class="card-title">CSV Database Upload</span>
+                            Upload your CSV database here. Do use the template to ensure the database can be read properly. Functions you can explore are <code>INDEX</code> and <code>MATCH</code> in Excel.
+                            <form action="/update/csv" method="POST">
+                                <div class="file-field input-field">
+                                    <div class="btn">
+                                        <span>CSV</span>
+                                        <input type="file" accept=".csv,text/csv">
+                                    </div>
+                                    <div class="file-path-wrapper">
+                                        <input class="file-path validate" type="text">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-action right-align">
+                            <a href="#">Template</a>
+                            <a href="#" class="btn">Upload</a>
+                        </div>
                     </div>
                 </div> <!-- /.col -->
             </div> <!-- /.row -->
