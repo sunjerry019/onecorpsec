@@ -76,14 +76,14 @@ def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', type = str, help = "csv file to parse or output to")
     parser.add_argument('-d', '--delete', action='store_true', help = "add flag to delete csv file after script")
-    parser.add_argument('-i', '--import', action='store_true', help = "Import the CSV Map")
-    parser.add_argument('-e', '--export', action='store_true', help = "Export the CSV Map into a template")
+    parser.add_argument('-i', '--importCSV', action='store_true', help = "Import the CSV Map")
+    parser.add_argument('-e', '--exportCSV', action='store_true', help = "Export the CSV Map into a template")
     args = parser.parse_args()
 
     x = Mapping(args.filename, args.delete)
-    if args.import:
+    if args.importCSV:
         x.importMap()
-    if args.export:
+    if args.exportCSV:
         x.generateTemplate()
     x.clean()
 
