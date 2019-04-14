@@ -17,7 +17,6 @@ from django.utils.encoding import smart_str
 
 @ensure_csrf_cookie
 def render_Home(request, page = 1):
-    t = get_template('home.html')
     if request.user.is_authenticated:
         _model = getTable(request.user.username)
         all_rows = _model.objects.all().order_by('coyname')
@@ -34,14 +33,14 @@ def render_Home(request, page = 1):
         all_rows = []
         override_base = "base.html"
 
-    html = t.render({
+    # https://stackoverflow.com/a/13048311/3211506
+    return render(request, 'home.html', {
         'hostname'      : "OneCorpSec",
         'user'          : request.user,
         'rows'          : rows,
         'rowCount'      : len(all_rows),
         'override_base' : override_base
     })
-    return http.HttpResponse(html)
 
 def updateDatabase(request):
     if request.user.is_authenticated:
