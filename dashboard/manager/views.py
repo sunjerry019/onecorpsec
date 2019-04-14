@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
 from django.conf import settings
 
 from django.template.loader import get_template
@@ -10,10 +9,13 @@ from .models import getTable
 from django.views.decorators.csrf import ensure_csrf_cookie
 import json
 
+# CSV Stuff
 import sys
 sys.path.insert(0, 'database/')
 import checker, mapping
 from django.utils.encoding import smart_str
+
+import time
 
 @ensure_csrf_cookie
 def render_Home(request, page = 1):
@@ -34,6 +36,7 @@ def render_Home(request, page = 1):
         override_base = "base.html"
 
     # https://stackoverflow.com/a/13048311/3211506
+    # Ensures CSRF
     return render(request, 'home.html', {
         'hostname'      : "OneCorpSec",
         'user'          : request.user,
@@ -86,7 +89,8 @@ def updateDatabaseCSV(request):
     if request.user.is_authenticated:
         if request.method == "POST":
             # use mapping to update the database
-            pass
+            print(request.FILES['file'])
+            return http.HttpResponse()
         else:
             # If not POST, we generate a template for the csv
             m = mapping.Mapping()

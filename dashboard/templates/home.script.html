@@ -26,7 +26,7 @@
             var csrftoken = djangoHelpers.getCookie('csrftoken');
 
             xhr.open(_type, _url);
-            xhr.setRequestHeader('Content-Type', _datatype);
+            if (_datatype) xhr.setRequestHeader('Content-Type', _datatype);
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
             xhr.onload = function() {
                 xhr.status === 200 ? _success(xhr.status, xhr.responseText) : _fail(xhr.status, xhr.responseText);
@@ -101,13 +101,51 @@
                     },
                     function(status, response) {
                         // Fail
-                        M.toast({html: 'Update failed, please try again later.', displayLength: 1000})
+                        M.toast({html: 'Update failed, please try again later.', displayLength: 1000});
                         // Reset field that was changed
-                        e.target.checked ^= 1
+                        e.target.checked ^= 1;
                     }
                 );
 
             });
         });
+
+        // For CSV Module
+        document.getElementById("csv_uploadTemplate").addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Get the file
+            // https://thoughtbot.com/blog/ridiculously-simple-ajax-uploads-with-formdata
+            var fileInput = document.querySelectorAll('.csv_module input[type="file"]')[0];
+            var file = fileInput.files[0];
+            if (!file) { M.toast({html: 'No file to upload!', displayLength: 1000}); return; }
+            var formData = new FormData();
+            formData.append('file', file);
+
+            // Show the progress bar
+            var pbar = document.querySelectorAll(".csv_module .progress")[0];
+            pbar.style.opacity = "1";
+
+            djangoHelpers.ajaxUpdate( "POST", "/update/csv/", '', formData,
+                function(status, response) {
+                    // Success
+                    pbar.style.opacity = "0";
+                    M.toast({html: 'Upload successful. Refreshing page...', displayLength: 1000});
+                    window.setTimeout(location.reload(true), 500)
+                },
+                function(status, response) {
+                    // Fail
+                    pbar.style.opacity = "0";
+                    if (response) response = ": " + response
+                    else response = ". Please try again later."
+                    M.toast({html: 'Error occurred' + response, displayLength: 1000});
+                }
+            );
+        })
+
+        // TODO: Generate template into blob and return to client
+        // TODO: AJAX to this, on AJAX, make progress bar visible, once complete, make progress bar 100 and have a toast that says DONE!
+        // https://github.com/eligrey/FileSaver.js
+
     });
 </script>
