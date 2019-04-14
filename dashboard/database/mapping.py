@@ -60,14 +60,22 @@ class Mapping():
     def generateTemplate(self, outputCSV = None):
         _csv = outputCSV
         if not _csv: _csv = self.csv
-        if not _csv: raise NXFileError("No file to export to")
+        # if not _csv: raise NXFileError("No file to export to")
 
-        with open(_csv, 'w') as f:
-            # First write the serial number
-            f.write('"S/N"')
+        if _csv:
+            with open(_csv, 'w') as f:
+                # First write the serial number
+                f.write('"S/N"')
+                _columns = self.database.query("SELECT * FROM {}".format(self.table), None, True)
+                for c in _columns:
+                    f.write(',"{}"'.format(c[2]))
+        else:
+            x = list()
+            x.append('"S/N"')
             _columns = self.database.query("SELECT * FROM {}".format(self.table), None, True)
             for c in _columns:
-                f.write(',"{}"'.format(c[2]))
+                x.append(',"{}"'.format(c[2]))
+            return "".join(x)
 
     def clean(self):
         self.database.exitDB()

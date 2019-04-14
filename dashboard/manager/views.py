@@ -13,6 +13,7 @@ import json
 import sys
 sys.path.insert(0, 'database/')
 import checker, mapping
+from django.utils.encoding import smart_str
 
 @ensure_csrf_cookie
 def render_Home(request, page = 1):
@@ -90,8 +91,11 @@ def updateDatabaseCSV(request):
         else:
             # If not POST, we generate a template for the csv
             m = mapping.Mapping()
-            m.generateTemplate()
-            # TODO: Generate template into blob and return to client
-            # TODO: AJAX to this, on AJAX, make progress bar visible, once complete, make progress bar 100 and have a toast that says DONE!
+            _csvT = m.generateTemplate()
+
+            # https://stackoverflow.com/a/1158750/3211506
+            _res = http.HttpResponse(content=_csvT, content_type='text/csv')
+            _res['Content-Disposition'] = 'attachment; filename={}'.format(smart_str("template.csv"))
+            return  _res
     else:
         return http.HttpResponseForbidden(content="Forbidden; Please Login")
