@@ -20,170 +20,179 @@
             <div class="row">
                 <div class="col l8 m12 s12">
                     <div class="main-monitor card">
-                        <p id="summary" class="grey darken-3">< You have {{ rowCount }} companies under your charge > </p>
+                        <p id="summary" class="grey darken-3">< You have {{ rowCount }} {% if rowCount == 1 %} company {% else %} companies {% endif %} under your charge > </p>
 
-                        <ul class="pagination center">
-                            {% if rows.has_previous %}
-                                <li class="waves-effect"><a href="/"><i class="material-icons">first_page</i></a></li>
-                                <li class="waves-effect"><a href="/{{ rows.previous_page_number }}/"><i class="material-icons">chevron_left</i></a></li>
-                            {% else %}
-                                <li class="disabled"><a href="/"><i class="material-icons">first_page</i></a></li>
-                                <li class="disabled"><a href="/"><i class="material-icons">chevron_left</i></a></li>
-                            {% endif %}
+                        {% if rowCount > 0 %}
+                            <ul class="pagination center">
+                                {% if rows.has_previous %}
+                                    <li class="waves-effect"><a href="/"><i class="material-icons">first_page</i></a></li>
+                                    <li class="waves-effect"><a href="/{{ rows.previous_page_number }}/"><i class="material-icons">chevron_left</i></a></li>
+                                {% else %}
+                                    <li class="disabled"><a href="/"><i class="material-icons">first_page</i></a></li>
+                                    <li class="disabled"><a href="/"><i class="material-icons">chevron_left</i></a></li>
+                                {% endif %}
 
-                            {# https://stackoverflow.com/a/14389078/3211506 #}
-                            {% with ''|center:rows.paginator.num_pages as range %}
-                                {% for _ in range %}
-                                    {% if forloop.counter == rows.number %}
-                                        <li class="active"><a href="/{{ forloop.counter }}/">{{ forloop.counter }}</a></li>
-                                    {% else %}
-                                        <li class="waves-effect"><a href="/{{ forloop.counter }}/">{{ forloop.counter }}</a></li>
-                                    {% endif %}
+                                {# https://stackoverflow.com/a/14389078/3211506 #}
+                                {% with ''|center:rows.paginator.num_pages as range %}
+                                    {% for _ in range %}
+                                        {% if forloop.counter == rows.number %}
+                                            <li class="active"><a href="/{{ forloop.counter }}/">{{ forloop.counter }}</a></li>
+                                        {% else %}
+                                            <li class="waves-effect"><a href="/{{ forloop.counter }}/">{{ forloop.counter }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endwith %}
+
+                                {% if rows.has_next %}
+                                    <li class="waves-effect"><a href="/{{ rows.next_page_number }}/"><i class="material-icons">chevron_right</i></a></li>
+                                    <li class="waves-effect"><a href="/{{ rows.paginator.num_pages }}/"><i class="material-icons">last_page</i></a></li>
+                                {% else %}
+                                    <li class="disabled"><a href="/{{ rows.paginator.num_pages }}/"><i class="material-icons">chevron_right</i></a></li>
+                                    <li class="disabled"><a href="/{{ rows.paginator.num_pages }}/"><i class="material-icons">last_page</i></a></li>
+                                {% endif %}
+                            </ul>
+
+                            {# TODO: Add some enum editor here #}
+
+                            {# Zero padding: https://djangosnippets.org/snippets/543/#c655 #}
+                            <ul class="collapsible company-list">
+                                {% for coy in rows %}
+                                    <li>
+                                        <div class="collapsible-header waves-effect">
+                                            {# avatar here????  https://materializecss.com/collections.html #}
+                                            {{ coy.coyname }}
+                                            <span class="badge">{{ coy.coyregno }}</span>
+                                            <i class="material-icons expansion"></i>
+                                        </div>
+                                        <div class="collapsible-body">
+                                            <form method="POST" data-crn="{{ coy.coyregno }}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="CRN" value="{{ coy.coyregno }}">
+                                                {# AJAX will auto handle the URL #}
+                                                {# We make our own forms because django doesnt support multiple forms on one page #}
+                                                {# Empty fields are replaced with <none> using CSS #}
+
+                                                {# Emails #}
+                                                <div class="coy-emails">
+                                                    <p><span class="fd-label">To: </span><span class="fd-content">{{ coy.toemail }}</span></p>
+                                                    <p><span class="fd-label">CC: </span><span class="fd-content">{{ coy.ccemail }}</span></p>
+                                                    <p><span class="fd-label">BCC: </span><span class="fd-content">{{ coy.bccemail }}</span></p>
+                                                    <p><span class="fd-label">Attn: </span><span class="fd-content">{{ coy.addressename }}</span></p>
+                                                </div>
+
+                                                {# Financial Year #}
+                                                <div class="agm_acra coy-section">
+                                                    <div class="status-header">
+                                                        <div class="switch status">
+                                                            <label>
+                                                                <input type="checkbox" name="agm_done" {% if coy.agm_done != 1 %} checked {% endif %}>
+                                                                <span class="lever"></span>
+                                                                <span class="status"></span>
+                                                            </label>
+                                                        </div>
+                                                        <h6>AGM/ACRA</h6>
+                                                    </div>
+                                                    <div class="fd-set">
+                                                        <div class="fd"><span class="fd-label">Financial Year Ends </span><span class="fd-content">{{ coy.fin_endmonth|stringformat:"02d" }}/{{ coy.fin_endyear }}</span></div>
+                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.agm_next|stringformat:"02d" }}/{% if coy.agm_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
+                                                    </div>
+                                                </div>
+
+                                                {# GST #}
+                                                <div class="gst coy-section {% if coy.gst_req != 1 %}not_required{% endif %}">
+                                                    <div class="status-header">
+                                                        <div class="switch status">
+                                                            <label>
+                                                                <input type="checkbox" name="gst_done" {% if coy.gst_req != 1 %} disabled {% else %} {% if coy.gst_done != 1 %} checked {% endif %} {% endif %}>
+                                                                <span class="lever"></span>
+                                                                <span class="status"></span>
+                                                            </label>
+                                                        </div>
+                                                        <h6>GST</h6>
+                                                    </div>
+                                                    {% if coy.gst_req != 1 %}
+                                                        <div class="fd-set">
+                                                            <div class="fd"><span class="fd-label">GST Window Ends </span><span class="fd-content"> -- </span></div>
+                                                            <div class="fd"><span class="fd-label">GST Frequency </span><span class="fd-content"> -- </span></div>
+                                                            <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content"> -- </span></div>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="fd-set">
+                                                            <div class="fd"><span class="fd-label">GST Window Ends </span><span class="fd-content">{{ coy.gst_endmonth|stringformat:"02d" }}/{{ coy.fin_endyear }}</span></div>
+                                                            <div class="fd"><span class="fd-label">GST Frequency </span><span class="fd-content">{{ coy.gst_type|stringformat:"02d" }} month(s)</span></div>
+                                                            <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.gst_next|stringformat:"02d" }}/{% if coy.gst_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+
+                                                {# Audit #}
+                                                <div class="audit coy-section {% if coy.audit_req != 1 %}not_required{% endif %}">
+                                                    <div class="status-header">
+                                                        <div class="switch status">
+                                                            <label>
+                                                                <input type="checkbox" name="audit_done" {% if coy.audit_req != 1 %} disabled {% else %} {% if coy.audit_done != 1 %} checked {% endif %} {% endif %}>
+                                                                <span class="lever"></span>
+                                                                <span class="status"></span>
+                                                            </label>
+                                                        </div>
+                                                        <h6>Audit</h6>
+                                                    </div>
+                                                    {% if coy.audit_req != 1 %}
+                                                        <div class="fd-set">
+                                                            <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content"> -- </span></div>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="fd-set">
+                                                            <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.audit_next|stringformat:"02d" }}/{% if coy.audit_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+
+                                                {# IRAS #}
+                                                <div class="iras coy-section">
+                                                    <div class="status-header">
+                                                        <div class="switch status">
+                                                            <label>
+                                                                <input type="checkbox" name="iras_done" {% if coy.iras_done != 1 %} checked {% endif %}>
+                                                                <span class="lever"></span>
+                                                                <span class="status"></span>
+                                                            </label>
+                                                        </div>
+                                                        <h6>IRAS</h6>
+                                                    </div>
+                                                    <div class="fd-set">
+                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.iras_next|stringformat:"02d" }}/{% if coy.iras_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
+                                                    </div>
+                                                </div>
+
+                                                <div><button class="delete-btn waves-effect waves-red btn-flat" data-crn="{{ coy.coyregno }}">Delete</a></div>
+                                            </form>
+                                        </div>
+                                    </li>
                                 {% endfor %}
-                            {% endwith %}
+                            </ul>
 
-                            {% if rows.has_next %}
-                                <li class="waves-effect"><a href="/{{ rows.next_page_number }}/"><i class="material-icons">chevron_right</i></a></li>
-                                <li class="waves-effect"><a href="/{{ rows.paginator.num_pages }}/"><i class="material-icons">last_page</i></a></li>
-                            {% else %}
-                                <li class="disabled"><a href="/{{ rows.paginator.num_pages }}/"><i class="material-icons">chevron_right</i></a></li>
-                                <li class="disabled"><a href="/{{ rows.paginator.num_pages }}/"><i class="material-icons">last_page</i></a></li>
-                            {% endif %}
-                        </ul>
-
-                        {# TODO: Add some enum editor here #}
-
-                        {# Zero padding: https://djangosnippets.org/snippets/543/#c655 #}
-                        <ul class="collapsible company-list">
-                            {% for coy in rows %}
-                                <li>
-                                    <div class="collapsible-header waves-effect">
-                                        {# avatar here????  https://materializecss.com/collections.html #}
-                                        {{ coy.coyname }}
-                                        <span class="badge">{{ coy.coyregno }}</span>
-                                        <i class="material-icons expansion"></i>
-                                    </div>
-                                    <div class="collapsible-body">
-                                        <form method="POST" data-crn="{{ coy.coyregno }}">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="CRN" value="{{ coy.coyregno }}">
-                                            {# AJAX will auto handle the URL #}
-                                            {# We make our own forms because django doesnt support multiple forms on one page #}
-                                            {# Empty fields are replaced with <none> using CSS #}
-
-                                            {# Emails #}
-                                            <div class="coy-emails">
-                                                <p><span class="fd-label">To: </span><span class="fd-content">{{ coy.toemail }}</span></p>
-                                                <p><span class="fd-label">CC: </span><span class="fd-content">{{ coy.ccemail }}</span></p>
-                                                <p><span class="fd-label">BCC: </span><span class="fd-content">{{ coy.bccemail }}</span></p>
-                                                <p><span class="fd-label">Attn: </span><span class="fd-content">{{ coy.addressename }}</span></p>
-                                            </div>
-
-                                            {# Financial Year #}
-                                            <div class="agm_acra coy-section">
-                                                <div class="status-header">
-                                                    <div class="switch status">
-                                                        <label>
-                                                            <input type="checkbox" name="agm_done" {% if coy.agm_done != 1 %} checked {% endif %}>
-                                                            <span class="lever"></span>
-                                                            <span class="status"></span>
-                                                        </label>
-                                                    </div>
-                                                    <h6>AGM/ACRA</h6>
-                                                </div>
-                                                <div class="fd-set">
-                                                    <div class="fd"><span class="fd-label">Financial Year Ends </span><span class="fd-content">{{ coy.fin_endmonth|stringformat:"02d" }}/{{ coy.fin_endyear }}</span></div>
-                                                    <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.agm_next|stringformat:"02d" }}/{% if coy.agm_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
-                                                </div>
-                                            </div>
-
-                                            {# GST #}
-                                            <div class="gst coy-section {% if coy.gst_req != 1 %}not_required{% endif %}">
-                                                <div class="status-header">
-                                                    <div class="switch status">
-                                                        <label>
-                                                            <input type="checkbox" name="gst_done" {% if coy.gst_req != 1 %} disabled {% else %} {% if coy.gst_done != 1 %} checked {% endif %} {% endif %}>
-                                                            <span class="lever"></span>
-                                                            <span class="status"></span>
-                                                        </label>
-                                                    </div>
-                                                    <h6>GST</h6>
-                                                </div>
-                                                {% if coy.gst_req != 1 %}
-                                                    <div class="fd-set">
-                                                        <div class="fd"><span class="fd-label">GST Window Ends </span><span class="fd-content"> -- </span></div>
-                                                        <div class="fd"><span class="fd-label">GST Frequency </span><span class="fd-content"> -- </span></div>
-                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content"> -- </span></div>
-                                                    </div>
-                                                {% else %}
-                                                    <div class="fd-set">
-                                                        <div class="fd"><span class="fd-label">GST Window Ends </span><span class="fd-content">{{ coy.gst_endmonth|stringformat:"02d" }}/{{ coy.fin_endyear }}</span></div>
-                                                        <div class="fd"><span class="fd-label">GST Frequency </span><span class="fd-content">{{ coy.gst_type|stringformat:"02d" }} month(s)</span></div>
-                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.gst_next|stringformat:"02d" }}/{% if coy.gst_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-
-                                            {# Audit #}
-                                            <div class="audit coy-section {% if coy.audit_req != 1 %}not_required{% endif %}">
-                                                <div class="status-header">
-                                                    <div class="switch status">
-                                                        <label>
-                                                            <input type="checkbox" name="audit_done" {% if coy.audit_req != 1 %} disabled {% else %} {% if coy.audit_done != 1 %} checked {% endif %} {% endif %}>
-                                                            <span class="lever"></span>
-                                                            <span class="status"></span>
-                                                        </label>
-                                                    </div>
-                                                    <h6>Audit</h6>
-                                                </div>
-                                                {% if coy.audit_req != 1 %}
-                                                    <div class="fd-set">
-                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content"> -- </span></div>
-                                                    </div>
-                                                {% else %}
-                                                    <div class="fd-set">
-                                                        <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.audit_next|stringformat:"02d" }}/{% if coy.audit_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-
-                                            {# IRAS #}
-                                            <div class="iras coy-section">
-                                                <div class="status-header">
-                                                    <div class="switch status">
-                                                        <label>
-                                                            <input type="checkbox" name="iras_done" {% if coy.iras_done != 1 %} checked {% endif %}>
-                                                            <span class="lever"></span>
-                                                            <span class="status"></span>
-                                                        </label>
-                                                    </div>
-                                                    <h6>IRAS</h6>
-                                                </div>
-                                                <div class="fd-set">
-                                                    <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.iras_next|stringformat:"02d" }}/{% if coy.iras_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
-                                                </div>
-                                            </div>
-
-                                            <div><button class="delete-btn waves-effect waves-red btn-flat" data-crn="{{ coy.coyregno }}">Delete</a></div>
-                                        </form>
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-
-                        <div id="modal-delete-confirm" class="modal delete-confirm">
-                            <div class="progress">
-                                <div class="indeterminate red"></div>
+                            <div id="modal-delete-confirm" class="modal delete-confirm">
+                                <div class="progress">
+                                    <div class="indeterminate red"></div>
+                                </div>
+                                <div class="modal-content">
+                                    <h6 class="left-align">Delete <span id="delete-crn"></span>?</h6>
+                                    <p class="left-align">This action is irreversible!</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="/delete/" class="modal-close waves-effect waves-red btn-flat red-text" id="delete-btn-cfm" data-crn="">Delete</a>
+                                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+                                </div>
                             </div>
-                            <div class="modal-content">
-                                <h6 class="left-align">Delete <span id="delete-crn"></span>?</h6>
-                                <p class="left-align">This action is irreversible!</p>
+                        {% else %}
+                            {# No Companies #}
+                            <div class="no-companies">
+                                <img src="{% static "no-companies.plain.svg" %}" alt="No Companies">
+                                <p>Please use the CSV module to populate the database.</p>
                             </div>
-                            <div class="modal-footer">
-                                <a href="/delete/" class="modal-close waves-effect waves-red btn-flat red-text" id="delete-btn-cfm" data-crn="">Delete</a>
-                                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
-                            </div>
-                        </div>
+                        {% endif %}
+
                     </div>
                 </div> <!-- /.col -->
 
@@ -249,8 +258,8 @@
         <div class="splash">
             <div class="centre">
                 <a href="/" class="center"> <!-- Note this is different from the above class -->
-                    <img src="{% static "favicon_silhouette.svg" %}">
-                    <img src="{% static "logo.cut.svg" %}">
+                    <img src="{% static "favicon_silhouette.svg" %}" alt="Logo">
+                    <img src="{% static "logo.cut.svg" %}" alt="Name">
                 </a>
                 <p>You are not logged in</p>
                 <a class="waves-effect waves-light btn" href="{% url 'login' %}">Login</a>

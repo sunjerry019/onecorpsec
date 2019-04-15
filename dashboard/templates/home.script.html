@@ -125,51 +125,54 @@
         });
 
         // AJAX for delete
-        _del_btn = document.getElementById("delete-btn-cfm")
-        _del_btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            _CRN = e.target.dataset.crn;
+        _del_btn = document.getElementById("delete-btn-cfm");
+        if (_del_btn !== null)
+        {
+            _del_btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                _CRN = e.target.dataset.crn;
 
-            // Load progress bar
-            var pbar = document.querySelectorAll(".delete-confirm .progress")[0];
-            pbar.style.opacity = "1";
-            // Disable the buttons
-            e.target.classList.add("disabled");
-            e.target.nextElementSibling.classList.add("disabled");
+                // Load progress bar
+                var pbar = document.querySelectorAll(".delete-confirm .progress")[0];
+                pbar.style.opacity = "1";
+                // Disable the buttons
+                e.target.classList.add("disabled");
+                e.target.nextElementSibling.classList.add("disabled");
 
-            // Send AJAX to delete
-            _data = { "CRN" : _CRN }
-            djangoHelpers.ajaxUpdate( "POST", "/delete/", 'application/json', JSON.stringify(_data),
-                function(status, response) {
-                    // Success
-                    // Remove pbar
-                    pbar.style.opacity = "0";
+                // Send AJAX to delete
+                _data = { "CRN" : _CRN }
+                djangoHelpers.ajaxUpdate( "POST", "/delete/", 'application/json', JSON.stringify(_data),
+                    function(status, response) {
+                        // Success
+                        // Remove pbar
+                        pbar.style.opacity = "0";
 
-                    _m = document.getElementById("modal-delete-confirm");
-                    M.Modal.getInstance(_m).close();
+                        _m = document.getElementById("modal-delete-confirm");
+                        M.Modal.getInstance(_m).close();
 
-                    M.toast({html: _CRN + ' deleted. Refreshing page...', displayLength: 1000});
-                    window.setTimeout(location.reload(true), 5000)
-                },
-                function(status, response) {
-                    // Fail
-                    // Remove pbar
-                    pbar.style.opacity = "0";
+                        M.toast({html: _CRN + ' deleted. Refreshing page...', displayLength: 1000});
+                        window.setTimeout(location.reload(true), 5000)
+                    },
+                    function(status, response) {
+                        // Fail
+                        // Remove pbar
+                        pbar.style.opacity = "0";
 
-                    _m = document.getElementById("modal-delete-confirm");
-                    M.Modal.getInstance(_m).close();
-                    // Clear all CRN related stuff from the modal since we aren't doing any page refresh
-                    e.target.dataset.crn = "";
-                    document.getElementById('delete-crn').innerHTML = "";
-                    // Renable buttons
-                    e.target.classList.remove("disabled");
-                    e.target.nextElementSibling.classList.remove("disabled");
+                        _m = document.getElementById("modal-delete-confirm");
+                        M.Modal.getInstance(_m).close();
+                        // Clear all CRN related stuff from the modal since we aren't doing any page refresh
+                        e.target.dataset.crn = "";
+                        document.getElementById('delete-crn').innerHTML = "";
+                        // Renable buttons
+                        e.target.classList.remove("disabled");
+                        e.target.nextElementSibling.classList.remove("disabled");
 
-                    M.toast({html: 'Unable to delete, please try again later.', displayLength: 1000});
-                }
-            );
-        });
+                        M.toast({html: 'Unable to delete, please try again later.', displayLength: 1000});
+                    }
+                );
+            });
+        }
 
         // For CSV Module
         document.getElementById("csv_uploadTemplate").addEventListener('click', function(e) {
