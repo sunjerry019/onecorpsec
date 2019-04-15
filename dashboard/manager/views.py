@@ -107,7 +107,7 @@ def updateDatabaseCSV(request):
 
             di.clean()
 
-            return http.HttpResponse()
+            return http.HttpResponse(content="OK")
         else:
             # If not POST, we generate a template for the csv
             m = mapping.Mapping()
@@ -129,7 +129,7 @@ def deleteCompany(request):
 
             # https://stackoverflow.com/a/14771593/3211506
             _model = getTable(request.user.username)
-            
+
             # Update the Database
             try:
                 # Some code here to delete

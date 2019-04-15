@@ -131,15 +131,20 @@
             e.stopPropagation();
             _CRN = e.target.dataset.crn;
 
-            // TODO:  Load some progress bar
+            // Load progress bar
+            var pbar = document.querySelectorAll(".delete-confirm .progress")[0];
+            pbar.style.opacity = "1";
+            // Disable the buttons
+            e.target.classList.add("disabled");
+            e.target.nextElementSibling.classList.add("disabled");
 
             // Send AJAX to delete
             _data = { "CRN" : _CRN }
             djangoHelpers.ajaxUpdate( "POST", "/delete/", 'application/json', JSON.stringify(_data),
                 function(status, response) {
                     // Success
-
-                    // TODO: Turn off the progress bar
+                    // Remove pbar
+                    pbar.style.opacity = "0";
 
                     _m = document.getElementById("modal-delete-confirm");
                     M.Modal.getInstance(_m).close();
@@ -149,14 +154,17 @@
                 },
                 function(status, response) {
                     // Fail
-
-                    // TODO: Turn off the progress bar
+                    // Remove pbar
+                    pbar.style.opacity = "0";
 
                     _m = document.getElementById("modal-delete-confirm");
                     M.Modal.getInstance(_m).close();
                     // Clear all CRN related stuff from the modal since we aren't doing any page refresh
                     e.target.dataset.crn = "";
                     document.getElementById('delete-crn').innerHTML = "";
+                    // Renable buttons
+                    e.target.classList.remove("disabled");
+                    e.target.nextElementSibling.classList.remove("disabled");
 
                     M.toast({html: 'Unable to delete, please try again later.', displayLength: 1000});
                 }
@@ -196,9 +204,7 @@
             );
         })
 
-        // TODO: Generate template into blob and return to client
-        // TODO: AJAX to this, on AJAX, make progress bar visible, once complete, make progress bar 100 and have a toast that says DONE!
-        // https://github.com/eligrey/FileSaver.js
+        // https://github.com/eligrey/FileSaver.js for template?
 
     });
 </script>
