@@ -132,7 +132,7 @@ def deleteCompany(request):
 
             # Update the Database
             try:
-                # Some code here to delete
+                _model.objects.get(coyregno = _CRN).delete()
                 return http.HttpResponse(status=200)
             except:
                 return http.HttpResponse(status=500)
