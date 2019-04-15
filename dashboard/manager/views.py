@@ -12,7 +12,7 @@ import json
 # CSV Stuff
 import sys
 sys.path.insert(0, 'database/')
-import checker, mapping
+import checker, mapping, importCSV
 from django.utils.encoding import smart_str
 
 import time
@@ -84,12 +84,29 @@ def updateDatabase(request):
 
 
 def updateDatabaseCSV(request):
-    # Check for CSV file here
-
     if request.user.is_authenticated:
         if request.method == "POST":
-            # use mapping to update the database
-            print(request.FILES['file'])
+
+            _file = request.FILES['file']
+            _dest = './temp/{}_{}'.format(request.user, int(time.time()))
+
+            with open(_dest + ".csv", 'wb+') as destination:
+                for chunk in _file.chunks():
+                    destination.write(chunk)
+
+            # TODO: Check for CSV file here
+
+            # Import the CSV
+            di = importCSV.DatabaseImporter(_dest + ".csv", request.user, True, _dest + ".log")
+            try:
+                _status, _output = di.parse()
+                if _status != 0:
+                    return http.HttpResponse(status=500, content=_output)
+            except:
+                return http.HttpResponse(status=500, content="Unknown Parsing/Update Error")
+
+            di.clean()
+
             return http.HttpResponse()
         else:
             # If not POST, we generate a template for the csv

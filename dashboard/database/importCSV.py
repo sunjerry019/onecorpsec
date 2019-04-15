@@ -106,11 +106,22 @@ class DatabaseImporter:
         _rowcount = 0
         _colCount = 0
 
+        _returnStatus = 0
+        _returnOutput = "OK"
+
         for row in  _reader:
             row = row[1:]           # we ignore the serial number
-            row = [self.mapValues(self.database.escape(x.strip())) for x in row]
+            try:
+                row = [self.mapValues(self.database.escape(x.strip())) for x in row]
+            except:
+                _returnStatus = 1
+                _srow = str(row)
+                _el = " ..." if len(_srow) > 8 else ""
+                _returnOutput = "Error mapping values: {:8.8}{}".format(_srow, _el)
+                break
 
             #TODO Do some error handling here to check for illegal values
+            # some assert statments here
 
             if _rowcount == 0:      # Headers
                 _map = [self.sqlMapping[x.strip()] for x in row]
@@ -136,6 +147,8 @@ class DatabaseImporter:
                 self.database.query(_q, tuple(row))
 
             _rowcount += 1
+
+        return _returnStatus, _returnOutput
 
     def clean(self):
         # Cleanly close the Database
