@@ -163,6 +163,18 @@
                                                     <div class="fd"><span class="fd-label">Next Email </span><span class="fd-content">{{ coy.iras_next|stringformat:"02d" }}/{% if coy.iras_next < coy.fin_endmonth %}{{ coy.fin_endyear|add:"1" }}{% else %}{{ coy.fin_endyear }}{% endif %}</span></div>
                                                 </div>
                                             </div>
+
+                                            <div><button class="delete-btn modal-trigger waves-effect waves-red btn-flat" data-target="modal-{{ coy.coyregno }}">Delete</a></div>
+                                            <div id="modal-{{ coy.coyregno }}" class="modal delete-confirm">
+                                                <div class="modal-content">
+                                                    <h6 class="left-align">Delete {{ coy.coyregno }}?</h6>
+                                                    <p class="left-align">This action is irreversible.</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <a href="/delete/" class="modal-close waves-effect waves-red btn-flat delete-btn-cfm">Delete</a>
+                                                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+                                                </div>
+                                            </div>
                                         </form>
                                     </div>
                                 </li>
