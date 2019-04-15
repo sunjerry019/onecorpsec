@@ -164,22 +164,23 @@
                                                 </div>
                                             </div>
 
-                                            <div><button class="delete-btn modal-trigger waves-effect waves-red btn-flat" data-target="modal-{{ coy.coyregno }}">Delete</a></div>
-                                            <div id="modal-{{ coy.coyregno }}" class="modal delete-confirm">
-                                                <div class="modal-content">
-                                                    <h6 class="left-align">Delete {{ coy.coyregno }}?</h6>
-                                                    <p class="left-align">This action is irreversible.</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <a href="/delete/" class="modal-close waves-effect waves-red btn-flat delete-btn-cfm">Delete</a>
-                                                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
-                                                </div>
-                                            </div>
+                                            <div><button class="delete-btn waves-effect waves-red btn-flat" data-crn="{{ coy.coyregno }}">Delete</a></div>
                                         </form>
                                     </div>
                                 </li>
                             {% endfor %}
                         </ul>
+
+                        <div id="modal-delete-confirm" class="modal delete-confirm">
+                            <div class="modal-content">
+                                <h6 class="left-align">Delete <span id="delete-crn"></span>?</h6>
+                                <p class="left-align">This action is irreversible!</p>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="/delete/" class="modal-close waves-effect waves-red btn-flat red-text" id="delete-btn-cfm" data-crn="">Delete</a>
+                                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+                            </div>
+                        </div>
                     </div>
                 </div> <!-- /.col -->
 

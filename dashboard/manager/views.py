@@ -119,3 +119,24 @@ def updateDatabaseCSV(request):
             return  _res
     else:
         return http.HttpResponseForbidden(content="Forbidden; Please Login")
+
+def deleteCompany(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            _enc = request.encoding if request.encoding else settings.DEFAULT_CHARSET
+            _form = json.loads(json.loads(request.body.decode(_enc)))
+            _CRN = _form["CRN"]
+
+            # https://stackoverflow.com/a/14771593/3211506
+            _model = getTable(request.user.username)
+            
+            # Update the Database
+            try:
+                # Some code here to delete
+                return http.HttpResponse(status=200)
+            except:
+                return http.HttpResponse(status=500)
+        else:
+            return http.HttpResponseNotAllowed("POST", content="GET Not Allowed")
+    else:
+        return http.HttpResponseForbidden(content="Forbidden; Please Login")

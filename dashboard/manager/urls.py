@@ -8,5 +8,6 @@ urlpatterns = [
     path('', views.render_Home, name='home'),
     path('update/csv/', views.updateDatabaseCSV, name="update_csv"),
     path('update/', views.updateDatabase, name="update"),
+    path('delete/', views.deleteCompany, name="delete"),
     re_path(r'^(\d+)/', views.render_Home),
 ]

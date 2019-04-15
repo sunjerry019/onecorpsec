@@ -82,9 +82,11 @@
         d_btns.forEach(function(ele) {
             ele.addEventListener('click', e => e.preventDefault() );
         });
-        // Initialize collapsibles
-        var _collapsibles = document.querySelectorAll('.collapsible');
-        var instances = M.Collapsible.init(_collapsibles, false);
+        // Initialize materializecss stuff
+        var _collapsibles   = document.querySelectorAll('.collapsible');
+        var _c_instances    = M.Collapsible.init(_collapsibles, false);
+        var _modals         = document.querySelectorAll('.modal');
+        var _m_instances    = M.Modal.init(_modals, false);
 
         // AJAX for change in done-status
         _checkboxes = document.querySelectorAll(".coy-section");
@@ -108,6 +110,57 @@
                 );
 
             });
+        });
+
+        // Opening of confirmations
+        _del_btns = document.querySelectorAll(".delete-btn");
+        _del_btns.forEach(function(ele){
+            ele.addEventListener('click', function(e) {
+                e.preventDefault();
+                _m = document.getElementById("modal-delete-confirm");
+                _m.querySelector('#delete-crn').innerHTML = ele.dataset.crn;
+                document.getElementById("delete-btn-cfm").dataset.crn = ele.dataset.crn;
+                M.Modal.getInstance(_m).open();
+            });
+        });
+
+        // AJAX for delete
+        _del_btn = document.getElementById("delete-btn-cfm")
+        _del_btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            _CRN = e.target.dataset.crn;
+
+            // TODO:  Load some progress bar
+
+            // Send AJAX to delete
+            _data = { "CRN" : _CRN }
+            djangoHelpers.ajaxUpdate( "POST", "/delete/", 'application/json', JSON.stringify(_data),
+                function(status, response) {
+                    // Success
+
+                    // TODO: Turn off the progress bar
+
+                    _m = document.getElementById("modal-delete-confirm");
+                    M.Modal.getInstance(_m).close();
+
+                    M.toast({html: _CRN + ' deleted. Refreshing page...', displayLength: 1000});
+                    window.setTimeout(location.reload(true), 5000)
+                },
+                function(status, response) {
+                    // Fail
+
+                    // TODO: Turn off the progress bar
+
+                    _m = document.getElementById("modal-delete-confirm");
+                    M.Modal.getInstance(_m).close();
+                    // Clear all CRN related stuff from the modal since we aren't doing any page refresh
+                    e.target.dataset.crn = "";
+                    document.getElementById('delete-crn').innerHTML = "";
+
+                    M.toast({html: 'Unable to delete, please try again later.', displayLength: 1000});
+                }
+            );
         });
 
         // For CSV Module
