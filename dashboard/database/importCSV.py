@@ -120,29 +120,32 @@ class DatabaseImporter:
         ccemail  = self.removeTrailingCommas(row[_map.index("ccEmail")])
         bccemail = self.removeTrailingCommas(row[_map.index("bccEmail")])
 
-        # TODO: Check if things are required
-
-        # Should be a valid month 1 - 12
         monthCols = [
             row[_map.index("fin_endMonth")],
             row[_map.index("AGM_next")],
-            row[_map.index("GST_endMonth")],
-            row[_map.index("GST_next")],
-            row[_map.index("audit_next")],
             row[_map.index("IRAS_next")]
         ]
 
-        monthCols = [x for x in monthCols if x != "" ] # Remove any empty strings
+        if row[_map.index("audit_req")]:
+            monthCols.append(row[_map.index("audit_next")])
+
+        if row[_map.index("GST_req")]:
+            monthCols.append(row[_map.index("GST_endMonth")])
+            monthCols.append(row[_map.index("GST_next")])
+            # Should be a valid type 1, 3 or 6
+            gstType = (row[_map.index("GST_type")] in {1: 0, 3: 0, 6: 0})
+        else:
+            gstType = True
+
+        # Should be a valid month 1 - 12
+        monthCols = [ x for x in monthCols if x != "" ] # Remove any empty strings
         try:
-            monthCols = reduce((lambda x, y: (1 <= x <= 12) & (1 <= y <= 12)) , monthCols )
+            monthCols = reduce( (lambda x, y: (1 <= x <= 12) & (1 <= y <= 12)) , monthCols)
         except Exception as e:
             return False
 
         # Should be a valid year after 1900
         yearCol = row[_map.index("fin_endYear")] > 1900
-
-        # Should be a valid type 1, 3 or 6
-        gstType = row[_map.index("GST_type")] in {1: 0, 3: 0, 6: 0}
 
         return len(toemail) >= 3 and \
             emailTest.match(toemail) and \
