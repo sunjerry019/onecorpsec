@@ -116,14 +116,13 @@ class DatabaseImporter:
             try:
                 row = [self.mapValues(self.database.escape(x.strip())) for x in row]
             except:
-                _returnStatus = 1
                 _srow = str(row)
                 _el = " ..." if len(_srow) > 8 else ""
-                _returnOutput = "Error mapping values: {:8.8}{}".format(_srow, _el)
-                break
+                if self.logfile: self.logfile.write("Error mapping values: {}".format(row))
+                raise ImporterError("Error mapping values: {:8.8}{}".format(_srow, _el))
 
             # TODO: Check if number of columns match headers
-            # TODO Do some error handling here to check for illegal values
+            # TODO: Do some error handling here to check for illegal values
             # TODO: some assert statments here
 
             if _rowcount == 0:      # Headers

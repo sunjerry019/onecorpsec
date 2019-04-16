@@ -116,7 +116,7 @@ def updateDatabaseCSV(request):
                 return http.HttpResponse(status=500, content=e)
 
             # Import the CSV
-            # delete = True, no log files since we don't want to clog up the server
+            # delete = True, and no log files since we don't want to clog up the server
             di = importCSV.DatabaseImporter(_dest + ".csv", request.user, True, None)
             try:
                 di.parse()
