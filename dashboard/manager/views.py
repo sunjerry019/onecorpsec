@@ -10,9 +10,11 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 import json
 
 # CSV Stuff
-import sys
+import sys, os
 sys.path.insert(0, 'database/')
 import checker, mapping, importCSV
+from fileValidator import FileValidator
+from django.core.exceptions import ValidationError
 from django.utils.encoding import smart_str
 
 import time
@@ -82,7 +84,6 @@ def updateDatabase(request):
     else:
         return http.HttpResponseForbidden(content="Forbidden; Please Login")
 
-
 def updateDatabaseCSV(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -90,23 +91,43 @@ def updateDatabaseCSV(request):
             _file = request.FILES['file']
             _dest = './temp/{}_{}'.format(request.user, int(time.time()))
 
-            with open(_dest + ".csv", 'wb+') as destination:
-                for chunk in _file.chunks():
-                    destination.write(chunk)
+            # Preliminary check on document
+            validate_file = FileValidator(max_size=52428800, content_types=('text/plain','text/csv')) # 52428800 B = 50 MiB
+            try:
+                validate_file(_file)
+            except ValidationError as e:
+                return http.HttpResponse(status=500, content=e)
 
-            # TODO: Check for CSV file here
+            if not os.path.exists('./temp'):
+                try:
+                    os.makedirs('./temp')
+                except OSError as e:
+                    return http.HttpResponse(status=500, content=e)
+
+            try:
+                with open(_dest + ".csv", 'wb+') as destination:
+                    for chunk in _file.chunks():
+                        destination.write(chunk)
+            # https://stackoverflow.com/a/4992124/3211506 (Does not catch KeyboardInterrupt, etc.)
+            except Exception as e:
+                # Remove file if exists
+                if os.path.isfile(_dest + ".csv"):
+                    os.remove(_dest + ".csv")
+                return http.HttpResponse(status=500, content=e)
 
             # Import the CSV
-            di = importCSV.DatabaseImporter(_dest + ".csv", request.user, True, _dest + ".log")
+            # delete = True, no log files since we don't want to clog up the server
+            di = importCSV.DatabaseImporter(_dest + ".csv", request.user, True, None)
             try:
-                _status, _output = di.parse()
-                if _status != 0:
-                    return http.HttpResponse(status=500, content=_output)
+                di.parse()
+            except importCSV.ImporterError as e:
+                di.clean()
+                return http.HttpResponse(status=500, content=e)
             except:
+                di.clean()
                 return http.HttpResponse(status=500, content="Unknown Parsing/Update Error")
 
             di.clean()
-
             return http.HttpResponse(content="OK")
         else:
             # If not POST, we generate a template for the csv
@@ -134,7 +155,7 @@ def deleteCompany(request):
             try:
                 _model.objects.get(coyregno = _CRN).delete()
                 return http.HttpResponse(status=200)
-            except:
+            except Exception as e:
                 return http.HttpResponse(status=500)
         else:
             return http.HttpResponseNotAllowed("POST", content="GET Not Allowed")
