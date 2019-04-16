@@ -3,6 +3,7 @@
 import csv
 import argparse
 from db import Database
+import os
 
 class NXFileError(Exception):
     pass
