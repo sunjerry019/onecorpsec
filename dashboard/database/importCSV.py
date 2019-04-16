@@ -11,6 +11,7 @@ import mysql.connector
 from mysql.connector import Error
 from db import Database
 from mapping import Mapping
+import re
 
 class ImporterError(Exception):
     """Generic error for errors in this importer"""
@@ -95,7 +96,51 @@ class DatabaseImporter:
         if _ele in GSTTypeMap:
             return(GSTTypeMap[_ele])
 
+        # Final test to change any string of integers into integers
+        try:
+            if isinstance(ele, str):
+                ele = int(ele)
+        except ValueError as e:
+            pass
+
         return ele
+
+    def removeTrailingCommas(self, _str):
+        lastCharTest = re.compile(r"[a-z0-9]", re.IGNORECASE)
+
+        while _str and not lastCharTest.match(_str[-1]):
+            _str = _str[:-1]
+
+        return _str
+
+    def checkRowValid(self, _row, _map):
+        emailTest = re.compile(r"^(?:(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]),\s*)*(?:(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))$", re.MULTILINE | re.IGNORECASE)
+
+        toemail  = self.removeTrailingCommas(row[_map.index("toEmail")])
+        ccemail  = self.removeTrailingCommas(row[_map.index("ccEmail")])
+        bccemail = self.removeTrailingCommas(row[_map.index("bccEmail")])
+
+        # Should be a valid month 1 - 12
+        monthCols = [
+            row[_map.index("fin_endMonth")],
+            row[_map.index("AGM_next")],
+            row[_map.index("GST_endMonth")],
+            row[_map.index("GST_next")],
+            row[_map.index("audit_next")],
+            row[_map.index("IRAS_next")]
+        ]
+
+        # Should be a valid year with 4 digits
+        yearCol = row[_map.index("fin_endYear")]
+
+        # Should be a valid type 1, 3 or 6
+        gstType = row[_map.index("GST_type")]
+
+        return len(toemail) >= 3 and \
+            emailTest.match(toemail) and \
+            (len(ccemail) == 0  or emailTest.match(ccemail)) and \
+            (len(bccemail) == 0 or emailTest.match(bccemail))
+
 
     def parse(self):
         # Prepare the database
@@ -121,14 +166,23 @@ class DatabaseImporter:
                 if self.logfile: self.logfile.write("Error mapping values: {}".format(row))
                 raise ImporterError("Error mapping values: {:8.8}{}".format(_srow, _el))
 
-            # TODO: Check if number of columns match headers
             # TODO: Do some error handling here to check for illegal values
-            # TODO: some assert statments here
 
             if _rowcount == 0:      # Headers
-                _map = [self.sqlMapping[x.strip()] for x in row]
+                assert len(row) == len(self.sqlMapping.keys()), "Numbers of columns do not match database"
+                try:
+                    _map = [self.sqlMapping[x.strip()] for x in row]
+                except Exception as e:
+                    raise ImporterError("Error mapping headers")
                 _colCount = len(_map)
             else:
+                # Check if CRN exists
+                assert _map.index("coyRegNo") > -1, "No CRN column found"
+                assert len(row[_map.index("coyRegNo")]) > 0, "No CRN found on row {}".format(_rowcount + 1)
+
+                # Check valid values
+                assert self.checkRowValid(row, _map), "Invalid data/type in CSV for CRN = {}. Check again?".format(row[_map.index("coyRegNo")])
+
                 # Check if exists
                 # Prepared SQL Statements will force quotes, table name is assumed to be clean and inserted directly into the query.
                 _r = self.database.query("SELECT * FROM `{}` WHERE (`coyRegNo` = %s);".format(self.table), (row[_map.index("coyRegNo")]), True)
@@ -142,8 +196,8 @@ class DatabaseImporter:
                     # INSERT INTO table1 (field1, field2, ...) VALUES (value1, value2, ...)
                     _q = "INSERT INTO `{}` ({}) VALUES ({})".format(self.table, ", ".join(_map), ", ".join(["%s"] * _colCount))
                 else:
-                    if self.logfile: self.logfile.write("Non-unique Identifier!")
-                    raise ImporterError("Non-unique Identifier!")
+                    if self.logfile: self.logfile.write("Non-unique Identifier, CRN = {}!",format(row[_map.index("coyRegNo")]))
+                    raise ImporterError("Non-unique Identifier, CRN = {}!",format(row[_map.index("coyRegNo")]))
                     return
 
                 _q += ";"

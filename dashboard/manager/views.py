@@ -120,7 +120,7 @@ def updateDatabaseCSV(request):
             di = importCSV.DatabaseImporter(_dest + ".csv", request.user, True, None)
             try:
                 di.parse()
-            except importCSV.ImporterError as e:
+            except importCSV.ImporterError, AssertionError as e:
                 di.clean()
                 return http.HttpResponse(status=500, content=e)
             except:
