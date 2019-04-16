@@ -12,8 +12,13 @@ from mysql.connector import Error
 from db import Database
 from mapping import Mapping
 
+class ImporterError(Exception):
+    """Generic error for errors in this importer"""
+    pass
+
+
 class DatabaseImporter:
-    def __init__(self, filename, username, delete = False, logfile = None):
+    def __init__(self, filename, username, delete = False, logfile = sys.stdout):
         # Initialize all variables and parameters
         # Must ensure username parameter is safe
 
@@ -25,10 +30,8 @@ class DatabaseImporter:
 
         self.sqlMapping = Mapping().getMap()
 
-        if logfile is not None:
+        if isinstance(logfile, str) and len(logfile) > 0:
             self.logfile = open(logfile, 'a')
-        else:
-            self.logfile = sys.stdout
 
         # connect to the database
         self.database.connect()
@@ -94,7 +97,6 @@ class DatabaseImporter:
 
         return ele
 
-
     def parse(self):
         # Prepare the database
         self.createTableIfDoesntExist()
@@ -120,8 +122,9 @@ class DatabaseImporter:
                 _returnOutput = "Error mapping values: {:8.8}{}".format(_srow, _el)
                 break
 
-            #TODO Do some error handling here to check for illegal values
-            # some assert statments here
+            # TODO: Check if number of columns match headers
+            # TODO Do some error handling here to check for illegal values
+            # TODO: some assert statments here
 
             if _rowcount == 0:      # Headers
                 _map = [self.sqlMapping[x.strip()] for x in row]
@@ -140,15 +143,14 @@ class DatabaseImporter:
                     # INSERT INTO table1 (field1, field2, ...) VALUES (value1, value2, ...)
                     _q = "INSERT INTO `{}` ({}) VALUES ({})".format(self.table, ", ".join(_map), ", ".join(["%s"] * _colCount))
                 else:
-                    self.logfile.write("Non-unique Identifier!")
-                    quit(1)
+                    if self.logfile: self.logfile.write("Non-unique Identifier!")
+                    raise ImporterError("Non-unique Identifier!")
+                    return
 
                 _q += ";"
                 self.database.query(_q, tuple(row))
 
             _rowcount += 1
-
-        return _returnStatus, _returnOutput
 
     def clean(self):
         # Cleanly close the Database
@@ -160,7 +162,8 @@ class DatabaseImporter:
             try:
                 os.remove(self.filename)
             except OSError:
-                self.logfile.write("Unable to delete csv file\n")
+                if self.logfile: self.logfile.write("Unable to delete csv file\n")
+                raise ImporterError("Unable to delete csv file")
 
 def _main():
     parser = argparse.ArgumentParser()
