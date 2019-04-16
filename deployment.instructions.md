@@ -9,3 +9,6 @@ install:
     django-material
 
 https://docs.djangoproject.com/en/dev/howto/static-files/ Deploy Static files appropriately
+
+Install:
+    pip install python-magic
