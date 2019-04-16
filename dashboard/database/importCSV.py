@@ -120,7 +120,7 @@ class DatabaseImporter:
         ccemail  = self.removeTrailingCommas(row[_map.index("ccEmail")])
         bccemail = self.removeTrailingCommas(row[_map.index("bccEmail")])
 
-        # Check if things are required
+        # TODO: Check if things are required
 
         # Should be a valid month 1 - 12
         monthCols = [
@@ -138,17 +138,19 @@ class DatabaseImporter:
         except Exception as e:
             return False
 
-        # Should be a valid year with 4 digits
-        yearCol = row[_map.index("fin_endYear")]
+        # Should be a valid year after 1900
+        yearCol = row[_map.index("fin_endYear")] > 1900
 
         # Should be a valid type 1, 3 or 6
-        gstType = row[_map.index("GST_type")]
+        gstType = row[_map.index("GST_type")] in {1: 0, 3: 0, 6: 0}
 
         return len(toemail) >= 3 and \
             emailTest.match(toemail) and \
             (len(ccemail) == 0  or emailTest.match(ccemail)) and \
             (len(bccemail) == 0 or emailTest.match(bccemail)) and \
-            monthCols
+            monthCols and \
+            gstType and \
+            yearCol
 
 
     def parse(self):
