@@ -117,13 +117,13 @@ def updateDatabaseCSV(request):
 
             # Import the CSV
             # delete = True, and no log files since we don't want to clog up the server
-            di = importCSV.DatabaseImporter(_dest + ".csv", request.user, True, None)
+            di = importCSV.DatabaseImporter(_dest + ".csv", request.user.username, True, None)
             try:
                 di.parse()
-            except importCSV.ImporterError, AssertionError as e:
+            except (importCSV.ImporterError, AssertionError) as e:
                 di.clean()
                 return http.HttpResponse(status=500, content=e)
-            except:
+            except Exception as e:
                 di.clean()
                 return http.HttpResponse(status=500, content="Unknown Parsing/Update Error")
 
