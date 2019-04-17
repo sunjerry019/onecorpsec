@@ -220,8 +220,6 @@ class DatabaseImporter:
                 if self.logfile: self.logfile.write("Error mapping values: {}".format(row))
                 raise ImporterError("Error mapping values: {:8.8}{}".format(_srow, _el))
 
-            # TODO: Do some error handling here to check for illegal values
-
             if _rowcount == 0:      # Headers
                 assert len(row) == len(self.sqlMapping.keys()), "Numbers of columns do not match database"
                 try:
