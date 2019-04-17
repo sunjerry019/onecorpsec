@@ -180,15 +180,6 @@ class DatabaseImporter:
         # Should be a valid year after 1900
         yearCol = row[_map.index("fin_endYear")] > 1900
 
-        print(len(toemail) >= 3,  \
-            emailTest.match(toemail), \
-            (len(ccemail) == 0  or emailTest.match(ccemail)) ,  \
-            (len(bccemail) == 0 or emailTest.match(bccemail)) , \
-            doneCols, \
-            monthCols , \
-            gstType , \
-            yearCol)
-
         return (row, len(toemail) >= 3 and \
             emailTest.match(toemail) and \
             (len(ccemail) == 0  or emailTest.match(ccemail)) and \
