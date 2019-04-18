@@ -120,49 +120,49 @@ class DatabaseImporter:
         # https://stackoverflow.com/a/201378/3211506
         emailTest = re.compile(r"^(?:(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]),\s*)*(?:(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))$", re.MULTILINE | re.IGNORECASE)
 
-        toemail  = self.removeTrailingCommas(row[_map.index("toEmail")])
-        ccemail  = self.removeTrailingCommas(row[_map.index("ccEmail")])
-        bccemail = self.removeTrailingCommas(row[_map.index("bccEmail")])
+        toemail  = self.removeTrailingCommas(row[_map["toEmail"]])
+        ccemail  = self.removeTrailingCommas(row[_map["ccEmail"]])
+        bccemail = self.removeTrailingCommas(row[_map["bccEmail"]])
 
-        row[_map.index("toEmail")]  = toemail
-        row[_map.index("ccEmail")]  = ccemail
-        row[_map.index("bccEmail")] = bccemail
+        row[_map["toEmail"]]  = toemail
+        row[_map["ccEmail"]]  = ccemail
+        row[_map["bccEmail"]] = bccemail
 
         # Check if all ? fields have been filled up
-        _reqs = isinstance(row[_map.index("audit_req")], int) & isinstance(row[_map.index("GST_req")], int)
+        _reqs = (isinstance(row[_map["audit_req"]], int) & isinstance(row[_map["GST_req"]], int))
         if not _reqs:
             return row, False
 
         # Check months and done fields
         monthCols = [
-            row[_map.index("fin_endMonth")],
-            row[_map.index("AGM_next")],
-            row[_map.index("IRAS_next")]
+            row[_map["fin_endMonth"]],
+            row[_map["AGM_next"]],
+            row[_map["IRAS_next"]]
         ]
         doneCols = [
-            row[_map.index("AGM_done")],
-            row[_map.index("IRAS_done")]
+            row[_map["AGM_done"]],
+            row[_map["IRAS_done"]]
         ]
 
-        if row[_map.index("audit_req")]:
-            monthCols.append(row[_map.index("audit_next")])
-            doneCols.append(row[_map.index("audit_done")])
+        if row[_map["audit_req"]]:
+            monthCols.append(row[_map["audit_next"]])
+            doneCols.append(row[_map["audit_done"]])
         else:
-            row[_map.index("audit_done")] = -1
-            row[_map.index("audit_next")] = -1
+            row[_map["audit_done"]] = -1
+            row[_map["audit_next"]] = -1
 
-        if row[_map.index("GST_req")]:
-            monthCols.append(row[_map.index("GST_endMonth")])
-            monthCols.append(row[_map.index("GST_next")])
+        if row[_map["GST_req"]]:
+            monthCols.append(row[_map["GST_endMonth"]])
+            monthCols.append(row[_map["GST_next"]])
             # Should be a valid type 1, 3 or 6
-            gstType = (row[_map.index("GST_type")] in {1: 0, 3: 0, 6: 0})
-            doneCols.append(row[_map.index("GST_done")])
+            gstType = (row[_map["GST_type"]] in {1: 0, 3: 0, 6: 0})
+            doneCols.append(row[_map["GST_done"]])
         else:
             gstType = True
-            row[_map.index("GST_done")]     = -1
-            row[_map.index("GST_endMonth")] = -1
-            row[_map.index("GST_next")]     = -1
-            row[_map.index("GST_type")]     = -1
+            row[_map["GST_done"]]     = -1
+            row[_map["GST_endMonth"]] = -1
+            row[_map["GST_next"]]     = -1
+            row[_map["GST_type"]]     = -1
 
         # Should be a valid month 1 - 12
         # monthCols = [ x for x in monthCols if x != "" ] # Remove any empty strings
@@ -178,7 +178,7 @@ class DatabaseImporter:
 
 
         # Should be a valid year after 1900
-        yearCol = row[_map.index("fin_endYear")] > 1900
+        yearCol = row[_map["fin_endYear"]] > 1900
 
         return (row, len(toemail) >= 3 and \
             emailTest.match(toemail) and \
@@ -224,13 +224,16 @@ class DatabaseImporter:
                 assert _map.index("coyRegNo") > -1, "No CRN column found"
                 assert len(row[_map.index("coyRegNo")]) > 0, "No CRN found on row {}".format(_rowcount + 1)
 
+                # https://stackoverflow.com/a/36460020/3211506
+                _mapDict = { k: v for v, k in enumerate(_map) }
+
                 # Check valid values
-                row, rowValid = self.checkRowValid(row, _map)
-                assert rowValid, "Invalid data/type in CSV for CRN = {}. Check again?".format(row[_map.index("coyRegNo")])
+                row, rowValid = self.checkRowValid(row, _mapDict)
+                assert rowValid, "Invalid data/type in CSV for CRN = {}. Check again?".format(row[_mapDict["coyRegNo"]])
 
                 # Check if exists
                 # Prepared SQL Statements will force quotes, table name is assumed to be clean and inserted directly into the query.
-                _r = self.database.query("SELECT * FROM `{}` WHERE (`coyRegNo` = %s);".format(self.table), (row[_map.index("coyRegNo")]), True)
+                _r = self.database.query("SELECT * FROM `{}` WHERE (`coyRegNo` = %s);".format(self.table), (row[_mapDict["coyRegNo"]]), True)
 
                 if len(_r) == 1:
                     # UPDATE table1 SET field1=new_value1 WHERE condition
@@ -241,9 +244,8 @@ class DatabaseImporter:
                     # INSERT INTO table1 (field1, field2, ...) VALUES (value1, value2, ...)
                     _q = "INSERT INTO `{}` ({}) VALUES ({})".format(self.table, ", ".join(_map), ", ".join(["%s"] * _colCount))
                 else:
-                    if self.logfile: self.logfile.write("Non-unique Identifier, CRN = {}!",format(row[_map.index("coyRegNo")]))
-                    raise ImporterError("Non-unique Identifier, CRN = {}!",format(row[_map.index("coyRegNo")]))
-                    return
+                    if self.logfile: self.logfile.write("Non-unique Identifier, CRN = {}!",format(row[_mapDict["coyRegNo"]]))
+                    raise ImporterError("Non-unique Identifier, CRN = {}!",format(row[_mapDict["coyRegNo"]]))
 
                 _q += ";"
                 self.database.query(_q, tuple(row))
