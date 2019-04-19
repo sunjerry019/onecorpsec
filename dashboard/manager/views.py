@@ -12,7 +12,7 @@ import json
 # CSV Stuff
 import sys, os
 sys.path.insert(0, 'database/')
-import checker, mapping, importCSV
+import checker, mapping, importCSV, exportCSV
 from fileValidator import FileValidator
 from django.core.exceptions import ValidationError
 from django.utils.encoding import smart_str
@@ -161,5 +161,29 @@ def deleteCompany(request):
                 return http.HttpResponse(status=500)
         else:
             return http.HttpResponseNotAllowed("POST", content="GET Not Allowed")
+    else:
+        return http.HttpResponseForbidden(content="Forbidden; Please Login")
+
+def download(request):
+    if request.user.is_authenticated:
+        return http.HttpResponseForbidden(content="Forbidden; Please access download resources directly.")
+    else:
+        return http.HttpResponseForbidden(content="Forbidden; Please Login")
+
+def downloadDatabase(request):
+    if request.user.is_authenticated:
+        # sth here to get csv
+        _ex = exportCSV.DatabaseExporter(request.user.username, None)
+        try:
+            _csvT = _ex.exportDB()
+        except exportCSV.ExporterError as e:
+            return http.HttpResponse(status=500, content=e)
+
+        _ex.clean()
+
+        # https://stackoverflow.com/a/1158750/3211506
+        _res = http.HttpResponse(content=_csvT, content_type='text/csv')
+        _res['Content-Disposition'] = 'attachment; filename={}'.format(smart_str("database.csv"))
+        return  _res
     else:
         return http.HttpResponseForbidden(content="Forbidden; Please Login")

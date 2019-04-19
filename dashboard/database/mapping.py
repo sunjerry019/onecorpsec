@@ -58,6 +58,34 @@ class Mapping():
 
         return ret
 
+    def getOrderedMap(self):
+        ret = dict()
+        order = list()
+        _columns = self.database.query("SELECT * FROM {}".format(self.table), None, True)
+        for c in _columns:
+            order.append(c[2])
+            ret[c[2]] = c[1]
+
+        return order, ret
+
+    def getInverseOrderedMap(self):
+        ret = dict()
+        order = list()
+        _columns = self.database.query("SELECT * FROM {}".format(self.table), None, True)
+        for c in _columns:
+            order.append(c[1])
+            ret[c[1]] = c[2]
+
+        return order, ret
+
+    def getInverseMap(self):
+        ret = dict()
+        _columns = self.database.query("SELECT * FROM {}".format(self.table), None, True)
+        for c in _columns:
+            ret[c[1]] = c[2]
+
+        return ret
+
     def generateTemplate(self, outputCSV = None):
         _csv = outputCSV
         if not _csv: _csv = self.csv
