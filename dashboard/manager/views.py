@@ -36,6 +36,7 @@ def render_Home(request, page = 1):
         rows = None
         all_rows = []
         override_base = "base.html"
+        numitems = None
 
     # https://stackoverflow.com/a/13048311/3211506
     # Ensures CSRF
@@ -43,6 +44,7 @@ def render_Home(request, page = 1):
         'hostname'      : "OneCorpSec",
         'user'          : request.user,
         'rows'          : rows,
+        'numitems'      : numitems,
         'rowCount'      : len(all_rows),
         'override_base' : override_base
     })

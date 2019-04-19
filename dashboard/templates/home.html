@@ -52,8 +52,6 @@
                                 {% endif %}
                             </ul>
 
-                            {# TODO: Add some enum editor here #}
-
                             {# Zero padding: https://djangosnippets.org/snippets/543/#c655 #}
                             <ul class="collapsible company-list">
                                 {% for coy in rows %}
@@ -171,6 +169,16 @@
                                     </li>
                                 {% endfor %}
                             </ul>
+
+                            {# Enum editor #}
+                            <div id="enum-editor">
+                                <form action="/" method="GET">
+                                    <span>Item(s)/page</span>
+                                    <div class="input-field"><input id="enum" name="enum" type="number" class="validate center" min="1" value="{{ numitems }}"></div>
+                                    <input type="submit" class="btn waves-effect waves-light" value="Go">
+                                </form>
+                            </div>
+
 
                             <div id="modal-delete-confirm" class="modal delete-confirm">
                                 <div class="progress">
