@@ -83,10 +83,11 @@
             ele.addEventListener('click', e => e.preventDefault() );
         });
         // Initialize materializecss stuff
-        var _collapsibles   = document.querySelectorAll('.collapsible');
-        var _c_instances    = M.Collapsible.init(_collapsibles, false);
-        var _modals         = document.querySelectorAll('.modal');
-        var _m_instances    = M.Modal.init(_modals, false);
+        // var _collapsibles   = document.querySelectorAll('.collapsible');
+        // var _c_instances    = M.Collapsible.init(_collapsibles, false);
+        // var _modals         = document.querySelectorAll('.modal');
+        // var _m_instances    = M.Modal.init(_modals, false);
+        M.AutoInit();
 
         // AJAX for change in done-status
         _checkboxes = document.querySelectorAll(".coy-section");
