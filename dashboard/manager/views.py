@@ -9,10 +9,13 @@ from .models import getTable
 from django.views.decorators.csrf import ensure_csrf_cookie
 import json
 
+# errors
+from django.db.utils import ProgrammingError
+
 # CSV Stuff
 import sys, os
 sys.path.insert(0, 'database/')
-import checker, mapping, importCSV, exportCSV
+import checker, mapping, importCSV, exportCSV, helpers
 from fileValidator import FileValidator
 from django.core.exceptions import ValidationError
 from django.utils.encoding import smart_str
@@ -23,7 +26,13 @@ import time
 def render_Home(request, page = 1):
     if request.user.is_authenticated:
         _model = getTable(request.user.username)
-        all_rows = _model.objects.all().order_by('coyname')
+        try:
+            all_rows = _model.objects.all().order_by('coyname')
+            # attempt to access the object so it can error out if necessary
+            _x = str(all_rows)
+        except ProgrammingError as e:
+            helpers.createTableIfDoesntExist(request.user.username)
+            all_rows = _model.objects.all().order_by('coyname')
 
         numitems = request.session['enum'] if 'enum' in request.session else 25
         numitems = request.GET.get('enum') or numitems
