@@ -175,7 +175,7 @@ def deleteCompany(request):
 
 def download(request):
     if request.user.is_authenticated:
-        return http.HttpResponseForbidden(content="Forbidden; Please access download resources directly.")
+        return http.HttpResponseForbidden(content="Forbidden; Please access downloadable resources directly")
     else:
         return http.HttpResponseForbidden(content="Forbidden; Please Login")
 

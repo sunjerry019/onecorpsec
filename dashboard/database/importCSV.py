@@ -45,6 +45,9 @@ class DatabaseImporter:
         return "table_{}".format(self.username)
 
     def createTableIfDoesntExist(self):
+        # This function has a mirror in helpers.py
+        # Please change that function as well if this function is changed
+
         # Check if the table already exists
         _r = self.database.query("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'{}'".format(self.table), None, True)
 

@@ -3,6 +3,9 @@
 from db import Database
 
 def createTableIfDoesntExist(usrname):
+    # This is a mirror of the function in importCSV.py
+    # Please change this function as well if that function is changed in importCSV
+    
     _database = Database()
 
     # connect to the database
