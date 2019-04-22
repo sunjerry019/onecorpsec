@@ -20,11 +20,10 @@ class NXError(Exception):
     pass
 
 class Checker():
-    def __init__(self, user = False, _map = False):
+    def __init__(self, user = False, _map = False, _confLoc = None):
         # user = username
         # _map = list of column headers
-
-        self.database = Database()
+        self.database = Database(_confLoc) if _confLoc is not None else Database()
         self.database.connect()
         self.users = self.getUsers()
 
@@ -76,7 +75,7 @@ class Checker():
             # Check if all 3 type are done (where required)
             # If all 3 types are done, update the financial year and reset all the flags
 
-            _okays = 0;
+            _okays = 0
 
             for _typ in self.types:
                 _req        = _a["{}_req".format(_typ)] if _typ in self.optional else True
@@ -94,7 +93,7 @@ class Checker():
                     if _yearEnd <= self.today <= _finalEmail and self.today >= _nextEmail and self.sendEmail(user, _a["coyRegNo"] , _typ):
                         # If any of the previous conditions don't match, the conditional will shortcircuit and not send the email
                         # Only update the database if the email sending is sucessful
-                        self.updateDatabaseDelta(user, _a["coyRegNo"], "{}_next".format(_typ), _interval[_typ])
+                        self.updateDatabaseDelta(user, _a["coyRegNo"], "{}_next".format(_typ), _intervals[_typ])
 
                     if self.today >= _finalEmail:
                         # we mark the item as if its done since its the final email we are going send anyway
@@ -112,20 +111,20 @@ class Checker():
                 # x = sum([self.getField(_usr, _CRN, t + "_done") for t in self.types])
 
                 # Increase financial year by 1
-                self.updateDatabaseDelta(_usr, _CRN, "fin_endYear", 1)
+                self.updateDatabaseDelta(user, _a["coyRegNo"], "fin_endYear", 1)
                 _fields = []
                 _vals   = []
 
                 for _t in self.types:
-                    _fields += [ "{}_done".format(_t), "{}_next" ]
+                    _fields += [ "{}_done".format(_t), "{}_next".format(_t) ]
+                    _vals   += [0, _a["fin_endMonth"]]
                     # NOTE: Marking GST as done stops emails until the next financial year!
-                    _vals += [0, _a["fin_endMonth"]]
-
-                self.updateDatabaseFields(_usr, _CRN, _fields, _vals)
+                print(_fields, _vals)
+                self.updateDatabaseFields(user, _a["coyRegNo"], _fields, _vals)
             else:
                 # Update the _done fields in the database if they have changed
                 if len(_markDone) > 0:
-                    self.updateDatabaseFields(_usr, _CRN, _markDone, [1] * len(_markDone))
+                    self.updateDatabaseFields(user, _a["coyRegNo"], _markDone, [1] * len(_markDone))
 
     def getField(self, _usr, _CRN, _field):
         # returns the first result for the user, CRN and field
@@ -140,7 +139,7 @@ class Checker():
 
     def updateDatabaseFields(self, _usr, _CRN, _fields, _vals):
         # _fields and _vals are list()s
-        _q = ["UPDATE `table_{}` SET".format(_usr)] + ["{} = %s,".format(x) for x in _fields[:-1]] + ["{} = %s".format(_fields[-1])] + ["WHERE (`CRN` = %s)"]
+        _q = ["UPDATE `table_{}` SET".format(_usr)] + ["{} = %s,".format(x) for x in _fields[:-1]] + ["{} = %s".format(_fields[-1])] + ["WHERE (`coyRegNo` = %s)"]
         _q = " ".join(_q)
         _vals.append(_CRN)
 
@@ -175,7 +174,7 @@ class Checker():
 
 
 def _main():
-    x = Checker()
+    x = Checker(_confLoc = "../../config.location")
     x.runCheckAll()
     x.clean()
 
