@@ -84,11 +84,8 @@ def updateDatabase(request):
             # Update the Database
             try:
                 _row.save(force_update=True, update_fields=_updateFields)
-
-                # TODO: If successful, trigger the checker here for that username for that company
-
                 return http.HttpResponse(status=200)
-            except:
+            except Exception as e:
                 return http.HttpResponse(status=500)
         else:
             return http.HttpResponseNotAllowed("POST", content="GET Not Allowed")

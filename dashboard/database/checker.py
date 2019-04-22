@@ -10,6 +10,7 @@ If so, emails are sent using sendEmailWithTemplate.py
 
 import mysql.connector
 from db import Database
+from mapping import Mapping
 import datetime
 from datetime import datetime as dt
 # from dateutil.relativedelta import relativedelta
@@ -19,7 +20,10 @@ class NXError(Exception):
     pass
 
 class Checker():
-    def __init__(self, user = False):
+    def __init__(self, user = False, _map = False):
+        # user = username
+        # _map = list of column headers
+
         self.database = Database()
         self.database.connect()
         self.users = self.getUsers()
@@ -30,34 +34,20 @@ class Checker():
             else:
                 self.users = [user]
 
+        if not _map:
+            # columns should be the same for every one
+            self.columnMap = self.database.query("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=N'table_{}';".format(self.users[0]), None, True)
+            self.columnMap = [x[0] for x in self.columnMap]
+        else:
+            # Reduce database call if unnecessary
+            self.columnMap = _map
+
         self.today = dt.now()
 
-        # columns should be the same for every one
-        self.columnMap = self.database.query("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=N'table_{}';".format(self.users[0]), None, True)
-        self.columnMap = [x[0] for x in self.columnMap]
-
         # Audit                             => QUESTION: Unconfirmed whether we need this
-        self.types = ["AGM", "GST", "IRAS", "audit"]
-
-    def stopEmail(self, _usr, _CRN, _typ):
-        # REVIEW: Test this part
-
-        # First update the database flag
-        self.updateDatabase(_usr, _typ + "_done", _CRN, 1)
-
-        # Check if all 3 type are done
-        # If all 3 types are done, update the financial year and reset all the flags
-        # x = sum([self.getField(_usr, _CRN, t + "_done") for t in self.types])
-        _x = 0
-        for _t in self.types:
-            _x += self.getField(_usr, _CRN, _t + "_done")
-
-        if _x == 3:
-            # Increase financial year by 1
-            self.updateDatabaseDelta(_usr, _CRN, "fin_endYear", 1)
-            for _t in self.types:
-                self.updateDatabase(_usr, _CRN, _t + "_done", 0)
-                # TODO: Reset email_next
+        self.types    = ["AGM", "GST", "IRAS", "audit"]
+        self.numtypes = 4
+        self.optional = {"GST": 1, "audit": 1}
 
     def runCheckAll(self):
         if self.users:
@@ -83,9 +73,16 @@ class Checker():
                 "audit" : 1
             }
 
+            # Check if all 3 type are done (where required)
+            # If all 3 types are done, update the financial year and reset all the flags
+
+            _okays = 0;
+
             for _typ in self.types:
+                _req        = _a["{}_req".format(_typ)] if _typ in self.optional else True
                 _done       = _a["{}_done".format(_typ)]
-                _req        = _a["{}_req".format(_typ)] if _typ in ["GST", "audit"] else True
+                _markDone   = []
+                if _done < 0: _done = 0
 
                 if _req and not _done:
                     _yearEnd  = dt(_a["fin_endYear"], _a["fin_endMonth"], 1)
@@ -101,15 +98,53 @@ class Checker():
 
                     if self.today >= _finalEmail:
                         # we mark the item as if its done since its the final email we are going send anyway
-                        self.stopEmail(user, _a["coyRegNo"], _typ)
+                        _done = 1
+                        _markDone.append(_typ)
+
+                # Check for OKAYNESS
+                _ok   = _done | (_req ^ 1)
+                _okays += _ok
+
+            if _okays == self.numtypes:
+                # REVIEW: Test this part
+                # Check if all 3 type are done (where required)
+                # If all 3 types are done, update the financial year and reset all the flags
+                # x = sum([self.getField(_usr, _CRN, t + "_done") for t in self.types])
+
+                # Increase financial year by 1
+                self.updateDatabaseDelta(_usr, _CRN, "fin_endYear", 1)
+                _fields = []
+                _vals   = []
+
+                for _t in self.types:
+                    _fields += [ "{}_done".format(_t), "{}_next" ]
+                    # NOTE: Marking GST as done stops emails until the next financial year!
+                    _vals += [0, _a["fin_endMonth"]]
+
+                self.updateDatabaseFields(_usr, _CRN, _fields, _vals)
+            else:
+                # Update the _done fields in the database if they have changed
+                if len(_markDone) > 0:
+                    self.updateDatabaseFields(_usr, _CRN, _markDone, [1] * len(_markDone))
 
     def getField(self, _usr, _CRN, _field):
         # returns the first result for the user, CRN and field
         # usually no more than 1 result will be returned
         return self.database.query("SELECT `{}` FROM `table_{}` WHERE `coyRegNo`='{}';".format(_field, _usr, _CRN), None, True)[0][0]
 
-    def updateDatabase(self, _usr, _CRN, _field, _val):
+    def getRow(self, _usr, _CRN):
+        return self.database.query("SELECT * FROM table_{} WHERE 'coyRegNo' = '{}';".format(_usr, _CRN), None, True)[0]
+
+    def updateDatabaseField(self, _usr, _CRN, _field, _val):
         return self.database.query("UPDATE `table_{}`SET `{}`='{}' WHERE `coyRegNo`='{}';".format(_usr, _field, _val, _CRN))
+
+    def updateDatabaseFields(self, _usr, _CRN, _fields, _vals):
+        # _fields and _vals are list()s
+        _q = ["UPDATE `table_{}` SET".format(_usr)] + ["{} = %s,".format(x) for x in _fields[:-1]] + ["{} = %s".format(_fields[-1])] + ["WHERE (`CRN` = %s)"]
+        _q = " ".join(_q)
+        _vals.append(_CRN)
+
+        self.database.query(_q, tuple(_vals))
 
     def updateDatabaseDelta(self, _usr, _CRN, _field, _increment):
         _prevVal = self.database.query("SELECT `{}` FROM `table_{}` WHERE `coyRegNo`='{}';".format(_field, _usr, _CRN), None, True)[0][0]

@@ -100,7 +100,7 @@
                 djangoHelpers.ajaxUpdate( "POST", "/update/", 'application/json', JSON.stringify(_data),
                     function(status, response) {
                         // Success
-                        M.toast({html: 'Update Successful!', displayLength: 1000});
+                        M.toast({html: 'Update Successful!<br>Dates will be updated next time the checker is run.', displayLength: 1000});
                     },
                     function(status, response) {
                         // Fail
