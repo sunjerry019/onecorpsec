@@ -15,6 +15,9 @@ import datetime
 from datetime import datetime as dt
 # from dateutil.relativedelta import relativedelta
 # https://stackoverflow.com/a/15155212
+import sys
+sys.path.insert(0, '../')
+import mailer
 
 class NXError(Exception):
     pass
@@ -90,7 +93,7 @@ class Checker():
                     # IRAS only check until Nov 20; Set limit for checking (1 Year)
                     _finalEmail = dt(_a["fin_endYear"], 11, 30) if _typ is "IRAS" else dt(_a["fin_endYear"] + 1, _a["fin_endMonth"], 1)
 
-                    if _yearEnd <= self.today <= _finalEmail and self.today >= _nextEmail and self.sendEmail(user, _a["coyRegNo"] , _typ):
+                    if _yearEnd <= self.today <= _finalEmail and self.today >= _nextEmail and self.sendEmail(user, _a["coyRegNo"] , _typ, _a):
                         # If any of the previous conditions don't match, the conditional will shortcircuit and not send the email
                         # Only update the database if the email sending is sucessful
                         self.updateDatabaseDelta(user, _a["coyRegNo"], "{}_next".format(_typ), _intervals[_typ])
@@ -150,8 +153,10 @@ class Checker():
         _newVal = _prevVal + _increment
         return self.database.query("UPDATE `table_{}`SET `{}`='{}' WHERE `coyRegNo`='{}';".format(_usr, _field, _newVal, _CRN))
 
-    def sendEmail(self, _usr, _coy, _typ):
+    def sendEmail(self, _usr, _coy, _typ, _row):
         print("{} - {}: Sending Email for {}".format(_usr, _coy, _typ))
+
+
 
         # TODO: actually send the email
         return True
