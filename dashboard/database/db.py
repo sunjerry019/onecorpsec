@@ -14,11 +14,10 @@ import mysql.connector
 from mysql.connector import Error
 
 class Database:
-    def __init__(self):
+    def __init__(self, configLocation = "../config.location"):
         # Source for the configuration file
-        _confLoc = "../config.location"
-        with open(_confLoc, 'r') as f:
-            _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), f.readlines()[0].strip())
+        with open(configLocation, 'r') as f:
+            _confFile = os.path.join(os.path.dirname(os.path.abspath(configLocation)), f.readlines()[0].strip())
 
         with open(_confFile, 'r') as f:
             self.configurations = json.load(f)

@@ -20,14 +20,14 @@ class ImporterError(Exception):
 
 
 class DatabaseImporter:
-    def __init__(self, filename, username, delete = False, logfile = sys.stdout):
+    def __init__(self, filename, username, delete = False, logfile = sys.stdout, configLocation = None):
         # Initialize all variables and parameters
         # Must ensure username parameter is safe
 
         self.delete = delete
         self.csvname = filename
         self.csvfile = open(self.csvname, 'r')
-        self.database = Database()
+        self.database = Database(configLocation) if configLocation else Database()
         self.username = username
 
         self.sqlMapping = Mapping().getMap()
@@ -276,7 +276,7 @@ def _main():
     parser.add_argument('-d', '--delete', action='store_true', help = "add flag to delete csv file after script")
     args = parser.parse_args()
 
-    x = DatabaseImporter(args.filename, args.username, args.delete ,args.logfile)
+    x = DatabaseImporter(args.filename, args.username, args.delete ,args.logfile, configLocation = "../../config.location")
     x.parse()
     x.clean()
 
