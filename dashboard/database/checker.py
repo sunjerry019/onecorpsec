@@ -2,7 +2,7 @@
 
 """
 This script is meant to check against the database for all the tables to see whether emails are to be sent.
-If so, emails are sent using sendEmailWithTemplate.py
+If so, emails are sent using mailer.py
 """
 
 # NOTE: No input sanitization is done here as input are supposed to be safe
@@ -109,7 +109,7 @@ class Checker():
                 #    D'  D
                 # R' 1   1
                 # R  0   1
-                
+
                 _ok   = _done | (_req ^ 1)
                 _okays += _ok
 
