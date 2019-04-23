@@ -18,7 +18,7 @@ class Mail():
 		plaintext = get_template('emails/email.txt')
 		htmly     = get_template('emails/email.html')
 
-		d = Context({ 'username': "bluhb" })
+		d ={ 'username': "bluhb" }
 
 		subject, from_email, to = 'hello', settings.DEFAULT_FROM_EMAIL, 'sunyudong@theenglishtuitioncorner.com'
 		text_content = plaintext.render(d)
