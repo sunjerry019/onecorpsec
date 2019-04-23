@@ -40,12 +40,14 @@ class Database:
             print("Error while connecting to MySQL: \n{}".format(e))
 
     def query(self, _query, data = None, result = False):
+        # ALWAYS USE SQL PREPARED STATEMENTS TO PREVENT BOBBY TABLES
         if data and type(data) is not tuple:
             data = (data,)
 
         self.dbCursor.execute(_query, data) if data else self.dbCursor.execute(_query)
 
         if result:
+            # returns a tuple (row1, row2, ...) of tuple (field1,field2, ...)
             return self.dbCursor.fetchall()
         else:
             return True

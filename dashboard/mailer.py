@@ -8,17 +8,17 @@ os.environ["DJANGO_SETTINGS_MODULE"] = "dashboard.settings"
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
-import dashboard.settings
+import dashboard.settings as settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
 
 class Mail():
 	def __init__(self):
-		plaintext = get_template('email.txt')
-		htmly     = get_template('email.html')
+		plaintext = get_template('emails/email.txt')
+		htmly     = get_template('emails/email.html')
 
-		d = Context({ 'username': username })
+		d = Context({ 'username': "bluhb" })
 
 		subject, from_email, to = 'hello', settings.DEFAULT_FROM_EMAIL, 'sunyudong@theenglishtuitioncorner.com'
 		text_content = plaintext.render(d)
@@ -27,6 +27,7 @@ class Mail():
 		msg.attach_alternative(html_content, "text/html")
 		msg.send()
 
+Mail()
 
 # send_mail(
 # 	"htmlemailer/example",
