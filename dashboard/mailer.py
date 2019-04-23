@@ -14,25 +14,65 @@ from django.template.loader import get_template
 from django.template import Context
 
 class Mail():
-	def __init__(self):
-		plaintext = get_template('emails/email.txt')
-		htmly     = get_template('emails/email.html')
+	def __init__(self, reply_to, row):
+		# row is a zipped dictionary
+		self.row = row
+		self.headers = { 'Auto-Submitted': 'auto-generated' }
+		self.reply_to = reply_to
+		self.context = {
+			'addressed_to' : self.row["addresseeName"] if self.row["addresseeName"] else self.row["coyName"],
+			"coyname"		: self.row["coyName"],
+			"coyregno"		: self.row["coyRegNo"]
+		}
+		self.to  = [ x.strip() for x in self.row["toEmail"].split(",") ]
+		self.cc  = [ x.strip() for x in self.row["ccEmail"].split(",") ] + [ self.reply_to ]
+		self.bcc = [ x.strip() for x in self.row["bccEmail"].split(",") ]
 
-		d ={ 'username': "bluhb" }
+		self.defaultoptions = {
+			"subject"		: "[OneCorpSec] No Subject",
+			"body"	 		: "This email contains no content.",
+			"from_email"	: settings.DEFAULT_FROM_EMAIL,
+			"headers"		: self.headers,
+			"to"			: self.to,
+			"cc"			: self.cc,
+			"bcc"			: self.bcc,
+			"reply_to"		: self.reply_to
+		}
 
-		subject, from_email, to = 'hello', settings.DEFAULT_FROM_EMAIL, 'sunyudong@theenglishtuitioncorner.com'
+	def send_acra(self):
+		subject = '[OneCorpSec] ACRA/AGM Reminder for {}'.format(self.row["coyname"])
+		plaintext = get_template('emails/agm_acra.txt')
+		htmly     = get_template('emails/agm_acra.html')
+
+		d = self.context
+		# Add additional contexts
+		d.update({
+			"subject"		: subject,
+			"fin_endmonth" 	: self.row["fin_endMonth"],
+			"fin_endYear"	: self.row["fin_endYear"]
+		})
+
 		text_content = plaintext.render(d)
 		html_content = htmly.render(d)
-		msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-		msg.attach_alternative(html_content, "text/html")
-		msg.send()
 
-Mail()
+		options = {
+			"subject"		: subject,
+			"body"	 		: text_content
+		}
+
+		return self.sendmail(options, html_content)
+
+	def sendmail(self, addOptions, html_content):
+		options = {**self.defaultoptions, **addOptions}
+
+		msg = EmailMultiAlternatives(**options)
+		msg.attach_alternative(html_content, "text/html")
+		return msg.send()
 
 # send_mail(
 # 	"htmlemailer/example",
 # 	settings.DEFAULT_FROM_EMAIL,
-# 	['sunyudong@theenglishtuitioncorner.com'],
+# 	['a@example.com'],
 # 	{
 # 		"my_message": "Hello & good day to you!"
 # 	}
