@@ -29,12 +29,13 @@ class Checker():
         self.database = Database(_confLoc) if _confLoc is not None else Database()
         self.database.connect()
         self.users = self.getUsers()
+        self.mailerCompany = None
 
         if user:
             if user not in self.users:
                 raise NXError("User does not have a valid table")
             else:
-                self.users = [user]
+                self.users = {user: self.users[user]}
 
         if not _map:
             # columns should be the same for every one
@@ -156,21 +157,29 @@ class Checker():
     def sendEmail(self, _usr, _coy, _typ, _row):
         print("{} - {}: Sending Email for {}".format(_usr, _coy, _typ))
 
-        x = mailer.Mail()
+        if self.mailerCompany is None or self.mailerCompany is not _coy:
+            # Reuse mailer if same company
+            self.mailer = mailer.Mail(self.users[_usr], _row)
+            self.mailerMappingDict = {
+                "AGM"   : self.mailer.send_acra,
+                "GST"   : self.mailer.send_GST,
+                "IRAS"  : self.mailer.send_acra,
+                "audit" : self.mailer.send_audit
+            }
+            self.mailerCompany = _coy
 
-        # TODO: actually send the email
-        return True
+        return self.mailerMappingDict[_typ]()
 
     def getUsers(self):
         # This function returns a list of users with a user database table
         # Users without a database table will not be returned
 
-        users = []
-        _users = self.database.query("SELECT username FROM `{}`".format(self.database.configurations["userTable"]), None, True)
+        users = {}
+        _users = self.database.query("SELECT username, email FROM `{}`".format(self.database.configurations["userTable"]), None, True)
         for user in _users:
             _r = self.database.query("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'table_{}'".format(user[0]), None, True)
             if len(_r):
-                users.append(user[0])
+                users[user[0]] = user[1]
         return users
 
     def clean(self):
