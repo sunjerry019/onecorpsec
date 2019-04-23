@@ -1,0 +1,5 @@
+Dear {{ addressed_to }},
+
+Please note that the GST for {{ coyname }} ({{ coyregno }}) is due for submission and this is a {{ gst_interval }} reminder for you to complete your GST returns.
+
+This is a computer generated email. No signature is required.

@@ -1,0 +1,18 @@
+{% extends "emails/0_email-base.html" %}
+
+{% block head %}
+    {% block extra_head %}
+    {% endblock %}
+{% endblock %}
+
+{% block body %}
+
+    {% block content %}
+    <p>Dear {{ addressed_to }},</p>
+
+    <p>Please note that the GST for {{ coyname }} ({{ coyregno }}) is due for submission and this is a {{ gst_interval }} reminder for you to complete your GST returns.</p>
+
+    <small>This is a computer generated email. No signature is required.</small>
+    {% endblock %}
+
+{% endblock %}

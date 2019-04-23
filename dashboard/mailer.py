@@ -24,6 +24,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
 
+from datetime import date
+
 class Mail():
 	def __init__(self, reply_to, row):
 		# row is a zipped dictionary of the mysql entry for that company
@@ -34,7 +36,9 @@ class Mail():
 		self.context = {
 			'addressed_to' 	: self.row["addresseeName"] if self.row["addresseeName"] else self.row["coyName"],
 			"coyname"		: self.row["coyName"],
-			"coyregno"		: self.row["coyRegNo"]
+			"coyregno"		: self.row["coyRegNo"],
+			"fin_endmonth" 	: self.row["fin_endMonth"],
+			"fin_endYear"	: self.row["fin_endYear"]
 		}
 		self.to  = [ x.strip() for x in self.row["toEmail"].split(",") ]
 		self.cc  = [ x.strip() for x in self.row["ccEmail"].split(",") ] + [ self.reply_to ]
@@ -51,18 +55,78 @@ class Mail():
 			"reply_to"		: self.reply_to
 		}
 
+		self.GST_Map = { 1 : "monthly", 3: "quarterly", 6: "semi-annual" }
+
+		self.today = date.today()
+
 	def send_acra(self):
-		subject = '[OneCorpSec] ACRA/AGM Reminder for {}'.format(self.row["coyname"])
+		subject   = '[OneCorpSec] {}/{:02} ACRA/AGM Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
 		plaintext = get_template('emails/agm_acra.txt')
 		htmly     = get_template('emails/agm_acra.html')
 
 		d = self.context
 		# Add additional contexts
+		d.update({ "subject" : subject })
+
+		text_content = plaintext.render(d)
+		html_content = htmly.render(d)
+
+		options = {
+			"subject"		: subject,
+			"body"	 		: text_content
+		}
+
+		return self.sendmail(options, html_content)
+
+	def send_audit(self):
+		subject   = '[OneCorpSec] {}/{:02} Audit Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
+		plaintext = get_template('emails/audit.txt')
+		htmly     = get_template('emails/audit.html')
+
+		d = self.context
+		# Add additional contexts
+		d.update({ "subject" : subject })
+
+		text_content = plaintext.render(d)
+		html_content = htmly.render(d)
+
+		options = {
+			"subject"		: subject,
+			"body"	 		: text_content
+		}
+
+		return self.sendmail(options, html_content)
+
+	def send_gst(self):
+		subject   = '[OneCorpSec] {}/{:02} GST Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
+		plaintext = get_template('emails/GST.txt')
+		htmly     = get_template('emails/GST.html')
+
+		d = self.context
+		# Add additional contexts
 		d.update({
 			"subject"		: subject,
-			"fin_endmonth" 	: self.row["fin_endMonth"],
-			"fin_endYear"	: self.row["fin_endYear"]
+			"gst_interval"  : self.GST_Map[self.row["GST_type"]]
 		})
+
+		text_content = plaintext.render(d)
+		html_content = htmly.render(d)
+
+		options = {
+			"subject"		: subject,
+			"body"	 		: text_content
+		}
+
+		return self.sendmail(options, html_content)
+
+	def send_iras(self):
+		subject   = '[OneCorpSec] {}/{:02} IRAS Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
+		plaintext = get_template('emails/IRAS.txt')
+		htmly     = get_template('emails/IRAS.html')
+
+		d = self.context
+		# Add additional contexts
+		d.update({ "subject" : subject })
 
 		text_content = plaintext.render(d)
 		html_content = htmly.render(d)
