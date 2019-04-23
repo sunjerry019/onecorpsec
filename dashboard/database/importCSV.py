@@ -276,7 +276,7 @@ def _main():
     parser.add_argument('-d', '--delete', action='store_true', help = "add flag to delete csv file after script")
     args = parser.parse_args()
 
-    x = DatabaseImporter(args.filename, args.username, args.delete ,args.logfile, configLocation = "../../config.location")
+    x = DatabaseImporter(args.filename, args.username, args.delete ,args.logfile, "../../config.location")
     x.parse()
     x.clean()
 
