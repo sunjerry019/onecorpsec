@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
 
+"""
+mailer.py
+This python module sends mails using django.core.mail and templates from templates/emails/
+
+If you want to change email contents, or add additional dynamic information, update the
+corresponding .html and .txt files and use the "row" as necessary
+
+All tags are declared in the context
+
+"""
+
 # https://www.stavros.io/posts/standalone-django-scripts-definitive-guide/
 
 import os
@@ -15,12 +26,13 @@ from django.template import Context
 
 class Mail():
 	def __init__(self, reply_to, row):
-		# row is a zipped dictionary
+		# row is a zipped dictionary of the mysql entry for that company
+
 		self.row = row
 		self.headers = { 'Auto-Submitted': 'auto-generated' }
 		self.reply_to = reply_to
 		self.context = {
-			'addressed_to' : self.row["addresseeName"] if self.row["addresseeName"] else self.row["coyName"],
+			'addressed_to' 	: self.row["addresseeName"] if self.row["addresseeName"] else self.row["coyName"],
 			"coyname"		: self.row["coyName"],
 			"coyregno"		: self.row["coyRegNo"]
 		}

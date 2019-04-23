@@ -105,6 +105,11 @@ class Checker():
                         _markDone.append(_typ)
 
                 # Check for OKAYNESS
+                # KV-Map:
+                #    D'  D
+                # R' 1   1
+                # R  0   1
+                
                 _ok   = _done | (_req ^ 1)
                 _okays += _ok
 
