@@ -156,7 +156,7 @@ class Checker():
     def sendEmail(self, _usr, _coy, _typ, _row):
         print("{} - {}: Sending Email for {}".format(_usr, _coy, _typ))
 
-
+        x = mailer.Mail()
 
         # TODO: actually send the email
         return True

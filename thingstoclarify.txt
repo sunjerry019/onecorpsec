@@ -27,3 +27,4 @@ Email account management:
 // TODO: When Adding a new user, create the table, otherwise user interface will not work
 // TODO: Export database for upload
 // TODO: If addressee is blank, address to company
+// TODO: Add email view

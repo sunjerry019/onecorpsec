@@ -9,11 +9,23 @@ from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
 import dashboard.settings
-from htmlemailer import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+from django.template import Context
 
 class Mail():
 	def __init__(self):
-		pass
+		plaintext = get_template('email.txt')
+		htmly     = get_template('email.html')
+
+		d = Context({ 'username': username })
+
+		subject, from_email, to = 'hello', settings.DEFAULT_FROM_EMAIL, 'sunyudong@theenglishtuitioncorner.com'
+		text_content = plaintext.render(d)
+		html_content = htmly.render(d)
+		msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+		msg.attach_alternative(html_content, "text/html")
+		msg.send()
 
 
 # send_mail(
