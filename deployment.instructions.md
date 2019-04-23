@@ -5,7 +5,7 @@ Configure Django (secret_key)
 install:
     dateutil
     https://pypi.org/project/mysql-connector-python/
-    django-html-emailer
+    # django-html-emailer
     django-material
 
 https://docs.djangoproject.com/en/dev/howto/static-files/ Deploy Static files appropriately

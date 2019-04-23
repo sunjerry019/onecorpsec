@@ -28,7 +28,7 @@ DEBUG = True
 
 # python manage.py runserver 0.0.0.0:8000
 # https://stackoverflow.com/a/6111790/3211506
-ALLOWED_HOSTS = [ "192.168.1.86", "localhost" ]
+ALLOWED_HOSTS = [ "192.168.1.86", "localhost", "onecorpsec.com" ]
 
 
 # Application definition
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
-    'htmlemailer'
+    # 'htmlemailer'
 ]
 
 MIDDLEWARE = [

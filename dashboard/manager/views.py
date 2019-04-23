@@ -193,3 +193,24 @@ def downloadDatabase(request):
         return  _res
     else:
         return http.HttpResponseForbidden(content="Forbidden; Please Login")
+
+def runPage(request):
+    if request.user.is_authenticated:
+        return http.HttpResponseForbidden(content="Forbidden; Please access endpoints directly. If you don't know the endpoint, you probably shouldn't run it. ")
+    else:
+        return http.HttpResponseForbidden(content="Forbidden; Please Login")
+
+def manualChecker(request):
+    if request.user.is_authenticated:
+        try:
+            c = checker.Checker()
+            o = c.runCheck(request.user.username)
+            c.clean()
+            return http.HttpResponse(status=200, content="OK! Check done.<br>{}".format(o))
+        except Exception as e:
+            return http.HttpResponse(status=500, content=e)
+    else:
+        return http.HttpResponseForbidden(content="Forbidden; Please Login")
+
+
+# TODO: ADD A VIEW TO EDIT EMAILS PER USER?
