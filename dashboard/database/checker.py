@@ -167,8 +167,8 @@ class Checker():
             self.mailer = mailer.Mail(self.users[_usr], _row)
             self.mailerMappingDict = {
                 "AGM"   : self.mailer.send_acra,
-                "GST"   : self.mailer.send_GST,
-                "IRAS"  : self.mailer.send_acra,
+                "GST"   : self.mailer.send_gst,
+                "IRAS"  : self.mailer.send_iras,
                 "audit" : self.mailer.send_audit
             }
             self.mailerCompany = _coy
