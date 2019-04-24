@@ -228,10 +228,25 @@ def editMails(request):
 def updateEmailTemplate(request, _type):
     if request.user.is_authenticated:
         if request.method == "POST":
-            _file = request.FILES['file']
+            _file       = request.FILES['file']
+            _emailType  = request.POST.get("type", "")
+            _dest       = './templates/emails/{}/{}.{}'.format(request.user.username, _emailType, _type)
 
-            # Process the files here
-            
+            # Preliminary check on document
+            ct_type = ('text/plain') if _type == "txt" else ('text/plain', 'text/html')
+            validate_file = FileValidator(max_size=10485760, content_types=ct_type) # 10485760 B = 10 MiB
+            try:
+                validate_file(_file)
+            except ValidationError as e:
+                return http.HttpResponse(status=500, content=e)
+
+            try:
+                with open(_dest, 'wb+') as destination:
+                    for chunk in _file.chunks():
+                        destination.write(chunk)
+            # https://stackoverflow.com/a/4992124/3211506 (Does not catch KeyboardInterrupt, etc.)
+            except Exception as e:
+                return http.HttpResponse(status=500, content="{}. Please reupload.".format(e))
 
             return http.HttpResponse(status=200)
         else:
