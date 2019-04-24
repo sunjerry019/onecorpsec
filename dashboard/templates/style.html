@@ -35,14 +35,15 @@
     .sidenav-title              { font-weight: 300; color: rgba(0, 0, 0, 0.87); display: block; padding: 0 32px; }
     .sidenav-title span         { display: block; font-size: 20px; text-align: right; }
     .sidenav-title .username    { font-size: 28px; margin-top: -15px; margin-bottom: 5px;}
-    .nav-wrapper ul li a { -webkit-user-select: none; /* Safari */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* IE10+/Edge */ user-select: none; /* Standard */ }
-    a#email-link                            { position: relative; height: 100%; }
+    .nav-wrapper ul li a                    { -webkit-user-select: none; /* Safari */ -moz-user-select: none; /* Firefox */ -ms-user-select: none; /* IE10+/Edge */ user-select: none; /* Standard */ }
+    a.email-link                            { position: relative; height: 100%; }
     /* https://stackoverflow.com/a/52103614/3211506 */
-    .material-icons#mail-link-draft         { visibility: hidden; }
-    .material-icons#mail-link-draft::before,
-    .material-icons#mail-link-draft::after  { display: block; position: absolute; text-align: center; visibility: visible; }
-    .material-icons#mail-link-draft::before { content: "drafts"; top: 0px; font-family: "Material Icons Outlined"; }
-    .material-icons#mail-link-draft::after  { content: "create"; top: 4px; right: 9px; font-size: 0.8em; }
+    #mail-link-draft                        { visibility: hidden; }
+    #mail-link-draft::before,
+    #mail-link-draft::after                 { display: block; position: absolute; text-align: center; visibility: visible; }
+    #mail-link-draft::before                { content: "drafts"; top: 0px; font-family: "Material Icons Outlined"; }
+    #mail-link-draft::after                 { content: "create"; top: 4px; left: 27px; font-size: 0.8em; }
+    #mobile-nav #mail-link-draft::after     { left: 44px; }
 
 
     /* Homepage Dashboard */
