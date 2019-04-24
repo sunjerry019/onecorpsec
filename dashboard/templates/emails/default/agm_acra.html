@@ -1,0 +1,18 @@
+{% extends "emails/0_email-base.html" %}
+
+{% block head %}
+    {% block extra_head %}
+    {% endblock %}
+{% endblock %}
+
+{% block body %}
+
+    {% block content %}
+    <p>Dear {{ addressed_to }},</p>
+
+    <p>Please note that the financial year for {{ coyname }} ({{ coyregno }}) has ended on {{ fin_endmonth }}/{{ fin_endyear }} and this is a monthly reminder for you to complete your ACRA and AGM.</p>
+
+    <small>This is a computer generated email. No signature is required.</small>
+    {% endblock %}
+
+{% endblock %}

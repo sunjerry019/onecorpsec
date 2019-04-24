@@ -27,9 +27,10 @@ from django.template import Context
 from datetime import date
 
 class Mail():
-	def __init__(self, reply_to, row):
+	def __init__(self, user ,reply_to, row):
 		# row is a zipped dictionary of the mysql entry for that company
 
+		self.user = user
 		self.row = row
 		self.headers = { 'Auto-Submitted': 'auto-generated' }
 		self.reply_to = reply_to
@@ -61,8 +62,8 @@ class Mail():
 
 	def send_acra(self):
 		subject   = '[OneCorpSec] {}/{:02} ACRA/AGM Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
-		plaintext = get_template('emails/agm_acra.txt')
-		htmly     = get_template('emails/agm_acra.html')
+		plaintext = get_template('emails/{}/agm_acra.txt'.format(self.user))
+		htmly     = get_template('emails/{}/agm_acra.html'.format(self.user))
 
 		d = self.context
 		# Add additional contexts
@@ -80,8 +81,8 @@ class Mail():
 
 	def send_audit(self):
 		subject   = '[OneCorpSec] {}/{:02} Audit Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
-		plaintext = get_template('emails/audit.txt')
-		htmly     = get_template('emails/audit.html')
+		plaintext = get_template('emails/{}/audit.txt'.format(self.user))
+		htmly     = get_template('emails/{}/audit.html'.format(self.user))
 
 		d = self.context
 		# Add additional contexts
@@ -99,8 +100,8 @@ class Mail():
 
 	def send_gst(self):
 		subject   = '[OneCorpSec] {}/{:02} GST Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
-		plaintext = get_template('emails/GST.txt')
-		htmly     = get_template('emails/GST.html')
+		plaintext = get_template('emails/{}/GST.txt'.format(self.user))
+		htmly     = get_template('emails/{}/GST.html'.format(self.user))
 
 		d = self.context
 		# Add additional contexts
@@ -121,8 +122,8 @@ class Mail():
 
 	def send_iras(self):
 		subject   = '[OneCorpSec] {}/{:02} IRAS Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
-		plaintext = get_template('emails/IRAS.txt')
-		htmly     = get_template('emails/IRAS.html')
+		plaintext = get_template('emails/{}/IRAS.txt'.format(self.user))
+		htmly     = get_template('emails/{}/IRAS.html'.format(self.user))
 
 		d = self.context
 		# Add additional contexts

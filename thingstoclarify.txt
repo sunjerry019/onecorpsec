@@ -28,3 +28,4 @@ Email account management:
 // TODO: Export database for upload
 // TODO: If addressee is blank, address to company
 // TODO: Add email view
+// TODO: Create templates for new user

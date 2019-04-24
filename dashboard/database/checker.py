@@ -164,7 +164,7 @@ class Checker():
 
         if self.mailerCompany is None or self.mailerCompany is not _coy:
             # Reuse mailer if same company
-            self.mailer = mailer.Mail(self.users[_usr], _row)
+            self.mailer = mailer.Mail(_usr, self.users[_usr], _row)
             self.mailerMappingDict = {
                 "AGM"   : self.mailer.send_acra,
                 "GST"   : self.mailer.send_gst,
