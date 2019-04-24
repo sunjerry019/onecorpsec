@@ -33,6 +33,7 @@ class Mail():
 		self.user = user
 		self.row = row
 		self.reply_to = reply_to if isinstance(reply_to, list) or isinstance(reply_to, tuple) else [reply_to]
+		# https://stackoverflow.com/questions/5243757/how-do-i-add-reply-to-to-this-in-django
 		# self.headers = { 'Auto-Submitted': 'auto-generated', 'Reply-To': ", ".join(self.reply_to) }
 		self.headers = { 'Auto-Submitted': 'auto-generated' }
 		self.context = {
