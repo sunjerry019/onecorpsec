@@ -41,7 +41,8 @@ class Mail():
 			"coyname"		: self.row["coyName"],
 			"coyregno"		: self.row["coyRegNo"],
 			"fin_endmonth" 	: "{:02}".format(self.row["fin_endMonth"]),
-			"fin_endyear"	: self.row["fin_endYear"]
+			"fin_endyear"	: self.row["fin_endYear"],
+			"row"			: self.row
 		}
 		self.to  = [ x.strip() for x in self.row["toEmail"].split(",") ]
 		self.cc  = [ x.strip() for x in self.row["ccEmail"].split(",") ] + self.reply_to
