@@ -228,9 +228,12 @@ def editMails(request):
 def updateEmailTemplate(request, _type):
     if request.user.is_authenticated:
         if request.method == "POST":
-            _file       = request.FILES['file']
-            _emailType  = request.POST.get("type", "")
-            _dest       = './templates/emails/{}/{}.{}'.format(request.user.username, _emailType, _type)
+            _file        = request.FILES['file']
+            # if the input is lower case
+            # _mailTypeMap = { "gst": "GST", "iras": "IRAS", "audit": "audit", "agm_acra": "agm_acra" }
+            # _emailType   = _mailTypeMap[request.POST.get("type", "")]
+            _emailType   = request.POST.get("type", "")
+            _dest        = './templates/emails/{}/{}.{}'.format(request.user.username, _emailType, _type)
 
             # Preliminary check on document
             ct_type = ('text/plain') if _type == "txt" else ('text/plain', 'text/html')

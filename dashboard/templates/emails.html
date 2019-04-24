@@ -76,7 +76,7 @@
         <div class="col l6 m12 s12">
             <div class="card white gst type-mod">
                 <form method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="type" value="gst">
+                    <input type="hidden" name="type" value="GST">
                     <div class="card-content">
                         <span class="card-title">GST</span>
                         <p>Sent once every time GST is due. Interval = GST Frequency</p>
@@ -134,7 +134,7 @@
         <div class="col l6 m12 s12">
             <div class="card white iras type-mod">
                 <form method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="type" value="iras">
+                    <input type="hidden" name="type" value="IRAS">
                     <div class="card-content">
                         <span class="card-title">IRAS</span>
                         <p>Sent every month after financial year ends until November.</p>
@@ -257,8 +257,10 @@
 
                     // Get the file
                     // https://thoughtbot.com/blog/ridiculously-simple-ajax-uploads-with-formdata
-                    var fileInput = e.target.form.querySelectorAll("input[type='file']")[0];
-                    var _type = e.target.form.type.value;
+                    // var fileInput = e.target.form.querySelectorAll("input[type='file']")[0];
+                    // var _type = e.target.form.type.value;
+                    var fileInput = e.target.closest("form").querySelectorAll("input[type='file']")[0];
+                    var _type = e.target.closest("form").type.value;
                     var file = fileInput.files[0];
                     if (!file) { M.toast({html: 'No file to upload!', displayLength: 1000}); return; }
                     var formData = new FormData();
@@ -300,8 +302,10 @@
 
                     // Get the file
                     // https://thoughtbot.com/blog/ridiculously-simple-ajax-uploads-with-formdata
-                    var fileInput = e.target.form.querySelectorAll("input[type='file']")[0];
-                    var _type = e.target.form.type.value;
+                    // var fileInput = e.target.form.querySelectorAll("input[type='file']")[0];
+                    // var _type = e.target.form.type.value;
+                    var fileInput = e.target.closest("form").querySelectorAll("input[type='file']")[0];
+                    var _type = e.target.closest("form").type.value;
                     var file = fileInput.files[0];
                     if (!file) { M.toast({html: 'No file to upload!', displayLength: 1000}); return; }
                     var formData = new FormData();
