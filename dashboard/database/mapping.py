@@ -9,8 +9,9 @@ class NXFileError(Exception):
     pass
 
 class Mapping():
-    def __init__(self, csv = None, delete = False):
-        self.database = Database()
+    def __init__(self, csv = None, delete = False, configLocation = None):
+        print(configLocation)
+        self.database = Database(configLocation) if configLocation else Database()
         self.database.connect()
         self.csv = csv
         self.table = 'csv_mapping'

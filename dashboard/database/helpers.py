@@ -2,11 +2,11 @@
 
 from db import Database
 
-def createTableIfDoesntExist(usrname):
+def createTableIfDoesntExist(usrname, configLocation = None):
     # This is a mirror of the function in importCSV.py
     # Please change this function as well if that function is changed in importCSV
-    
-    _database = Database()
+
+    _database = Database(configLocation) if configLocation else Database()
 
     # connect to the database
     _database.connect()

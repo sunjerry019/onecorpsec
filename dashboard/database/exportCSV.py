@@ -17,15 +17,15 @@ class ExporterError(Exception):
     pass
 
 class DatabaseExporter:
-    def __init__(self,  username, filename = None):
+    def __init__(self,  username, filename = None, configLocation = None):
         # Initialize all variables and parameters
         # Must ensure username parameter is safe
 
         self.csvname = filename
-        self.database = Database()
+        self.database = Database(configLocation) if configLocation else Database()
         self.username = username
 
-        self.sqlMappingOrder, self.sqlMapping = Mapping().getInverseOrderedMap()
+        self.sqlMappingOrder, self.sqlMapping = Mapping(configLocation = configLocation).getInverseOrderedMap()
         self.defineMaps()
 
         if isinstance(filename, str) and len(filename) > 0:

@@ -30,7 +30,7 @@ class DatabaseImporter:
         self.database = Database(configLocation) if configLocation else Database()
         self.username = username
 
-        self.sqlMapping = Mapping().getMap()
+        self.sqlMapping = Mapping(configLocation = configLocation).getMap()
 
         if isinstance(logfile, str) and len(logfile) > 0:
             self.logfile = open(logfile, 'a')
