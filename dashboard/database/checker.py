@@ -160,7 +160,7 @@ class Checker():
         return self.database.query("UPDATE `table_{}`SET `{}`='{}' WHERE `coyRegNo`='{}';".format(_usr, _field, _newVal, _CRN))
 
     def sendEmail(self, _usr, _coy, _typ, _row):
-        print("{} - {}: Sending Email for {}".format(_usr, _coy, _typ))
+        # print("{} - {}: Sending Email for {}".format(_usr, _coy, _typ))
 
         if self.mailerCompany is None or self.mailerCompany is not _coy:
             # Reuse mailer if same company
