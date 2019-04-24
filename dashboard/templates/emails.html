@@ -1,0 +1,24 @@
+{% extends 'navbar.html' %}
+{% load static %}
+{% load material_form %}
+
+{% block title %}{{ hostname }}{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <style>
+        body { background-color: #eee; }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    
+{% endblock %}
+
+
+{% block end %}
+    {{ block.super }}
+    <script type="text/javascript">
+    </script>
+{% endblock %}
