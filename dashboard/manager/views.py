@@ -212,5 +212,16 @@ def manualChecker(request):
     else:
         return http.HttpResponseForbidden(content="Forbidden; Please Login")
 
+@ensure_csrf_cookie
+def editMails(request):
+    if request.user.is_authenticated:
+        
 
-# TODO: ADD A VIEW TO EDIT EMAILS PER USER?
+        # https://stackoverflow.com/a/13048311/3211506
+        # Ensures CSRF
+        return render(request, 'emails.html', {
+            'hostname'      : "OneCorpSec",
+            'user'          : request.user
+        })
+    else:
+        return http.HttpResponseForbidden(content="Forbidden; Please Login")
