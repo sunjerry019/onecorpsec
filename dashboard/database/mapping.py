@@ -10,7 +10,6 @@ class NXFileError(Exception):
 
 class Mapping():
     def __init__(self, csv = None, delete = False, configLocation = None):
-        print(configLocation)
         self.database = Database(configLocation) if configLocation else Database()
         self.database.connect()
         self.csv = csv

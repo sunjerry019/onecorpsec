@@ -27,22 +27,23 @@ from django.template import Context
 from datetime import date
 
 class Mail():
-	def __init__(self, user ,reply_to, row):
+	def __init__(self, user, reply_to, row):
 		# row is a zipped dictionary of the mysql entry for that company
 
 		self.user = user
 		self.row = row
+		self.reply_to = reply_to if isinstance(reply_to, list) or isinstance(reply_to, tuple) else [reply_to]
+		# self.headers = { 'Auto-Submitted': 'auto-generated', 'Reply-To': ", ".join(self.reply_to) }
 		self.headers = { 'Auto-Submitted': 'auto-generated' }
-		self.reply_to = reply_to
 		self.context = {
 			'addressed_to' 	: self.row["addresseeName"] if self.row["addresseeName"] else self.row["coyName"],
 			"coyname"		: self.row["coyName"],
 			"coyregno"		: self.row["coyRegNo"],
-			"fin_endmonth" 	: self.row["fin_endMonth"],
-			"fin_endYear"	: self.row["fin_endYear"]
+			"fin_endmonth" 	: "{:02}".format(self.row["fin_endMonth"]),
+			"fin_endyear"	: self.row["fin_endYear"]
 		}
 		self.to  = [ x.strip() for x in self.row["toEmail"].split(",") ]
-		self.cc  = [ x.strip() for x in self.row["ccEmail"].split(",") ] + [ self.reply_to ]
+		self.cc  = [ x.strip() for x in self.row["ccEmail"].split(",") ] + self.reply_to
 		self.bcc = [ x.strip() for x in self.row["bccEmail"].split(",") ]
 
 		self.defaultoptions = {
@@ -61,7 +62,7 @@ class Mail():
 		self.today = date.today()
 
 	def send_acra(self):
-		subject   = '[OneCorpSec] {}/{:02} ACRA/AGM Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
+		subject   = '[OneCorpSec] {}/{:02} ACRA/AGM Reminder for {}'.format(self.today.year, self.today.month, self.row["coyName"])
 		plaintext = get_template('emails/{}/agm_acra.txt'.format(self.user))
 		htmly     = get_template('emails/{}/agm_acra.html'.format(self.user))
 
@@ -80,7 +81,7 @@ class Mail():
 		return self.sendmail(options, html_content)
 
 	def send_audit(self):
-		subject   = '[OneCorpSec] {}/{:02} Audit Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
+		subject   = '[OneCorpSec] {}/{:02} Audit Reminder for {}'.format(self.today.year, self.today.month, self.row["coyName"])
 		plaintext = get_template('emails/{}/audit.txt'.format(self.user))
 		htmly     = get_template('emails/{}/audit.html'.format(self.user))
 
@@ -99,7 +100,7 @@ class Mail():
 		return self.sendmail(options, html_content)
 
 	def send_gst(self):
-		subject   = '[OneCorpSec] {}/{:02} GST Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
+		subject   = '[OneCorpSec] {}/{:02} GST Reminder for {}'.format(self.today.year, self.today.month, self.row["coyName"])
 		plaintext = get_template('emails/{}/GST.txt'.format(self.user))
 		htmly     = get_template('emails/{}/GST.html'.format(self.user))
 
@@ -121,7 +122,7 @@ class Mail():
 		return self.sendmail(options, html_content)
 
 	def send_iras(self):
-		subject   = '[OneCorpSec] {}/{:02} IRAS Reminder for {}'.format(self.today.year, self.today.month, self.row["coyname"])
+		subject   = '[OneCorpSec] {}/{:02} IRAS Reminder for {}'.format(self.today.year, self.today.month, self.row["coyName"])
 		plaintext = get_template('emails/{}/IRAS.txt'.format(self.user))
 		htmly     = get_template('emails/{}/IRAS.html'.format(self.user))
 

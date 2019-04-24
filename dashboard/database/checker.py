@@ -39,7 +39,7 @@ class Checker():
 
         if not _map:
             # columns should be the same for every one
-            self.columnMap = self.database.query("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=N'table_{}';".format(self.users[0]), None, True)
+            self.columnMap = self.database.query("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=N'table_{}';".format(next(iter(self.users))), None, True)
             self.columnMap = [x[0] for x in self.columnMap]
         else:
             # Reduce database call if unnecessary
