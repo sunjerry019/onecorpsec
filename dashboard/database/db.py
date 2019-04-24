@@ -15,6 +15,7 @@ from mysql.connector import Error
 
 class Database:
     def __init__(self, configLocation = "../config.location"):
+        print("db: {}".format(configLocation))
         # Source for the configuration file
         with open(configLocation, 'r') as f:
             _confFile = os.path.join(os.path.dirname(os.path.abspath(configLocation)), f.readlines()[0].strip())
