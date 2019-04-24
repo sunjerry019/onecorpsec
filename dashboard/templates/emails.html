@@ -2,7 +2,7 @@
 {% load static %}
 {% load material_form %}
 
-{% block title %}{{ hostname }}{% endblock %}
+{% block title %}{{ hostname }} - Edit Emails{% endblock %}
 
 {% block styles %}
     {{ block.super }}
@@ -13,12 +13,327 @@
 
 
 {% block content %}
-    
+<div class="email-wrapper">
+    <h3>Edit Emails</h3>
+    <div class="row">
+        <div class="col l12 m12 s12">
+            <div class="card white">
+                <div class="card-content email-instructions">
+                    <span class="card-title">Instructions</span>
+                    {# https://stackoverflow.com/a/1432552/3211506 #}
+                    <p>Here you can edit the template used to send your emails.</p>
+                    <p>For each section, there are 2 files that you have take note of: a <code>.txt</code> and a <code>.html</code>. The <code>.txt</code> is there to provide a plaintext version of your email. This is for email previews, and used when the HTML content does not display correctly for the receipient. The <code>.html</code> template uses <a href="https://docs.djangoproject.com/en/2.2/ref/templates/language/" target="_blank" title="Django Template Language">Django Template Language</a> and extends a boilerplate template that is included as a base for all emails. You can choose to not include this base by removing the <code>{% templatetag openbrace %}% extends "emails/0_email-base.html" %{% templatetag closebrace %} </code> in the template.</p>
+                    <p>You need edit and upload <b class="warning">both</b> files. </p>
+                    <p>All files uploaded here will <b class="warning">replace</b> all previous templates. <span class="warning">This is irreversible.</span> Please take extra care when uploading your template files and click on the correct button.</p>
+                    <p>Please only upload one file at a time. </p>
+                    <p class="note">Although it is said that it is a cardinal sin to trust the user on the input, but in this case, it is done so that you have more control over not just the content, but also the style and any additional elements you want to add. You may use the original templates provided as a starting point for any fancy design. </p>
+                    <p>All emails sent out by OneCorpSec will be from <code>info@onecorpsec.com</code> and will include you in the CC. The email will be addressed to the company if no address-to person was provided. </p>
+                    <p>Variables have already been included in the loaded template. The variables that are available to you are as follows: </p>
+                    <table>
+                        <tr><td><code>addressed_to</code></td><td>Name, or company name</td></tr>
+                        <tr><td><code>coyname</code></td><td>Company name</td></tr>
+                        <tr><td><code>coyregno</code></td><td>Company Registration Number</td></tr>
+                        <tr><td><code>fin_endmonth</code></td><td>Financial year ends on this month. This is an integer from 1 to 12.</td></tr>
+                        <tr><td><code>fin_endyear</code></td><td>Financial year ends on this year. This is a 4-digit interger</td></tr>
+                        <tr><td><code>row</code></td><td>This variable is a dictionary representing the entry in the database. The keys are the column names in the database. You may access its key-values with <code>row.key</code>.</tr>
+                    </table>
+                    <p>You may use the button below to run the checker manually should you wish to do so.</p>
+                </div>
+                <div class="card-action right-align">
+                    <a href="{% url 'runChecker' %}" class="btn waves-effect" id="run_checker" title="Run Checker">Run Checker</a>
+                </div>
+            </div>
+        </div>
+        <div class="col l6 m12 s12">
+            <div class="card white agm_acra type-mod">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="type" value="agm_acra">
+                    <div class="card-content">
+                        <span class="card-title">AGM/ACRA</span>
+                        <p>Sent every month after financial year ends</p>
+                        <div class="currents">
+                            <a href="{% static 'emails/'|add:user.username|add:'/agm_acra.html' %}" class="btn-flat waves-effect blue-text text-darken-2">Current html</a>
+                            <a href="{% static 'emails/'|add:user.username|add:'/agm_acra.txt'%}" class="btn-flat waves-effect blue-text text-darken-2">Current txt</a>
+                        </div>
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>File</span>
+                                <input type="file" accept=".txt,text/txt,.html,text/html">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action right-align">
+                        <input type="button" class="btn upload_html waves-effect" value="Upload HTML">
+                        <input type="button" class="btn upload_txt waves-effect" value="Upload TXT">
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.col -->
+
+        <div class="col l6 m12 s12">
+            <div class="card white gst type-mod">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="type" value="gst">
+                    <div class="card-content">
+                        <span class="card-title">GST</span>
+                        <p>Sent once every time GST is due. Interval = GST Frequency</p>
+                        <div class="currents">
+                            <a href="{% static 'emails/'|add:user.username|add:'/GST.html' %}" class="btn-flat waves-effect blue-text text-darken-2">Current html</a>
+                            <a href="{% static 'emails/'|add:user.username|add:'/GST.txt'%}" class="btn-flat waves-effect blue-text text-darken-2">Current txt</a>
+                        </div>
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>File</span>
+                                <input type="file" accept=".txt,text/txt,.html,text/html">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action right-align">
+                        <input type="button" class="btn upload_html waves-effect" value="Upload HTML">
+                        <input type="button" class="btn upload_txt waves-effect" value="Upload TXT">
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.col -->
+
+        <div class="col l6 m12 s12">
+            <div class="card white audit type-mod">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="type" value="audit">
+                    <div class="card-content">
+                        <span class="card-title">Audit</span>
+                        <p>Sent every month after financial year ends</p>
+                        <div class="currents">
+                            <a href="{% static 'emails/'|add:user.username|add:'/audit.html' %}" class="btn-flat waves-effect blue-text text-darken-2">Current html</a>
+                            <a href="{% static 'emails/'|add:user.username|add:'/audit.txt'%}" class="btn-flat waves-effect blue-text text-darken-2">Current txt</a>
+                        </div>
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>File</span>
+                                <input type="file" accept=".txt,text/txt,.html,text/html">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action right-align">
+                        <input type="button" class="btn upload_html waves-effect" value="Upload HTML">
+                        <input type="button" class="btn upload_txt waves-effect" value="Upload TXT">
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.col -->
+
+        <div class="col l6 m12 s12">
+            <div class="card white iras type-mod">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="type" value="iras">
+                    <div class="card-content">
+                        <span class="card-title">IRAS</span>
+                        <p>Sent every month after financial year ends until November.</p>
+                        <div class="currents">
+                            <a href="{% static 'emails/'|add:user.username|add:'/IRAS.html' %}" class="btn-flat waves-effect blue-text text-darken-2">Current html</a>
+                            <a href="{% static 'emails/'|add:user.username|add:'/IRAS.txt'%}" class="btn-flat waves-effect blue-text text-darken-2">Current txt</a>
+                        </div>
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>File</span>
+                                <input type="file" accept=".txt,text/txt,.html,text/html">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action right-align">
+                        <input type="button" class="btn upload_html waves-effect" value="Upload HTML">
+                        <input type="button" class="btn upload_txt waves-effect" value="Upload TXT">
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.col -->
+    </div> <!-- /.row -->
+</div>
+
+<div id="loader">
+    <div class="preloader-wrapper big">
+        <div class="spinner-layer spinner-blue">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-red">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-yellow">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-green">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 
 {% block end %}
     {{ block.super }}
     <script type="text/javascript">
+        var djangoHelpers =
+        {
+            getCookie : function(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            },
+
+            ajaxUpdate : function(_type = "POST", _url, _datatype = 'application/json', _data, _success, _fail)
+            {
+                var xhr = new XMLHttpRequest();
+                var csrftoken = djangoHelpers.getCookie('csrftoken');
+
+                xhr.open(_type, _url);
+                if (_datatype) xhr.setRequestHeader('Content-Type', _datatype);
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                xhr.onload = function() {
+                    xhr.status === 200 ? _success(xhr.status, xhr.responseText) : _fail(xhr.status, xhr.responseText);
+                };
+
+                if (_datatype === 'application/json') _data = JSON.stringify(_data);
+                xhr.send(_data);
+
+                return xhr;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function(e) {
+            htmlbtns = document.querySelectorAll(".upload_html");
+            htmlbtns.forEach(function(ele) {
+                ele.addEventListener('click', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Get the file
+                    // https://thoughtbot.com/blog/ridiculously-simple-ajax-uploads-with-formdata
+                    var fileInput = e.target.form.querySelectorAll("input[type='file']")[0];
+                    var _type = e.target.form.type.value;
+                    var file = fileInput.files[0];
+                    if (!file) { M.toast({html: 'No file to upload!', displayLength: 1000}); return; }
+                    var formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('type', _type);
+
+                    // Show the progress bar
+                    var pbaroverlay = document.getElementById("loader")
+                    var pbar        = pbaroverlay.querySelectorAll(".preloader-wrapper")[0]
+                    pbaroverlay.classList.add('active');
+                    pbar.classList.add('active');
+
+                    djangoHelpers.ajaxUpdate( "POST", "/update/template/html/", '', formData,
+                        function(status, response) {
+                            // Success
+                            pbaroverlay.classList.remove('active');
+                            pbar.classList.remove('active');
+
+                            M.toast({html: 'Upload successful', displayLength: 1000});
+                        },
+                        function(status, response) {
+                            // Fail
+                            pbaroverlay.classList.remove('active');
+                            pbar.classList.remove('active');
+
+                            if (response) response = ": " + response
+                            else response = ". Please try again later."
+                            M.toast({html: 'Error occurred' + response, displayLength: 1000});
+                        }
+                    );
+                });
+            });
+
+            txtbtns = document.querySelectorAll(".upload_txt");
+            txtbtns.forEach(function(ele) {
+                ele.addEventListener('click', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Get the file
+                    // https://thoughtbot.com/blog/ridiculously-simple-ajax-uploads-with-formdata
+                    var fileInput = e.target.form.querySelectorAll("input[type='file']")[0];
+                    var _type = e.target.form.type.value;
+                    var file = fileInput.files[0];
+                    if (!file) { M.toast({html: 'No file to upload!', displayLength: 1000}); return; }
+                    var formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('type', _type);
+
+                    // Show the progress bar
+                    var pbaroverlay = document.getElementById("loader")
+                    var pbar        = pbaroverlay.querySelectorAll(".preloader-wrapper")[0]
+                    pbaroverlay.classList.add('active');
+                    pbar.classList.add('active');
+
+                    djangoHelpers.ajaxUpdate( "POST", "/update/template/txt/", '', formData,
+                        function(status, response) {
+                            // Success
+                            pbaroverlay.classList.remove('active');
+                            pbar.classList.remove('active');
+
+                            M.toast({html: 'Upload successful', displayLength: 1000});
+                        },
+                        function(status, response) {
+                            // Fail
+                            pbaroverlay.classList.remove('active');
+                            pbar.classList.remove('active');
+
+                            if (response) response = ": " + response
+                            else response = ". Please try again later."
+                            M.toast({html: 'Error occurred' + response, displayLength: 1000});
+                        }
+                    );
+                });
+            });
+        });
     </script>
 {% endblock %}

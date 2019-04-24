@@ -215,13 +215,26 @@ def manualChecker(request):
 @ensure_csrf_cookie
 def editMails(request):
     if request.user.is_authenticated:
-        
-
         # https://stackoverflow.com/a/13048311/3211506
         # Ensures CSRF
         return render(request, 'emails.html', {
-            'hostname'      : "OneCorpSec",
-            'user'          : request.user
+            'hostname' : "OneCorpSec",
+            'user'     : request.user
         })
+    else:
+        return http.HttpResponseForbidden(content="Forbidden; Please Login")
+
+
+def updateEmailTemplate(request, _type):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            _file = request.FILES['file']
+
+            # Process the files here
+            
+
+            return http.HttpResponse(status=200)
+        else:
+            return http.HttpResponseNotAllowed("POST", content="GET Not Allowed")
     else:
         return http.HttpResponseForbidden(content="Forbidden; Please Login")
