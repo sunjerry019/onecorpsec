@@ -31,6 +31,7 @@
                     <p>Variables have already been included in the loaded template. The variables that are available to you are as follows: </p>
                     <table>
                         <tr><td><code>addressed_to</code></td><td>Name, or company name</td></tr>
+                        <tr><td><code>sign_off_name</code></td><td>Name in the database used to sign off emails. </td></tr>
                         <tr><td><code>coyname</code></td><td>Company name</td></tr>
                         <tr><td><code>coyregno</code></td><td>Company Registration Number</td></tr>
                         <tr><td><code>fin_endmonth</code></td><td>Financial year ends on this month. This is an integer from 1 to 12.</td></tr>
@@ -270,8 +271,8 @@
                     formData.append('type', _type);
 
                     // Show the progress bar
-                    var pbaroverlay = document.getElementById("loader")
-                    var pbar        = pbaroverlay.querySelectorAll(".preloader-wrapper")[0]
+                    var pbaroverlay = document.getElementById("loader");
+                    var pbar        = pbaroverlay.querySelectorAll(".preloader-wrapper")[0];
                     pbaroverlay.classList.add('active');
                     pbar.classList.add('active');
 
@@ -317,8 +318,8 @@
                     formData.append('type', _type);
 
                     // Show the progress bar
-                    var pbaroverlay = document.getElementById("loader")
-                    var pbar        = pbaroverlay.querySelectorAll(".preloader-wrapper")[0]
+                    var pbaroverlay = document.getElementById("loader");
+                    var pbar        = pbaroverlay.querySelectorAll(".preloader-wrapper")[0];
                     pbaroverlay.classList.add('active');
                     pbar.classList.add('active');
 

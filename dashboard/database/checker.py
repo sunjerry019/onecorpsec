@@ -164,7 +164,7 @@ class Checker():
 
         if self.mailerCompany is None or self.mailerCompany is not _coy:
             # Reuse mailer if same company
-            self.mailer = mailer.Mail(_usr, self.users[_usr], _row)
+            self.mailer = mailer.Mail(_usr, self.users[_usr]["reply_to"], self.users[_usr]["sign_off_name"], _row)
             self.mailerMappingDict = {
                 "AGM"   : self.mailer.send_acra,
                 "GST"   : self.mailer.send_gst,
@@ -180,11 +180,15 @@ class Checker():
         # Users without a database table will not be returned
 
         users = {}
-        _users = self.database.query("SELECT username, email FROM `{}`".format(self.database.configurations["userTable"]), None, True)
+        _users = self.database.query("SELECT username, email, reply_to, sign_off_name FROM `{}`".format(self.database.configurations["userTable"]), None, True)
         for user in _users:
             _r = self.database.query("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'table_{}'".format(user[0]), None, True)
             if len(_r):
-                users[user[0]] = user[1]
+                users[user[0]] = {
+                    "email"         : user[1],
+                    "reply_to"      : user[2] if len(user[2]) else user[1],
+                    "sign_off_name" : user[3]
+                }
         return users
 
     def clean(self):

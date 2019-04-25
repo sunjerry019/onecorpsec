@@ -27,7 +27,7 @@ from django.template import Context
 from datetime import date
 
 class Mail():
-	def __init__(self, user, reply_to, row):
+	def __init__(self, user, reply_to, sign_off_name, row):
 		# row is a zipped dictionary of the mysql entry for that company
 
 		self.user = user
@@ -37,7 +37,8 @@ class Mail():
 		# self.headers = { 'Auto-Submitted': 'auto-generated', 'Reply-To': ", ".join(self.reply_to) }
 		self.headers = { 'Auto-Submitted': 'auto-generated' }
 		self.context = {
-			'addressed_to' 	: self.row["addresseeName"] if self.row["addresseeName"] else self.row["coyName"],
+			"addressed_to" 	: self.row["addresseeName"] if self.row["addresseeName"] else self.row["coyName"],
+			"sign_off_name"	: sign_off_name,
 			"coyname"		: self.row["coyName"],
 			"coyregno"		: self.row["coyRegNo"],
 			"fin_endmonth" 	: "{:02}".format(self.row["fin_endMonth"]),
