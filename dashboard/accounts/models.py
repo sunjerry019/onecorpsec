@@ -17,6 +17,9 @@ class DatabaseUser(AbstractUser):
 
     REQUIRED_FIELDS = ["email", "sign_off_name"]
 
+    class Meta:
+        app_label = 'accounts'
+
     def get_short_name(self):
         "Returns the short name for the user."
         return self.sign_off_name
