@@ -21,6 +21,9 @@
         <ul id="nav-mobile" class="right hide-on-med-and-down">
             {% if user.is_authenticated %}
                 <li class="nav-welcome"><span>Welcome, </span><span class="username">{{ user.username }}</span></li>
+                {% if user.is_superuser %}
+                    <li><a href="{% url 'signup' %}" title="Add User"><i class="material-icons">person_add</i></a></li>
+                {% endif %}
                 <li><a href="{% url 'editMails' %}" class="email-link" title="Edit Emails"><i class="material-icons" id="mail-link-draft">create</i></a></li>
                 <li><a href="{% url 'admin:index' %}" title="Settings"><i class="material-icons">settings</i></a></li>
                 {# https://stackoverflow.com/questions/694477/getting-django-admin-url-for-an-object #}
@@ -37,6 +40,9 @@
         <li class="sidenav-title"><span>Welcome,</span><span class="username">{{ user.username }}</span></li>
         <li><a href="{% url 'editMails' %}" class="email-link" title="Edit Emails"><i class="material-icons" id="mail-link-draft">create</i> Edit Emails</a></li>
         <li><a href="{% url 'admin:index' %}" title="Administration"><i class="material-icons">settings</i> Settings</a></li>
+        {% if user.is_superuser %}
+            <li><a href="{% url 'signup' %}" title="Add User"><i class="material-icons">person_add</i> Add User</a></li>
+        {% endif %}
         <li><a href="{% url 'logout' %}" title="Logout"><i class="material-icons">exit_to_app</i> Logout</a></li>
     {% else %}
         <li><a href="{% url 'login' %}">Login</a></li>
