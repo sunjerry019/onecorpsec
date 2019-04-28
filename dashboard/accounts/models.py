@@ -75,8 +75,8 @@ class DatabaseUser(AbstractBaseUser, PermissionsMixin):
 
     # Custom Stuff
     name          = models.CharField(_('name'), max_length=250, blank=True)
-    sign_off_name = models.CharField(_('sign_off_name'), max_length=250, blank=True, help_text="The name used for signing off emails sent from the server. This is usually a short name")
-    reply_to      = models.EmailField(_('reply_to'), blank=True, help_text="Email that people can choose to reply to for any information emails, if different from email")
+    sign_off_name = models.CharField(_('sign off name'), max_length=250, blank=True, help_text="The name used for signing off emails sent from the server. This is usually a short name")
+    reply_to      = models.EmailField(_('reply-to email'), blank=True, help_text="Email that people can choose to reply to for any information emails, if different from email")
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ["email", "sign_off_name"]
