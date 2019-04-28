@@ -6,6 +6,9 @@
 {% block title %}Login - {{ hostname }}{% endblock %}
 
 {% block registration_content %}
+    {% if user.is_authenticated %}
+        <script>(function(){window.location.href = "{% url 'home' %}"})();</script>
+    {% endif %}
 <div class="card white">
     <div class="card-content">
         <span class="card-title">Login</span>
