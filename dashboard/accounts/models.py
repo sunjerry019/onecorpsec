@@ -23,7 +23,8 @@ class DatabaseUserManager(BaseUserManager):
         if not username:
             raise ValueError('The given username must be set')
         email       = self.normalize_email(email)
-        # reply_to    = self.normalize_email(reply_to)
+        if reply_to:
+            reply_to    = self.normalize_email(reply_to)
         user        = self.model(username=username, email=email,
                           is_staff=is_staff, is_active=True,
                           is_superuser=is_superuser,
@@ -38,9 +39,9 @@ class DatabaseUserManager(BaseUserManager):
     def create_superuser(self, username, email, password, **extra_fields):
         return self._create_user(username, email, password, True, True, **extra_fields)
 
-    def get_by_natural_key(self, email_):
-        print(email_)
-        return self.get(email=email_)
+    def get_by_natural_key(self, _username):
+        # Authenticate uses username [https://stackoverflow.com/a/46825451/3211506]
+        return self.get(username=_username)
 
 class DatabaseUser(AbstractBaseUser, PermissionsMixin):
     """
