@@ -1,9 +1,10 @@
+from .forms import DatabaseUserCreationForm, DatabaseUserChangeForm
+from .models import DatabaseUser
+
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import DatabaseUserCreationForm, DatabaseUserChangeForm
-from .models import DatabaseUser
 
 class DatabaseUserAdmin(UserAdmin):
     add_form = DatabaseUserCreationForm
