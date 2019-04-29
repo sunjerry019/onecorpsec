@@ -38,7 +38,7 @@
                         <tr><td><code>fin_endyear</code></td><td>Financial year ends on this year. This is a 4-digit interger</td></tr>
                         <tr><td><code>row</code></td><td>This variable is a dictionary representing the entry in the database. The keys are the column names in the database. You may access its key-values with <code>row.key</code>.</tr>
                     </table>
-                    <p>You may use the button below to run the checker manually should you wish to do so.</p>
+                    <p>You may use the button below to run the checker manually should you wish to do so. The checker will automatically run every month on the first day of the month. </p>
                 </div>
                 <div class="card-action right-align">
                     <a href="{% url 'runChecker' %}" class="btn waves-effect" id="run_checker" title="Run Checker">Run Checker</a>
