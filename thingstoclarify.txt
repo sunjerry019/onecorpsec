@@ -24,7 +24,3 @@ Email account management:
 // TODO: Make mail forward to the registered email address
 // TODO: Change password changes email password as well
 // TODO: When setting password, email password changes as well
-// TODO: When Adding a new user, create the table, otherwise user interface will not work
-// TODO: Export database for upload
-// TODO: Add email view
-// TODO: Create templates for new user
