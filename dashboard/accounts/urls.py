@@ -7,4 +7,5 @@ from . import views
 urlpatterns = [
     path('', RedirectView.as_view(url=reverse_lazy('admin:index'), permanent=False)), # https://stackoverflow.com/a/9093623/3211506
     path('signup/', views.SignUp.as_view(), name='signup'),
+    path('update/', views.UpdateUser.as_view(), name='updateUser')
 ]

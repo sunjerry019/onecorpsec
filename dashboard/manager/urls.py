@@ -15,5 +15,6 @@ urlpatterns = [
     re_path(r'^update/template/(html|txt)/', views.updateEmailTemplate, name="updateEmailTemplate"),
     path('update/', views.updateDatabase, name="update"),
     path('delete/', views.deleteCompany, name="delete"),
+    path('settings/', views.userSettings, name="userSettings"),
     re_path(r'^(\d+)/', views.render_Home),
 ]

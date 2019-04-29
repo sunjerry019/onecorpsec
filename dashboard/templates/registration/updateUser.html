@@ -5,18 +5,19 @@
 {% block title %}Sign up new member{% endblock %}
 
 {% block content %}
-    {% if user.is_superuser %}
+    {% if user.is_authenticated %}
     <div class="centre blue-grey lighten-5 long_form">
         <div class="row">
             <div class="col s12">
                 <div class="card white">
                     <div class="card-content">
-                        <span class="card-title">Sign Up</span>
-                        <p style="font-size: 0.9em; margin-bottom: 10px;">Here you can sign new members up. To edit their groups (e.g. give them permissions, please visit the <a href='{% url "admin:index" %}' title="Django Admin">admin page</a>)</p>
-                        <form method="post">
+                        <span class="card-title">Update Profile</span>
+                        <p style="font-size: 0.9em; margin-bottom: 10px;"><p>You are logged in as <code style="color: #777;">{{ request.user.username }}</code>. Change your user profile here:</p>
+                        <form method="post" style="margin-top: 10px;">
                             {% csrf_token %}
                             {% form %}{% endform %}
-                            <button type="submit" class="btn">Sign Up</button>
+                            <button type="submit" class="btn" style="margin-top: 10px;">Update</button>
+                            <a class="btn-flat" href="{% url 'home' %}" style="margin-top: 10px; position: absolute; right: 24px;">Return Home</a>
                         </form>
                     </div>
                 </div>
@@ -29,7 +30,7 @@
             <div class="col s12">
                 <div class="card white">
                     <div class="card-content">
-                        <span class="card-title">Sorry, you may not create a new account.</span>
+                        <span class="card-title">Please Login.</span>
                     </div>
                 </div>
             </div>

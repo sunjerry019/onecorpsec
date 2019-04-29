@@ -256,3 +256,13 @@ def updateEmailTemplate(request, _type):
             return http.HttpResponseNotAllowed("POST", content="GET Not Allowed")
     else:
         return http.HttpResponseForbidden(content="Forbidden; Please Login")
+
+def userSettings(request):
+    if request.user.is_authenticated:
+
+        return render(request, 'settings.html', {
+            'hostname'      : "OneCorpSec",
+            'user'          : request.user
+        })
+    else:
+        return http.HttpResponseForbidden(content="Forbidden; Please Login")

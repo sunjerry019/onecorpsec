@@ -1,0 +1,29 @@
+{% extends 'navbar.html' %}
+{% load static %}
+{% load material_form %}
+
+{% block title %}{{ hostname }} - Settings{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="settings-links">
+        <h3>Settings</h3>
+        <div class="row">
+            <div class="col l12 m12 s12">
+                <div class="collection">
+                    <a href="{% url 'password_change' %}" class="collection-item"><i class="material-icons">vpn_key</i>Change Password</a>
+                    <a href="{% url 'updateUser' %}" class="collection-item"><i class="material-icons">account_circle</i>Update Profile</a>
+                </div>
+                <a href="{% url 'home' %}" class="btn waves-effect" title="Return Home">Return Home</a>
+            </div>
+    </div>
+{% endblock %}
+
+
+{% block end %}
+    {{ block.super }}
+{% endblock %}

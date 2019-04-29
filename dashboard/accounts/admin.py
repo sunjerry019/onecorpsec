@@ -14,7 +14,7 @@ class DatabaseUserAdmin(UserAdmin):
     list_display = ['email', 'username', 'name', 'sign_off_name']
     # https://stackoverflow.com/a/24438757/3211506
     fieldsets = (
-            (None, {'fields': ('username', 'password',)}),
+            ('DO NOT EDIT THESE HERE!', {'fields': ('username', 'password',)}),
             ('Personal info', {'fields': ('name', 'first_name', 'last_name', 'sign_off_name', 'email', 'reply_to', 'date_joined', 'last_login',)}),
             ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions',)}),
         )

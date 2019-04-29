@@ -44,7 +44,7 @@ class DatabaseUserCreationForm(UserCreationForm):
 class DatabaseUserChangeForm(UserChangeForm):
     class Meta:
         model = DatabaseUser
-        fields = ('username', 'email', 'name', 'sign_off_name')
+        fields = ('email', 'reply_to', 'name', 'first_name', 'last_name' , 'sign_off_name')
 
 
 # # GROUPS = https://stackoverflow.com/a/39648244/3211506

@@ -5,6 +5,7 @@
     .centre { display: flex; justify-content: center; align-items: center; }
     .single-centre-form      { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
     .single-centre-form .row { width: 100%; max-width: 500px; }
+    .long_form { min-height: 100vh; }
 
     /* Homescreen Splash */
     .splash {
@@ -133,4 +134,10 @@
 
     #loader        { background-color: rgba(0,0,0,0.7); position: fixed; top: 0; bottom: 0; right: 0; left: 0; z-index: 1000; display: none; }
     #loader.active { display: flex; justify-content: center; align-items: center; }
+
+    /* User Settings */
+    .settings-links                               { padding: 10px; max-width: 130ch; margin: auto;  }
+    .settings-links .collection a.collection-item { display: flex; flex-direction: row; align-items: center; }
+    .settings-links .collection a.collection-item .material-icons { margin-right: 10px; }
+
 </style>
