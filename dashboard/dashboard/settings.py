@@ -21,10 +21,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '3yuyd@vfyu3i*m09(g)n%tpx(h0vep_4pf@f9l!rh!7xeptg_f'
+# Source for the configuration file
+_confLoc = os.path.join(BASE_DIR, "../config.location")
+with open(_confLoc, 'r') as f:
+    _x = f.readlines()[0].strip()
+    if _x[0] == '.':
+        _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), _x)
+    else:
+        # This is an absolute path
+        _confFile = _x
+
+# Obtain the database configuration details
+with open(_confFile,'r') as f:
+    _conf = json.load(f)
+
+SECRET_KEY = _conf["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # python manage.py runserver 0.0.0.0:8000
 # https://stackoverflow.com/a/6111790/3211506
@@ -85,20 +99,6 @@ WSGI_APPLICATION = 'dashboard.wsgi.application'
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
-
-# Source for the configuration file
-_confLoc = os.path.join(BASE_DIR, "../config.location")
-with open(_confLoc, 'r') as f:
-    _x = f.readlines()[0].strip()
-    if _x[0] == '.':
-        _confFile = os.path.join(os.path.dirname(os.path.abspath(_confLoc)), _x)
-    else:
-        # This is an absolute path
-        _confFile = _x
-
-# Obtain the database configuration details
-with open(_confFile,'r') as f:
-    _conf = json.load(f)
 
 DATABASES = {
     'default': {
@@ -186,3 +186,9 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
     )
+
+# SSL
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
