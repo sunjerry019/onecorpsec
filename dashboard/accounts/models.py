@@ -8,6 +8,10 @@ from django.utils import six, timezone
 from django.core import validators
 from django.core.mail import send_mail
 
+import os
+from pathlib import Path
+from shutil import copyfile
+
 
 # https://medium.com/agatha-codes/options-objects-customizing-the-django-user-model-6d42b3e971a4
 
@@ -15,28 +19,43 @@ from django.core.mail import send_mail
 class DatabaseUserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self, username, email, password, is_staff, is_superuser, **extra_fields):
+    def _create_user(self, username, email, password, is_staff, is_superuser, reply_to = None, **extra_fields):
         """
         Creates and saves a User with the given username, email and password.
         """
         now = timezone.now()
         if not username:
             raise ValueError('The given username must be set')
-        email       = self.normalize_email(email)
+        email        = self.normalize_email(email)
         if reply_to:
-            reply_to    = self.normalize_email(reply_to)
-        user        = self.model(username=username, email=email,
+            reply_to = self.normalize_email(reply_to)
+        user         = self.model(username=username, email=email,
                           is_staff=is_staff, is_active=True,
                           is_superuser=is_superuser,
                           date_joined=now, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+
+        # Create a template folder for their emails
+        emailTemplateDir = "templates/emails/{}".format(username)
+        # Create folder if doesn't exist (https://stackoverflow.com/a/273227/3211506)
+        os.makedirs(emailTemplateDir, exist_ok=True)
+
+        defaultDir = "templates/emails/default"
+        pathlist = Path(defaultDir).glob('**/*')
+        for path in pathlist:
+            path_in_str = str(path)
+            basename    = os.path.basename(path_in_str)
+            newfile     = os.path.join(emailTemplateDir, basename)
+            if not os.path.exists(newfile):
+                copyfile(path_in_str, newfile)
+
         return user
 
-    def create_user(self, username, email, password, **extra_fields):
+    def create_user(self, username, email, password, reply_to = None, **extra_fields):
         return self._create_user(username, email, password, False, False, **extra_fields)
 
-    def create_superuser(self, username, email, password, **extra_fields):
+    def create_superuser(self, username, email, password, reply_to = None, **extra_fields):
         return self._create_user(username, email, password, True, True, **extra_fields)
 
     def get_by_natural_key(self, _username):

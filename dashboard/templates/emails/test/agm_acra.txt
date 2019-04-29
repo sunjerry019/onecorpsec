@@ -1,0 +1,5 @@
+Dear {{ addressed_to }},
+
+Please note that the financial year for {{ coyname }} ({{ coyregno }}) has ended on {{ fin_endmonth }}/{{ fin_endyear }} and this is a monthly reminder for you to complete your ACRA and AGM.
+
+This is a computer generated email. No signature is required.

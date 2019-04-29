@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import DatabaseUser
+from django.core.exceptions import ValidationError
 
 # Groups
 # from django.contrib.auth import get_user_model
@@ -11,6 +12,34 @@ class DatabaseUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
         model = DatabaseUser
         fields = ('username', 'email', 'reply_to', 'name', 'sign_off_name' )
+
+    # https://overiq.com/django-1-10/django-creating-users-using-usercreationform/
+
+    # def clean_username(self):
+    #     username = self.cleaned_data['username'].lower()
+    #     r = DatabaseUser.objects.filter(username=username)
+    #     if r.count():
+    #         raise ValidationError("Username already exists")
+    #     return username
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower()
+        r = DatabaseUser.objects.filter(email=email)
+        if r.count():
+            raise ValidationError("Email already exists")
+        return email
+
+    def save(self, commit=True):
+        # user = super().save(commit=False)
+        # user.set_password(self.cleaned_data["password1"])
+        # if commit:
+        #     user.save()
+        if commit:
+            self.cleaned_data["password"] = self.cleaned_data.pop("password1", None)
+            self.cleaned_data.pop("password2", None)
+            user = DatabaseUser.objects.create_user(**self.cleaned_data)
+            return user
+        return True
 
 class DatabaseUserChangeForm(UserChangeForm):
     class Meta:
