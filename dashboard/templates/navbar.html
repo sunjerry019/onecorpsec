@@ -47,7 +47,6 @@
     {% if user.is_authenticated %}
         <li class="sidenav-title"><span>Welcome,</span><span class="username">{{ user.username }}</span></li>
         <li><a href="{% url 'editMails' %}" class="email-link" title="Edit Emails"><i class="material-icons" id="mail-link-draft">create</i> Edit Emails</a></li>
-        <li><a href="{% url 'admin:index' %}" title="Setting"><i class="material-icons">settings</i> Settings</a></li>
         {% if user.is_superuser %}
             <li><a href="{% url 'admin:index' %}" title="Administration"><i class="material-icons">settings</i> Administration</a></li>
             <li><a href="{% url 'signup' %}" title="Add User"><i class="material-icons">person_add</i> Add User</a></li>
