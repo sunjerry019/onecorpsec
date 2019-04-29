@@ -204,9 +204,9 @@ def manualChecker(request):
     if request.user.is_authenticated:
         try:
             c = checker.Checker()
-            o = c.runCheck(request.user.username)
+            c.runCheck(request.user.username)
             c.clean()
-            return http.HttpResponse(status=200, content="OK! Check done.<br>{}".format(o))
+            return http.HttpResponse(status=200, content="OK! Check done.")
         except Exception as e:
             return http.HttpResponse(status=500, content=e)
     else:
