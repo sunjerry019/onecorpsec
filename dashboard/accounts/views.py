@@ -15,6 +15,7 @@ class SignUp(generic.CreateView):
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
 
+# https://stackoverflow.com/a/21122537/3211506
 class UpdateUser(generic.edit.UpdateView):
     form_class = DatabaseUserChangeForm
     # https://stackoverflow.com/a/23155078/3211506
