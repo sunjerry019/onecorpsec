@@ -41,3 +41,18 @@ sudo apt-get install libmysqlclient-dev
 
 https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql
 https://serverfault.com/questions/512219/dovecot-lmtp-does-not-exist
+
+https://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html
+./bin/pip install mysql-connector-python django mysqlclient python-dateutil django-material python-magic uwsgi
+https://simpleisbetterthancomplex.com/tutorial/2016/05/11/how-to-setup-ssl-certificate-on-nginx-for-django-application.html
+edited the original onecorpsec.com
+created onecorpsec_nginx.conf
+run django on port 8123
+
+install libssl-dev
+rebuilt uwsgi = pip uninstall then install --no-cache-dir
+eveyrthing is done through .ini files
+
+install wsgi systemwide
+
+https://uwsgi-docs.readthedocs.io/en/latest/Systemd.html
