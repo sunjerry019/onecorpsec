@@ -12,3 +12,9 @@ https://docs.djangoproject.com/en/dev/howto/static-files/ Deploy Static files ap
 
 Install:
     pip install python-magic
+
+
+==================== CUSTOM MAIL SERVER ====================
+
+Install:
+    pip install python-gnupg

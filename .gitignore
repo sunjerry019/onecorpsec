@@ -1,5 +1,6 @@
 # Custom
 config.json
+password.json
 *.ignore.*
 *.ignore
 
