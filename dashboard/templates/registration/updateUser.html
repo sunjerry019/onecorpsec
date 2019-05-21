@@ -13,9 +13,11 @@
                     <div class="card-content">
                         <span class="card-title">Update Profile</span>
                         <p style="font-size: 0.9em; margin-bottom: 10px;"><p>You are logged in as <code style="color: #777;">{{ request.user.username }}</code>. Change your user profile here:</p>
+                        <p style="font-size: 0.9em; margin-top: 10px; color: #09c;">Leave the fields from "Email use TLS?" onwards blank to use the default OneCorpSec mail server. </p>
                         <form method="post" style="margin-top: 10px;">
                             {% csrf_token %}
                             {% form %}{% endform %}
+                            <p class="red-text" style="font-size: 0.9em; ">Always remember to test your mail settings after setting it!</p>
                             <button type="submit" class="btn" style="margin-top: 10px;">Update</button>
                             <a class="btn-flat" href="{% url 'home' %}" style="margin-top: 10px; position: absolute; right: 24px;">Return Home</a>
                         </form>

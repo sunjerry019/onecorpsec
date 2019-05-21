@@ -23,6 +23,8 @@ encrypted_ascii = gpg.encrypt(_EMAILpassword, ["test@test.com"], sign="test@test
 if not encrypted_ascii.ok:
     print("ERROR: ", encrypted_ascii.status)
 
+print(encrypted_ascii.data)
+
 based64 = base64.b64encode(encrypted_ascii.data)
 print("BASED64, length = {}".format(len(based64)))
 # print("BASE64 = ", based64)

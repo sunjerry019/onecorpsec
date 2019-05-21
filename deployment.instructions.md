@@ -18,3 +18,5 @@ Install:
 
 Install:
     pip install python-gnupg
+
+change gnupg home

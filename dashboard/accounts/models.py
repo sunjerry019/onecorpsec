@@ -8,9 +8,12 @@ from django.utils import six, timezone
 from django.core import validators
 from django.core.mail import send_mail
 
-import os
+import os, sys
 from pathlib import Path
 from shutil import copyfile
+
+sys.path.insert(0, 'database/')
+import GPGPass
 
 
 # https://medium.com/agatha-codes/options-objects-customizing-the-django-user-model-6d42b3e971a4
@@ -94,8 +97,15 @@ class DatabaseUser(AbstractBaseUser, PermissionsMixin):
 
     # Custom Stuff
     name          = models.CharField(_('name'), max_length=250, blank=True)
-    sign_off_name = models.CharField(_('sign off name'), max_length=250, blank=True, help_text="The name used for signing off emails sent from the server. This is usually a short name")
-    reply_to      = models.EmailField(_('reply-to email'), blank=True, help_text="Email that people can choose to reply to for any information emails, if different from email")
+    sign_off_name = models.CharField(_('sign off name'), max_length=250, blank=True, help_text="The name used for signing off emails sent from the server. This is usually a short name.")
+    reply_to      = models.EmailField(_('reply-to email'), blank=True, help_text="Email that people can choose to reply to for any information emails, if different from email.")
+
+    # CUSTOM EMAIL SERVER
+    email_tls       = models.BooleanField('Email use TLS?', default=False, help_text=_('Designates whether to use TLS when connecting to your custom email server.'))
+    email_host      = models.CharField(_('email host'), max_length=254, blank=True, help_text=_('Address of the host email server, e.g. mail.domain.com. Leave blank to use default OneCorpSec'))
+    email_port      = models.PositiveIntegerField(_("email port"), null=True, blank=True, help_text=_('Port of the host email server. '))
+    email_host_user = models.CharField(_('email host username'), max_length=254, blank=True, help_text=_('Username to log in to the email server'))
+    email_host_pass = models.CharField(_('email host password'), max_length=3550, blank=True, help_text=_('Password to log in to the email server. Leave blank to leave password unchanged in the database. Passwords will be encrypted with GPG and not stored in plaintext.'))
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ["email", "sign_off_name"]
@@ -111,6 +121,43 @@ class DatabaseUser(AbstractBaseUser, PermissionsMixin):
         # DO NOT USE ABSTRACT = TRUE
         # abstract = True
         app_label = 'accounts'
+
+    def save(self, *args, **kwargs):
+        # Custom save function
+        # https://stackoverflow.com/a/11456944/3211506
+        # https://github.com/django/django/blob/master/django/contrib/auth/base_user.py
+
+        # Encrypt the host pass
+        _gh = GPGPass.GPGPass()
+
+        print(self.email_host_pass, type(self.email_host_pass))
+
+        # q = self.email_host_pass[0:23]
+        # w = "§ENCRYPTED_ONECORPSEC¤="
+        # print(q, w)
+        # print("q == w? ", q == w)
+
+        if self.email_host_pass and self.email_host_pass[0:23] != "§ENCRYPTED_ONECORPSEC¤=":
+            self.email_host_pass = "§ENCRYPTED_ONECORPSEC¤=" + _gh.encrypt(self.email_host_pass)
+            assert len(self.email_host_pass) < 3500, "Password too long"
+
+            super().save(*args, **kwargs)
+        else:
+            if self.email_host:
+                # https://code.djangoproject.com/attachment/ticket/4102/save_fields.patch
+                a = [*args]
+                kwa = {**kwargs}
+                if "update_fields" not in kwa:
+                    _fds = [f.name for f in self._meta.fields if f.name not in ["id", "email_host_pass"] ]
+                    self.email_host_pass = None
+                    super().save(update_fields=_fds, *args, **kwargs)
+                else:
+                    kwa["update_fields"] = [f for f in kwa["update_fields"] if f not in ["id", "email_host_pass"] ]
+                    super().save(*args, **kwa)
+            else:
+                super().save(*args, **kwargs)
+
+
 
     def has_module_perms(self, app_label):
         "Does the user have permissions to view the app `app_label`?"

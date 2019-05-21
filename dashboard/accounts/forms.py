@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import DatabaseUser
 from django.core.exceptions import ValidationError
+from django.core.validators import EMPTY_VALUES
 
 # Groups
 # from django.contrib.auth import get_user_model
@@ -42,9 +43,36 @@ class DatabaseUserCreationForm(UserCreationForm):
         return True
 
 class DatabaseUserChangeForm(UserChangeForm):
+    # fieldsets = (
+    #         ('Basic Information', {'fields': ('email',)}),
+    #         ('Personal info', {'fields': ('name', 'first_name', 'last_name', 'sign_off_name', 'reply_to',)}),
+    #         ('Custom Email Server', {'fields': ('email_tls', 'email_host', 'email_port', 'email_host_user', 'email_host_pass',), "description": "Leave these blank to use the default onecorpsec.com mail servers."}),
+    #     )
+
     class Meta:
         model = DatabaseUser
-        fields = ('email', 'reply_to', 'name', 'first_name', 'last_name' , 'sign_off_name')
+        fields = ('email', 'reply_to', 'name', 'first_name', 'last_name' , 'sign_off_name', 'email_tls', 'email_host', 'email_port', 'email_host_user', 'email_host_pass')
+
+        widgets = {
+            'email_host_pass': forms.PasswordInput(),
+        }
+
+    def clean(self):
+        # https://stackoverflow.com/a/22816390/3211506
+        super().clean()
+
+        has_custom_host = self.cleaned_data.get('email_host', False)
+        if has_custom_host:
+            # validate the custom fields
+            _fds  = ['email_tls', 'email_port', 'email_host_user'] # 'email_host_pass'
+            _fdPT = ['TLS', 'Port', 'Host server username'] # 'Host server password'
+
+            for i, fdname in enumerate(_fds):
+                _fd  = self.cleaned_data.get(fdname, None)
+                if _fd in EMPTY_VALUES:
+                    self._errors[fdname] = self.error_class(['{} is required.'.format(_fdPT[i])])
+
+        return self.cleaned_data
 
 
 # # GROUPS = https://stackoverflow.com/a/39648244/3211506
