@@ -63,7 +63,7 @@ class DatabaseUserChangeForm(UserChangeForm):
 
         has_custom_host = self.cleaned_data.get('email_host', False)
         if has_custom_host:
-            # validate the custom fields
+            # validate the custom fields if the custom host is set
             _fds  = ['email_tls', 'email_port', 'email_host_user'] # 'email_host_pass'
             _fdPT = ['TLS', 'Port', 'Host server username'] # 'Host server password'
 

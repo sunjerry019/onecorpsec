@@ -137,6 +137,9 @@ class DatabaseUser(AbstractBaseUser, PermissionsMixin):
         # print(q, w)
         # print("q == w? ", q == w)
 
+        # During login, the last_login is updated and everything is sent through the save function
+        # We need to filter out and not encrypt and already encrypted password
+
         if self.email_host_pass and self.email_host_pass[0:23] != "§ENCRYPTED_ONECORPSEC¤=":
             self.email_host_pass = "§ENCRYPTED_ONECORPSEC¤=" + _gh.encrypt(self.email_host_pass)
             assert len(self.email_host_pass) < 3500, "Password too long"
@@ -145,16 +148,21 @@ class DatabaseUser(AbstractBaseUser, PermissionsMixin):
         else:
             if self.email_host:
                 # https://code.djangoproject.com/attachment/ticket/4102/save_fields.patch
-                a = [*args]
-                kwa = {**kwargs}
+                a = [ *args ]
+                kwa = { **kwargs }
+                # we check if there is already a set of update_fields
+
                 if "update_fields" not in kwa:
+                    # Update everything BUT id and email_host_pass
                     _fds = [f.name for f in self._meta.fields if f.name not in ["id", "email_host_pass"] ]
                     self.email_host_pass = None
                     super().save(update_fields=_fds, *args, **kwargs)
                 else:
+                    # Remove "email_host_pass" and "id" from the list of fields to be updated
                     kwa["update_fields"] = [f for f in kwa["update_fields"] if f not in ["id", "email_host_pass"] ]
                     super().save(*args, **kwa)
             else:
+                # Just a normal db call to probably update the last_login
                 super().save(*args, **kwargs)
 
 
