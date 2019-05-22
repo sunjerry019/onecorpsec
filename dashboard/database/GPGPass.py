@@ -38,7 +38,7 @@ class GPGPass():
         if b64:
             enc_data = base64.b64decode(enc_data)
 
-        decrypted_data = gpg.decrypt(enc_data, passphrase=self.GPGConfig["ukpp"])
+        decrypted_data = self.gpg.decrypt(enc_data, passphrase=self.GPGConfig["ukpp"])
         # Note that the above outputs a bytestring
 
         if not decrypted_data.ok:
