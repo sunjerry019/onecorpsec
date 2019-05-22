@@ -44,3 +44,29 @@ def createTableIfDoesntExist(usrname, configLocation = None):
         ).format(_table)
 
         _database.query(_q)
+
+def getEmailConfiguration(user):
+    from accounts.models import DatabaseUser
+    from django.core.mail.backends.smtp import EmailBackend
+    import database.GPGPass as GPGPass
+
+    _row = DatabaseUser.objects.get(username = user)
+
+    if _row.email_host:
+        if _row.email_host_pass[0:23] == "§ENCRYPTED_ONECORPSEC¤=":
+            _gh = GPGPass.GPGPass()
+            _password = _gh.decrypt(_row.email_host_pass[23:])
+        else:
+            _password = _row.email_host_pass
+
+        return EmailBackend(
+            host = _row.email_host,
+            port = _row.email_port,
+            username = _row.email_host_user,
+            password = _password,
+            use_tls  = _row.email_tls,
+        )
+
+    # we return False instead of None
+    # so that we flag that we have already checked and the user has no custom email host
+    return False

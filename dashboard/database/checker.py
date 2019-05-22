@@ -19,6 +19,8 @@ import sys
 sys.path.insert(0, '../')
 import mailer
 
+from database.helpers import getEmailConfiguration
+
 class NXError(Exception):
     pass
 
@@ -29,7 +31,10 @@ class Checker():
         self.database = Database(_confLoc) if _confLoc is not None else Database()
         self.database.connect()
         self.users = self.getUsers()
+
         self.mailerCompany = None
+        self.emailConnectionUser = None
+        self.emailConnection = None
 
         if user:
             if user not in self.users:
@@ -61,6 +66,10 @@ class Checker():
             print("No users with appropriate data")
 
     def runCheck(self, user):
+        # We set this every time runCheck is run
+        self.emailConnectionUser = user
+        self.emailConnection = getEmailConfiguration(user)
+
         _companies = self.database.query("SELECT * FROM `table_{}`".format(user), None, True)
         for company in _companies:
             _a = dict(zip(self.columnMap, company))
@@ -164,7 +173,14 @@ class Checker():
 
         if self.mailerCompany is None or self.mailerCompany is not _coy:
             # Reuse mailer if same company
-            self.mailer = mailer.Mail(_usr, self.users[_usr]["reply_to"], self.users[_usr]["sign_off_name"], _row)
+            self.mailer = mailer.Mail(
+                user            = _usr,
+                reply_to        = self.users[_usr]["reply_to"],
+                sign_off_name   = self.users[_usr]["sign_off_name"],
+                row             = _row,
+                connection      = self.emailConnection
+                )
+
             self.mailerMappingDict = {
                 "AGM"   : self.mailer.send_acra,
                 "GST"   : self.mailer.send_gst,

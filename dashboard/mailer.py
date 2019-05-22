@@ -24,15 +24,18 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
 
+from database.helpers import getEmailConfiguration
+
 from datetime import date
 
 class Mail():
-	def __init__(self, user, reply_to, sign_off_name, row):
+	def __init__(self, user, reply_to, sign_off_name, row, connection = None):
 		# row is a zipped dictionary of the mysql entry for that company
 
 		self.user = user
 		self.row = row
 		self.reply_to = reply_to if isinstance(reply_to, list) or isinstance(reply_to, tuple) else [reply_to]
+
 		# https://stackoverflow.com/questions/5243757/how-do-i-add-reply-to-to-this-in-django
 		# self.headers = { 'Auto-Submitted': 'auto-generated', 'Reply-To': ", ".join(self.reply_to) }
 		self.headers = { 'Auto-Submitted': 'auto-generated' }
@@ -59,6 +62,13 @@ class Mail():
 			"bcc"			: self.bcc,
 			"reply_to"		: self.reply_to
 		}
+
+		self.emailConnection = self.getEmailConfiguration(self.user) if connection is None else connection
+
+		if self.emailConnection:
+			# If there is a custom email configuration, we use the custom email configuration
+			self.defaultoptions["from_email"] = "{} <{}>".format(sign_off_name, self.emailConnection.username) if len(sign_off_name) else self.emailConnection.username
+			self.defaultoptions["connection"] = self.emailConnection
 
 		self.GST_Map = { 1 : "monthly", 3: "quarterly", 6: "semi-annual" }
 

@@ -56,3 +56,23 @@ eveyrthing is done through .ini files
 install wsgi systemwide
 
 https://uwsgi-docs.readthedocs.io/en/latest/Systemd.html
+
+
+==================== CUSTOM MAIL SERVER ====================
+
+For testing:
+    disabled SSL
+	mkdir lib at /srv/http/
+	created symlink to /lib/python3.7 (ln -s /lib/python3.7 python3.6)
+    set debug = True
+
+    generated key for test@test.com
+
+
+https://stackoverflow.com/a/21759466/3211506
+https://stackoverflow.com/a/19517177/3211506
+
+bash GIT_COMMITTER_DATE="$(git show --format=%aD | head -1)" && git tag -a v0.1 -m"v0.1"
+fish:
+    git reset "HEAD@{1}"
+    git checkout master

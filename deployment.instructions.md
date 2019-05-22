@@ -20,3 +20,5 @@ Install:
     pip install python-gnupg
 
 change gnupg home
+
+ALWAYS RUN make migrations ON THE SERVER
