@@ -3,6 +3,7 @@ config.json
 password.json
 *.ignore.*
 *.ignore
+quotation
 
 # Migrations
 **/migrations/0001_initial.py
