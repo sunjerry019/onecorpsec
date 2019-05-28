@@ -133,7 +133,7 @@ def updateDatabaseCSV(request):
                 return http.HttpResponse(status=500, content=e)
             except Exception as e:
                 di.clean()
-                return http.HttpResponse(status=500, content="Unknown Parsing/Update Error")
+                return http.HttpResponse(status=500, content="Unknown Parsing/Update Error: {}".format(e))
 
             di.clean()
             return http.HttpResponse(content="OK")
