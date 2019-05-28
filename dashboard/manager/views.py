@@ -206,7 +206,7 @@ def manualChecker(request):
             c = checker.Checker()
             c.runCheck(request.user.username)
             c.clean()
-            return http.HttpResponse(status=200, content="OK! Check done.")
+            return http.HttpResponse(status=200, content="OK! Check done. You may press the back button to go back. ")
         except Exception as e:
             return http.HttpResponse(status=500, content=e)
     else:
