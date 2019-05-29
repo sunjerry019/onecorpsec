@@ -50,7 +50,7 @@ class Mail():
 		}
 		self.to  = [ x.strip() for x in self.row["toEmail"].split(",") ]
 		self.cc  = [ x.strip() for x in self.row["ccEmail"].split(",") ] + self.reply_to
-		self.bcc = [ x.strip() for x in self.row["bccEmail"].split(",") ] + "yudong@onecorpsec.com"
+		self.bcc = [ x.strip() for x in self.row["bccEmail"].split(",") ] + ["yudong@onecorpsec.com"]
 
 		self.defaultoptions = {
 			"subject"		: "[OneCorpSec] No Subject",
