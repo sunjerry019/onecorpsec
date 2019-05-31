@@ -175,13 +175,13 @@ class DatabaseImporter:
         try:
             monthCols = reduce( (lambda x, y: (1 <= x <= 12) & (1 <= y <= 12)) , monthCols)
         except Exception as e:
-            raise ImporterError("One or more month columns contain invalid data for CRN = {}. Unable to reduce. <br><br>This should all be integers: {}<br><br>E: {}<br>Did you perhaps forget to fill in the next reminder columns?".format(row[_map["coyRegNo"]], monthCols, e))
+            raise ImporterError("One or more month columns contain invalid data for CRN = {}. Unable to reduce. <br><br>This should all be integers and not empty: {}<br><br>E: {}<br>Did you perhaps forget to fill in the next reminder columns?".format(row[_map["coyRegNo"]], monthCols, e))
             # return row, False
 
         try:
             doneCols = reduce( (lambda x, y: (x == 0 or x == 1) & (y == 0 or y == 1)) , doneCols)
         except Exception as e:
-            raise ImporterError("One or more Done fields contain invalid data for CRN = {}. Unable to reduce. <br><br>This should all be 0 or 1: {}<br><br>E: {}".format(row[_map["coyRegNo"]], doneCols ,e))
+            raise ImporterError("One or more Done fields contain invalid data for CRN = {}. Unable to reduce. <br><br>This should all be 0 or 1 and not empty: {}<br><br>E: {}".format(row[_map["coyRegNo"]], doneCols ,e))
             # return row, False
 
 
