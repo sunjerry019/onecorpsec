@@ -136,7 +136,8 @@ class DatabaseImporter:
         # Check if all ? fields have been filled up
         _reqs = (isinstance(row[_map["audit_req"]], int) & isinstance(row[_map["GST_req"]], int))
         if not _reqs:
-            return row, False
+            raise ImporterError("Not all ? fields have been filled up for CRN = {}".format(row[_map["coyRegNo"]]))
+            # return row, False
 
         # Check months and done fields
         monthCols = [
@@ -174,24 +175,38 @@ class DatabaseImporter:
         try:
             monthCols = reduce( (lambda x, y: (1 <= x <= 12) & (1 <= y <= 12)) , monthCols)
         except Exception as e:
-            return row, False
+            raise ImporterError("One or more month columns contain invalid data for CRN = {}. Unable to reduce. <br><br>This should all be integers: {}<br><br>E: {}<br>Did you perhaps forget to fill in the next reminder columns?".format(row[_map["coyRegNo"]], monthCols, e))
+            # return row, False
 
         try:
             doneCols = reduce( (lambda x, y: (x == 0 or x == 1) & (y == 0 or y == 1)) , doneCols)
         except Exception as e:
-            return row, False
+            raise ImporterError("One or more Done fields contain invalid data for CRN = {}. Unable to reduce. <br><br>This should all be 0 or 1: {}<br><br>E: {}".format(row[_map["coyRegNo"]], doneCols ,e))
+            # return row, False
 
 
         # Should be a valid year after 1900
         yearCol = row[_map["fin_endYear"]] > 1900
 
-        return (row, len(toemail) >= 3 and \
-            emailTest.match(toemail) and \
-            (len(ccemail) == 0  or emailTest.match(ccemail)) and \
-            (len(bccemail) == 0 or emailTest.match(bccemail)) and \
-            monthCols and \
-            gstType and \
-            yearCol)
+
+        # Massive separation of variables
+        assert len(toemail) >= 3,                                   "to-emails not filled, or too short for CRN = {}.".format(row[_map["coyRegNo"]])
+        assert emailTest.match(toemail),                            "to-emails not valid for CRN = {}.".format(row[_map["coyRegNo"]])
+        assert (len(ccemail) == 0 or emailTest.match(ccemail)),     "cc-emails not valid for CRN = {}.".format(row[_map["coyRegNo"]])
+        assert (len(bccemail) == 0 or emailTest.match(bccemail)),   "bcc-emails not valid for CRN = {}.".format(row[_map["coyRegNo"]])
+        assert monthCols,                                           "One or more month columns contain invalid data for CRN = {}.".format(row[_map["coyRegNo"]])
+        assert gstType,                                             "Invalid GST Type (1/12, 3/12, 6/12) for CRN = {}.".format(row[_map["coyRegNo"]])
+        assert yearCol,                                             "Invalid year entered for CRN = {}. Year must be an integer more than 1900.".format(row[_map["coyRegNo"]])
+
+        return (row, True)
+
+        # return (row, len(toemail) >= 3 and \
+        #     emailTest.match(toemail) and \
+        #     (len(ccemail) == 0  or emailTest.match(ccemail)) and \
+        #     (len(bccemail) == 0 or emailTest.match(bccemail)) and \
+        #     monthCols and \
+        #     gstType and \
+        #     yearCol)
 
     def parse(self):
         # Prepare the database
