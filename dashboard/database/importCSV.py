@@ -34,6 +34,8 @@ class DatabaseImporter:
 
         if isinstance(logfile, str) and len(logfile) > 0:
             self.logfile = open(logfile, 'a')
+        else:
+            self.logfile = logfile
 
         # connect to the database
         self.database.connect()
@@ -89,11 +91,11 @@ class DatabaseImporter:
             return 0
         elif _ele == "TRUE":
             return 1
-
+            
         # Change Months
         monthMap = { "JAN" : 1, "FEB" : 2, "MAR" : 3, "APR" : 4, "MAY" : 5, "JUN" : 6, "JUL" : 7, "AUG" : 8, "SEP" : 9, "OCT" : 10, "NOV" : 11, "DEC" : 12 }
         if _ele in monthMap:
-            return(monthMap[ele])
+            return(monthMap[_ele])
 
         # Change GST Type
         GSTTypeMap = {"1/12": 1, "3/12": 3, "6/12" : 6}
@@ -209,11 +211,11 @@ class DatabaseImporter:
             row = row[1:]           # we ignore the serial number
             try:
                 row = [self.mapValues(self.database.escape(x.strip())) for x in row]
-            except:
+            except Exception as e:
                 _srow = str(row)
-                _el = " ..." if len(_srow) > 8 else ""
+                _el = " ..." if len(_srow) > 30 else ""
                 if self.logfile: self.logfile.write("Error mapping values: {}".format(row))
-                raise ImporterError("Error mapping values: {:8.8}{}".format(_srow, _el))
+                raise ImporterError("Error mapping values: {:30.30}{}<br><br>Error: {}".format(_srow, _el, e))
 
             if _rowcount == 0:      # Headers
                 assert len(row) == len(self.sqlMapping.keys()), "Numbers of columns do not match database"
