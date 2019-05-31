@@ -91,7 +91,7 @@ class DatabaseImporter:
             return 0
         elif _ele == "TRUE":
             return 1
-            
+
         # Change Months
         monthMap = { "JAN" : 1, "FEB" : 2, "MAR" : 3, "APR" : 4, "MAY" : 5, "JUN" : 6, "JUL" : 7, "AUG" : 8, "SEP" : 9, "OCT" : 10, "NOV" : 11, "DEC" : 12 }
         if _ele in monthMap:
@@ -227,7 +227,10 @@ class DatabaseImporter:
             else:
                 # Check if CRN exists
                 assert _map.index("coyRegNo") > -1, "No CRN column found"
-                assert len(row[_map.index("coyRegNo")]) > 0, "No CRN found on row {}".format(_rowcount + 1)
+                if isinstance(row[_map.index("coyRegNo")], str):
+                    assert len(row[_map.index("coyRegNo")]) > 0, "No CRN found on row {}".format(_rowcount + 1)
+                else:
+                    assert len(str(row[_map.index("coyRegNo")])) > 0, "No CRN found on row {}".format(_rowcount + 1)
 
                 # https://stackoverflow.com/a/36460020/3211506
                 _mapDict = { k: v for v, k in enumerate(_map) }
