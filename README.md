@@ -9,6 +9,6 @@ Screenshots available at [screenshots](https://github.com/sunjerry019/onecorpsec
 
 Web-Design based on [`materializecss`](https://materializecss.com/).
 
-Deployed to a DigitalOcean VPS Droplet running `uswgi` and `nginx`.
+Deployed to a DigitalOcean VPS Droplet running `uwsgi` and `nginx`.
 
 Written 2019.
